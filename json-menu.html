@@ -640,7 +640,7 @@ function debounce(func, wait) {
             .list-item .item-content { padding:${padT}px ${padR}px ${padB}px ${padL}px; }
             .list-item-name { color:${cardTitleColor}; font-family:'${titleFont}',sans-serif; font-size:${titleSize}px; font-weight:${titleWeight}; }
             .list-item-description { color:${descTextColor}; font-family:'${descFont}',sans-serif; font-size:${descSize}px; font-weight:${descWeight}; line-clamp:2; -webkit-line-clamp:2; display:-webkit-box; -webkit-box-orient:vertical; overflow:hidden; }
-            .list-item-price { color:${activeBg}; }
+            .list-item-price { font-family: '${descFont}', sans-serif; font-size: ${tabSize}px; font-weight: ${tabWeight}; color: ${activeBg}; margin-top: auto; }
             .category-search, .category-select { background:${defaultBg}; color:${defaultText}; border:${tabBorderWidth}px solid ${tabBorderColor}; border-radius:${tabRadTL}px ${tabRadTR}px ${tabRadBR}px ${tabRadBL}px; font-family:'${tabFont}',sans-serif; font-size:${tabSize}px; font-weight:${tabWeight}; }
         `;
         document.head.appendChild(style);
@@ -997,6 +997,17 @@ function debounce(func, wait) {
                 }
     
                 const style = document.createElement('style');
+                function loadGoogleFont(family) {
+                    if (!family || family === 'Inter') return;
+                    const link = document.createElement('link');
+                    link.href = `https://fonts.googleapis.com/css2?family=${family.replace(/ /g, '+')}:wght@400;500;600;700&display=swap`;
+                    link.rel = 'stylesheet';
+                    document.head.appendChild(link);
+                }
+                // Load all fonts from settings
+                loadGoogleFont(s.tabFontFamily);
+                loadGoogleFont(s.titleFontFamily);
+                loadGoogleFont(s.descFontFamily);
                 style.textContent = \`${generateStyleString(settings)}\`;
                 document.head.appendChild(style);
                 renderMenuHTML(menuData, s, container, activeCats);
@@ -1130,59 +1141,83 @@ function debounce(func, wait) {
 
     function generateStyleString(s) {
         return `
-        .spoton-embed * { margin:0; padding:0; box-sizing:border-box; }
-        .spoton-embed { font-family: system-ui, -apple-system, sans-serif; }
-        .spoton-embed .menu-layout { display: flex; gap: 24px; }
-        .spoton-embed .menu-layout.tabs-top { flex-direction: column; }
-        .spoton-embed .menu-layout.tabs-bottom { flex-direction: column-reverse; }
-        .spoton-embed .menu-layout.tabs-left { flex-direction: row; }
-        .spoton-embed .menu-layout.tabs-right { flex-direction: row-reverse; }
-        .spoton-embed .tabs-left .menu-root, .spoton-embed .tabs-right .menu-root { align-self: flex-start; }
-        .spoton-embed .categories-container { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-        .spoton-embed .tabs-left .categories-container, .spoton-embed .tabs-right .categories-container { flex-direction: column; min-width: 150px; max-width: 200px; }
-        .spoton-embed .category-link {
-            padding: 8px 14px; background: ${s.defaultTabColor}; border: ${s.tabBorderWidth}px solid ${s.tabBorderColor};
-            border-radius: ${s.tabRadiusTL}px ${s.tabRadiusTR}px ${s.tabRadiusBR}px ${s.tabRadiusBL}px;
-            text-decoration: none; color: ${s.defaultTabTextColor}; font-family: '${s.tabFontFamily}', sans-serif;
-            font-size: ${s.tabFontSize}px; font-weight: ${s.tabFontWeight}; cursor: pointer; white-space: nowrap; display: inline-block;
-        }
-        .spoton-embed .tabs-left .category-link, .spoton-embed .tabs-right .category-link {white-space: normal !important; text-align: center; word-break: break-word; max-width: 100%;}
-        .spoton-embed .category-link.active { background: ${s.activeTabColor}; color: ${s.activeTabTextColor}; border-color: ${s.activeTabColor}; }
-        .spoton-embed .menu-root { flex: 1; }
-        .spoton-embed .layout-classic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 24px; }
-        .spoton-embed .layout-hero-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 28px; }
-        .spoton-embed .layout-list-image-left, .spoton-embed .layout-list-image-right { display: flex; flex-direction: column; gap: 20px; }
-        .spoton-embed .layout-list-image-left .list-item, .spoton-embed .layout-list-image-right .list-item { display: flex; gap: 20px; align-items: stretch; }
-        .spoton-embed .layout-list-image-left .list-item { flex-direction: row; }
-        .spoton-embed .layout-list-image-right .list-item { flex-direction: row-reverse; }
-        .spoton-embed .layout-list-image-left .item-thumbnail-wrapper, .spoton-embed .layout-list-image-right .item-thumbnail-wrapper { width: 120px; height: 120px; flex-shrink: 0; background: ${s.cardBgColor}; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        .spoton-embed .list-item-image { width: 100%; height: 100%; object-fit: cover; object-position: center; }
-        .spoton-embed .layout-list-image-left .item-content, .spoton-embed .layout-list-image-right .item-content { flex: 1; padding: 12px 0; }
-        .spoton-embed .layout-list-image-right .item-content { padding-left: 16px; }
-        .spoton-embed .layout-compact-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
-        .spoton-embed .layout-split-view { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
-        .spoton-embed .list-item {
-            background: ${s.cardBgColor}; border-radius: ${s.cardRadiusTL}px ${s.cardRadiusTR}px ${s.cardRadiusBR}px ${s.cardRadiusBL}px;
-            border: ${s.cardBorderWidth}px solid ${s.cardBorderColor}; overflow: hidden; display: flex; flex-direction: column; height: 100%;
-        }
-        .spoton-embed .item-thumbnail-wrapper { background: ${s.cardBgColor}; overflow: hidden; flex-shrink: 0; margin:0; padding:0; }
-        .spoton-embed .item-content { padding: ${s.cardPaddingTop}px ${s.cardPaddingRight}px ${s.cardPaddingBottom}px ${s.cardPaddingLeft}px; flex: 1; display: flex; flex-direction: column; }
-        .spoton-embed .list-item-name { font-family: '${s.titleFontFamily}', sans-serif; font-size: ${s.titleFontSize}px; font-weight: ${s.titleFontWeight}; margin-bottom: 6px; color: ${s.cardTitleColor}; }
-        .spoton-embed .list-item-description { font-family: '${s.descFontFamily}', sans-serif; font-size: ${s.descFontSize}px; font-weight: ${s.descFontWeight}; color: ${s.descTextColor}; margin-bottom: 10px; line-height: 1.4; line-clamp:2; -webkit-line-clamp:2; display:-webkit-box; -webkit-box-orient:vertical; overflow:hidden; }
-        .spoton-embed .list-item-price { font-size: 15px; font-weight: 700; color: ${s.activeTabColor}; margin-top: auto; }
-        .spoton-embed .price-hidden { display: none; }
-        .spoton-embed .category-toolbar { margin-bottom: 12px; display: flex; gap: 12px; flex-wrap: wrap; }
-        .spoton-embed .category-search, .spoton-embed .category-select {
-            padding: 8px 12px; border: 1px solid #2a2e35; border-radius: ${s.tabRadiusTL}px ${s.tabRadiusTR}px ${s.tabRadiusBR}px ${s.tabRadiusBL}px;
-            background: ${s.defaultTabColor}; color: ${s.defaultTabTextColor}; font-family: '${s.tabFontFamily}', sans-serif; font-size: ${s.tabFontSize}px; font-weight: ${s.tabFontWeight};
-        }
-        @media (max-width: 768px) {
-            .spoton-embed .menu-layout.tabs-left, .spoton-embed .menu-layout.tabs-right { flex-direction: column; }
-            .spoton-embed .tabs-left .categories-container, .spoton-embed .tabs-right .categories-container { flex-direction: column; flex-wrap: wrap;  min-width: 150px; max-width: 200px;}
-            .spoton-embed .layout-list-image-left .list-item, .spoton-embed .layout-list-image-right .list-item { flex-direction: column; }
-            .spoton-embed .layout-list-image-left .item-thumbnail-wrapper, .spoton-embed .layout-list-image-right .item-thumbnail-wrapper { width: 100% !important; height: 180px !important; }
-        }
-    `;
+            .spoton-embed * { margin:0; padding:0; box-sizing:border-box; }
+            .spoton-embed { font-family: system-ui, -apple-system, sans-serif; }
+            .spoton-embed .menu-layout { display: flex; gap: 24px; }
+            .spoton-embed .menu-layout.tabs-top { flex-direction: column; }
+            .spoton-embed .menu-layout.tabs-bottom { flex-direction: column-reverse; }
+            .spoton-embed .menu-layout.tabs-left { flex-direction: row; }
+            .spoton-embed .menu-layout.tabs-right { flex-direction: row-reverse; }
+            .spoton-embed .tabs-left .menu-root, .spoton-embed .tabs-right .menu-root { align-self: flex-start; }
+            .spoton-embed .categories-container { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+            .spoton-embed .tabs-left .categories-container, .spoton-embed .tabs-right .categories-container {
+                flex-direction: column;
+                min-width: 150px;
+                max-width: 200px;
+            }
+            .spoton-embed .tabs-left .category-link, .spoton-embed .tabs-right .category-link {
+                white-space: normal !important;
+                text-align: center;
+                word-break: break-word;
+            }
+            .spoton-embed .category-link {
+                padding: 8px 14px; background: ${s.defaultTabColor}; border: ${s.tabBorderWidth}px solid ${s.tabBorderColor};
+                border-radius: ${s.tabRadiusTL}px ${s.tabRadiusTR}px ${s.tabRadiusBR}px ${s.tabRadiusBL}px;
+                text-decoration: none; color: ${s.defaultTabTextColor}; font-family: '${s.tabFontFamily}', sans-serif;
+                font-size: ${s.tabFontSize}px; font-weight: ${s.tabFontWeight}; cursor: pointer; white-space: nowrap; display: inline-block;
+            }
+            .spoton-embed .category-link.active { background: ${s.activeTabColor}; color: ${s.activeTabTextColor}; border-color: ${s.activeTabColor}; }
+            .spoton-embed .menu-root { flex: 1; }
+            .spoton-embed .layout-classic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 24px; }
+            .spoton-embed .layout-hero-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 28px; }
+            .spoton-embed .layout-list-image-left, .spoton-embed .layout-list-image-right { display: flex; flex-direction: column; gap: 20px; }
+            .spoton-embed .layout-list-image-left .list-item, .spoton-embed .layout-list-image-right .list-item { display: flex; gap: 20px; align-items: stretch; }
+            .spoton-embed .layout-list-image-left .list-item { flex-direction: row; }
+            .spoton-embed .layout-list-image-right .list-item { flex-direction: row-reverse; }
+            .spoton-embed .layout-list-image-left .item-thumbnail-wrapper, .spoton-embed .layout-list-image-right .item-thumbnail-wrapper {
+                width: 120px; height: 120px; flex-shrink: 0; background: ${s.cardBgColor}; overflow: hidden; display: flex; align-items: center; justify-content: center;
+            }
+            .spoton-embed .list-item-image { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+            .spoton-embed .layout-list-image-left .item-content, .spoton-embed .layout-list-image-right .item-content { flex: 1; padding: 12px 0; }
+            .spoton-embed .layout-list-image-right .item-content { padding-left: 16px; }
+            .spoton-embed .layout-compact-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+            .spoton-embed .layout-split-view { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+            .spoton-embed .list-item {
+                background: ${s.cardBgColor}; border-radius: ${s.cardRadiusTL}px ${s.cardRadiusTR}px ${s.cardRadiusBR}px ${s.cardRadiusBL}px;
+                border: ${s.cardBorderWidth}px solid ${s.cardBorderColor}; overflow: hidden; display: flex; flex-direction: column; height: 100%;
+            }
+            .spoton-embed .item-thumbnail-wrapper { background: ${s.cardBgColor}; overflow: hidden; flex-shrink: 0; margin:0; padding:0; }
+            .spoton-embed .item-content { padding: ${s.cardPaddingTop}px ${s.cardPaddingRight}px ${s.cardPaddingBottom}px ${s.cardPaddingLeft}px; flex: 1; display: flex; flex-direction: column; }
+            .spoton-embed .list-item-name {
+                font-family: '${s.titleFontFamily}', sans-serif; font-size: ${s.titleFontSize}px; font-weight: ${s.titleFontWeight};
+                margin-bottom: 6px; color: ${s.cardTitleColor};
+            }
+            .spoton-embed .list-item-description {
+                font-family: '${s.descFontFamily}', sans-serif; font-size: ${s.descFontSize}px; font-weight: ${s.descFontWeight};
+                color: ${s.descTextColor}; margin-bottom: 10px; line-height: 1.4; line-clamp:2; -webkit-line-clamp:2;
+                display:-webkit-box; -webkit-box-orient:vertical; overflow:hidden;
+            }
+            .spoton-embed .list-item-price {
+                font-family: '${s.descFontFamily}', sans-serif;
+                font-size: ${s.tabFontSize}px;
+                font-weight: ${s.tabFontWeight};
+                color: ${s.activeTabColor};
+                margin-top: auto;
+            }
+            .spoton-embed .price-hidden { display: none; }
+            .spoton-embed .category-toolbar { margin-bottom: 12px; display: flex; gap: 12px; flex-wrap: wrap; }
+            .spoton-embed .category-search, .spoton-embed .category-select {
+                padding: 8px 12px; border: 1px solid #2a2e35; border-radius: ${s.tabRadiusTL}px ${s.tabRadiusTR}px ${s.tabRadiusBR}px ${s.tabRadiusBL}px;
+                background: ${s.defaultTabColor}; color: ${s.defaultTabTextColor}; font-family: '${s.tabFontFamily}', sans-serif;
+                font-size: ${s.tabFontSize}px; font-weight: ${s.tabFontWeight};
+            }
+            @media (max-width: 768px) {
+                .spoton-embed .menu-layout.tabs-left, .spoton-embed .menu-layout.tabs-right { flex-direction: column; }
+                .spoton-embed .tabs-left .categories-container, .spoton-embed .tabs-right .categories-container { flex-direction: row; flex-wrap: wrap; min-width: auto; }
+                .spoton-embed .layout-list-image-left .list-item, .spoton-embed .layout-list-image-right .list-item { flex-direction: column; }
+                .spoton-embed .layout-list-image-left .item-thumbnail-wrapper, .spoton-embed .layout-list-image-right .item-thumbnail-wrapper { width: 100% !important; height: 180px !important; }
+            }
+        `;
     }
 
     function showEmbedCode() { document.getElementById('embedCodeDisplay').textContent = generateEmbedCode(); document.getElementById('codeModal').classList.add('active'); }
