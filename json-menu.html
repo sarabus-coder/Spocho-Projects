@@ -471,30 +471,38 @@
 
     // ─── Load from URL ───────────────────────────────────────────────────────────
     async function loadFromUrl(url) {
-    if (!url) {
-        showStatus('Please enter a JSON URL', 'error');
-        return;
-    }
-    showStatus('Loading menu from URL...', 'info');
-    
-    // Function to attempt fetch with optional proxy
-    async function tryFetch(fetchUrl) {
-        const response = await fetch(fetchUrl);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return response.json();
-    }
-
-    try {
-        let json;
-        try {
-            // Try direct fetch first
-            json = await tryFetch(url);
-        } catch (directError) {
-            console.warn('Direct fetch failed, trying CORS proxy...', directError);
-            // Fallback to a public CORS proxy
-            const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
-            json = await tryFetch(proxyUrl);
+        if (!url) { showStatus('Please enter a JSON URL', 'error'); return; }
+        showStatus('Loading menu from URL...', 'info');
+        
+        async function fetchJson(fetchUrl) {
+            const res = await fetch(fetchUrl);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
         }
+    
+        try {
+            let json;
+            try {
+                json = await fetchJson(url);
+            } catch (e) {
+                console.warn('Direct fetch failed, trying CORS proxy...', e);
+                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+                json = await fetchJson(proxyUrl);
+            }
+            const parsed = parseSpotOnJSON(json);
+            if (!parsed.categories.length) throw new Error('No active categories found');
+            currentMenuData = parsed;
+            currentItemsMap = parsed.itemsFull;
+            excludedCategories = [];
+            buildExcludeWidget();
+            renderMenu();
+            showStatus(`Loaded ${parsed.categories.length} categories, ${Object.values(parsed.itemsByCategory).flat().length} items`, 'success');
+        } catch (err) {
+            console.error('Load error:', err);
+            showStatus(`Failed to load URL: ${err.message}`, 'error');
+            currentMenuData = null;
+        }
+    }
         
         const parsed = parseSpotOnJSON(json);
         if (!parsed.categories.length) throw new Error('No active categories found');
@@ -852,310 +860,235 @@
         const url = document.getElementById('jsonUrl').value.trim();
         if (!url) return '<!-- No JSON URL provided. Please enter a URL and load the menu first. -->';
         if (!currentMenuData) return '<!-- Menu not loaded. Please click "Load" to fetch the menu data first. -->';
-
-        const isInherit = document.getElementById('inheritCardStyle').checked;
-
-        // Compute modal style values once (baked into embed at generation time)
-        const mBg     = isInherit ? document.getElementById('cardBgColor').value      : document.getElementById('modalBgColor').value;
-        const mText   = isInherit ? document.getElementById('cardTitleColor').value    : document.getElementById('modalTextColor').value;
-        const mAccent = isInherit ? document.getElementById('activeTabColor').value    : document.getElementById('modalAccentColor').value;
-        const mLine   = isInherit ? document.getElementById('cardBorderColor').value   : document.getElementById('modalLineColor').value;
-        const mRadTL  = isInherit ? document.getElementById('cardRadiusTL').value      : document.getElementById('modalRadiusTL').value;
-        const mRadTR  = isInherit ? document.getElementById('cardRadiusTR').value      : document.getElementById('modalRadiusTR').value;
-        const mRadBR  = isInherit ? document.getElementById('cardRadiusBR').value      : document.getElementById('modalRadiusBR').value;
-        const mRadBL  = isInherit ? document.getElementById('cardRadiusBL').value      : document.getElementById('modalRadiusBL').value;
-        const mTFont  = isInherit ? document.getElementById('titleFontFamily').value   : document.getElementById('modalTitleFont').value;
-        const mTSize  = isInherit ? document.getElementById('titleFontSize').value     : document.getElementById('modalTitleSize').value;
-        const mTWt    = isInherit ? document.getElementById('titleFontWeight').value   : document.getElementById('modalTitleWeight').value;
-        const mMFont  = isInherit ? document.getElementById('descFontFamily').value    : document.getElementById('modalModifierFont').value;
-        const mMSize  = isInherit ? document.getElementById('descFontSize').value      : document.getElementById('modalModifierSize').value;
-        const mMWt    = isInherit ? document.getElementById('descFontWeight').value    : document.getElementById('modalModifierWeight').value;
-
+    
+        // Collect all styling settings
         const settings = {
-            layout:            document.getElementById('layoutType').value,
-            tabsPos:           document.querySelector('input[name="tabsPosition"]:checked').value,
-            tabAlign:          document.querySelector('input[name="tabAlign"]:checked').value,
-            showImages:        document.getElementById('showImages').checked,
-            showPrices:        document.getElementById('showPrices').checked,
-            showModifiers:     document.getElementById('showModifiers').checked,
-            showSearch:        document.getElementById('showCategorySearch').checked,
-            showDropdown:      document.getElementById('showCategoryDropdown').checked,
-            excluded:          excludedCategories,
-            defaultTabColor:   document.getElementById('defaultTabColor').value,
+            layout: document.getElementById('layoutType').value,
+            tabsPos: document.querySelector('input[name="tabsPosition"]:checked').value,
+            tabAlign: document.querySelector('input[name="tabAlign"]:checked').value,
+            showImages: document.getElementById('showImages').checked,
+            showPrices: document.getElementById('showPrices').checked,
+            showSearch: document.getElementById('showCategorySearch').checked,
+            showDropdown: document.getElementById('showCategoryDropdown').checked,
+            excluded: excludedCategories,
+            defaultTabColor: document.getElementById('defaultTabColor').value,
             defaultTabTextColor: document.getElementById('defaultTabTextColor').value,
-            activeTabColor:    document.getElementById('activeTabColor').value,
+            activeTabColor: document.getElementById('activeTabColor').value,
             activeTabTextColor: document.getElementById('activeTabTextColor').value,
-            tabBorderColor:    document.getElementById('tabBorderColor').value,
-            tabBorderWidth:    document.getElementById('tabBorderWidth').value,
-            tabRadiusTL:       document.getElementById('tabRadiusTL').value,
-            tabRadiusTR:       document.getElementById('tabRadiusTR').value,
-            tabRadiusBR:       document.getElementById('tabRadiusBR').value,
-            tabRadiusBL:       document.getElementById('tabRadiusBL').value,
-            cardBgColor:       document.getElementById('cardBgColor').value,
-            cardBorderColor:   document.getElementById('cardBorderColor').value,
-            cardBorderWidth:   document.getElementById('cardBorderWidth').value,
-            cardPaddingTop:    document.getElementById('cardPaddingTop').value,
-            cardPaddingRight:  document.getElementById('cardPaddingRight').value,
+            tabBorderColor: document.getElementById('tabBorderColor').value,
+            tabBorderWidth: document.getElementById('tabBorderWidth').value,
+            tabRadiusTL: document.getElementById('tabRadiusTL').value,
+            tabRadiusTR: document.getElementById('tabRadiusTR').value,
+            tabRadiusBR: document.getElementById('tabRadiusBR').value,
+            tabRadiusBL: document.getElementById('tabRadiusBL').value,
+            cardBgColor: document.getElementById('cardBgColor').value,
+            cardBorderColor: document.getElementById('cardBorderColor').value,
+            cardBorderWidth: document.getElementById('cardBorderWidth').value,
+            cardPaddingTop: document.getElementById('cardPaddingTop').value,
+            cardPaddingRight: document.getElementById('cardPaddingRight').value,
             cardPaddingBottom: document.getElementById('cardPaddingBottom').value,
-            cardPaddingLeft:   document.getElementById('cardPaddingLeft').value,
-            cardRadiusTL:      document.getElementById('cardRadiusTL').value,
-            cardRadiusTR:      document.getElementById('cardRadiusTR').value,
-            cardRadiusBR:      document.getElementById('cardRadiusBR').value,
-            cardRadiusBL:      document.getElementById('cardRadiusBL').value,
-            cardTitleColor:    document.getElementById('cardTitleColor').value,
-            descTextColor:     document.getElementById('descTextColor').value,
-            tabFontFamily:     document.getElementById('tabFontFamily').value,
-            tabFontSize:       document.getElementById('tabFontSize').value,
-            tabFontWeight:     document.getElementById('tabFontWeight').value,
-            titleFontFamily:   document.getElementById('titleFontFamily').value,
-            titleFontSize:     document.getElementById('titleFontSize').value,
-            titleFontWeight:   document.getElementById('titleFontWeight').value,
-            descFontFamily:    document.getElementById('descFontFamily').value,
-            descFontSize:      document.getElementById('descFontSize').value,
-            descFontWeight:    document.getElementById('descFontWeight').value
+            cardPaddingLeft: document.getElementById('cardPaddingLeft').value,
+            cardRadiusTL: document.getElementById('cardRadiusTL').value,
+            cardRadiusTR: document.getElementById('cardRadiusTR').value,
+            cardRadiusBR: document.getElementById('cardRadiusBR').value,
+            cardRadiusBL: document.getElementById('cardRadiusBL').value,
+            cardTitleColor: document.getElementById('cardTitleColor').value,
+            descTextColor: document.getElementById('descTextColor').value,
+            tabFontFamily: document.getElementById('tabFontFamily').value,
+            tabFontSize: document.getElementById('tabFontSize').value,
+            tabFontWeight: document.getElementById('tabFontWeight').value,
+            titleFontFamily: document.getElementById('titleFontFamily').value,
+            titleFontSize: document.getElementById('titleFontSize').value,
+            titleFontWeight: document.getElementById('titleFontWeight').value,
+            descFontFamily: document.getElementById('descFontFamily').value,
+            descFontSize: document.getElementById('descFontSize').value,
+            descFontWeight: document.getElementById('descFontWeight').value
         };
-
+    
         const settingsJson = JSON.stringify(settings);
-        const escapedUrl   = url.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-
-        // Modal inner HTML (baked styles)
-        const modalInnerHTML = '<div style=\\"max-width:550px;width:90%;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;background:' + mBg + ';border-radius:' + mRadTL + 'px ' + mRadTR + 'px ' + mRadBR + 'px ' + mRadBL + 'px;border:1px solid ' + mLine + ';\\">' +
-            '<div style=\\"padding:20px 24px;display:flex;justify-content:space-between;align-items:center;background:' + mBg + ';border-bottom:1px solid ' + mLine + ';\\">' +
-            '<h3 id=\\"sm-modal-title\\" style=\\"font-size:18px;margin:0;color:' + mText + ';font-family:\\\\'' + mTFont + '\\\\',sans-serif;font-weight:' + mTWt + ';\\"></h3>' +
-            '<button id=\\"sm-modal-close\\" style=\\"background:none;border:none;font-size:28px;cursor:pointer;color:' + mText + ';\\">&times;</button>' +
-            '</div>' +
-            '<div id=\\"sm-modal-body\\" style=\\"padding:20px 24px;overflow-y:auto;flex:1;background:' + mBg + ';\\"></div>' +
-            '</div>';
-
+        const escapedUrl = url.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+        const styleString = generateStyleString(settings).replace(/`/g, '\\`');
+    
         const embedScript = `(function(){
-    var s = ${settingsJson};
-    var url = "${escapedUrl}";
-    var container = document.getElementById('spoton-menu-embed');
-    if (!container) return;
-
-    // Inject Google Fonts
-    var fontsToLoad = [s.tabFontFamily, s.titleFontFamily, s.descFontFamily].filter(function(f) { return f && f !== 'Inter'; });
-    fontsToLoad.forEach(function(f) {
-        var l = document.createElement('link');
-        l.rel = 'stylesheet';
-        l.href = 'https://fonts.googleapis.com/css2?family=' + f.replace(/ /g,'+') + ':wght@400;500;600;700&display=swap';
-        document.head.appendChild(l);
-    });
-
-    // Escape helper
-    function esc(str) {
-        if (!str) return '';
-        var m = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
-        return str.replace(/[&<>"']/g, function(c) { return m[c]; });
-    }
-
-    // URL sanitizer (blocks javascript: and data: injection)
-    function safeUrl(url) {
-        if (!url) return '';
-        return /^https?:\\/\\//i.test(url) ? url : '';
-    }
-
-    // Parser
-    function parseMenu(raw) {
-        var catsRaw = (raw.menu && raw.menu.categories) || raw.categories || [];
-        var itemsRaw = raw.items || [];
-        var catMap = new Map(), itemsByCat = new Map(), itemsFull = new Map();
-        catsRaw.forEach(function(c) {
-            if (c.active !== false && c.id) { catMap.set(c.id, c.name.trim()); itemsByCat.set(c.id, []); }
-        });
-        itemsRaw.forEach(function(item) {
-            if (item.active === false) return;
-            itemsFull.set(item.id, item);
-            (item.category_ids || []).forEach(function(cid) {
-                if (catMap.has(cid)) {
-                    var pa = (item.price && item.price.amount) || 0;
-                    if (item.category_references) {
-                        var ref = item.category_references.find(function(r) { return r.category_id === cid; });
-                        if (ref && ref.price) pa = ref.price.amount;
-                    }
-                    itemsByCat.get(cid).push({ id: item.id, name: item.name, description: item.description || '', price: (pa/100).toFixed(2), imageUrl: item.image_url || item.thumbnail_url || '' });
-                }
-            });
-        });
-        var cats = [], items = {};
-        catMap.forEach(function(name, cid) {
-            var arr = itemsByCat.get(cid);
-            if (arr && arr.length) { cats.push({id:cid,name:name}); items[cid] = arr; }
-        });
-        return { categories: cats, itemsByCategory: items, itemsFull: itemsFull };
-    }
-
-    // Inject CSS
-    var style = document.createElement('style');
-    style.textContent = \`${generateStyleString(settings)}\`;
-    document.head.appendChild(style);
-
-    // Build modifier modal (if modifiers enabled)
-    var modModal = null;
-    var itemsFull = new Map();
-    if (s.showModifiers) {
-        modModal = document.createElement('div');
-        modModal.id = 'sm-modal-overlay';
-        modModal.style.cssText = 'display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:10000;align-items:center;justify-content:center;';
-        modModal.innerHTML = "${modalInnerHTML}";
-        document.body.appendChild(modModal);
-        document.getElementById('sm-modal-close').onclick = function() { modModal.style.display = 'none'; };
-        modModal.addEventListener('click', function(e) { if (e.target === modModal) modModal.style.display = 'none'; });
-    }
-
-    function openModifierModal(id, name) {
-        if (!modModal) return;
-        var full = itemsFull.get(id);
-        if (!full || !full.modifier_groups || !full.modifier_groups.length) return;
-        document.getElementById('sm-modal-title').textContent = name;
-        var html = '';
-        full.modifier_groups.forEach(function(g) {
-            var lim = g.limits || {};
-            var limTxt = [lim.min ? 'Min: ' + lim.min : '', lim.max ? 'Max: ' + lim.max : ''].filter(Boolean).join(' | ');
-            html += '<div style="margin-bottom:20px;">';
-            html += '<div style="font-size:15px;font-weight:600;margin-bottom:8px;color:${mText};font-family:\\'${mTFont}\\',sans-serif;">' + esc(g.name || 'Options') + '</div>';
-            if (limTxt) html += '<div style="font-size:11px;margin-bottom:10px;color:${mAccent};">' + limTxt + '</div>';
-            html += '<div>';
-            var mods = g.modifiers || [];
-            mods.forEach(function(m, i) {
-                var price = (m.price && m.price.amount) || 0;
-                var isLast = i === mods.length - 1;
-                html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:13px;' + (isLast ? '' : 'border-bottom:1px solid ${mLine};') + '">';
-                html += '<span style="color:${mText};font-family:\\'${mMFont}\\',sans-serif;font-weight:${mMWt};">' + esc(m.name) + '</span>';
-                html += '<span style="color:' + (price > 0 ? '${mAccent}' : '${mText}') + ';font-family:\\'${mMFont}\\',sans-serif;font-weight:' + (price > 0 ? '600' : '400') + ';">' + (price > 0 ? '+$' + (price/100).toFixed(2) : '') + '</span>';
-                html += '</div>';
-            });
-            html += '</div></div>';
-        });
-        document.getElementById('sm-modal-body').innerHTML = html;
-        modModal.style.display = 'flex';
-    }
-
-    fetch(url)
-        .then(function(res) {
-            if (!res.ok) throw new Error('HTTP ' + res.status);
-            return res.json();
-        })
-        .then(function(raw) {
-            var d = parseMenu(raw);
-            itemsFull = d.itemsFull;
-            var activeCats = d.categories.filter(function(c) { return !s.excluded.includes(c.name); });
-            if (!activeCats.length) {
-                container.innerHTML = '<div style="padding:20px;text-align:center;">No categories available</div>';
-                return;
-            }
-            renderMenu(d, activeCats);
-        })
-        .catch(function(err) {
-            container.innerHTML = '<div style="padding:20px;text-align:center;">Failed to load menu: ' + err.message + '</div>';
-        });
-
-    function renderMenu(d, activeCats) {
-        var html = '<div class="spoton-embed"><div class="menu-layout tabs-' + s.tabsPos + '">';
-        html += '<div class="categories-container" id="sm-cats" style="justify-content:' + (s.tabAlign === 'left' ? 'flex-start' : s.tabAlign === 'center' ? 'center' : 'flex-end') + ';">';
-        if ((s.showSearch || s.showDropdown) && (s.tabsPos === 'left' || s.tabsPos === 'right')) {
-            html += '<div class="category-toolbar">';
-            if (s.showSearch) html += '<input type="text" class="category-search" id="sm-search" placeholder="Search categories...">';
-            if (s.showDropdown) html += '<select class="category-select" id="sm-select"></select>';
-            html += '</div>';
-        }
-        html += '</div>';
-        if ((s.showSearch || s.showDropdown) && (s.tabsPos === 'top' || s.tabsPos === 'bottom')) {
-            html += '<div class="category-toolbar">';
-            if (s.showSearch) html += '<input type="text" class="category-search" id="sm-search" placeholder="Search categories...">';
-            if (s.showDropdown) html += '<select class="category-select" id="sm-select"></select>';
-            html += '</div>';
-        }
-        html += '<div class="menu-root layout-' + s.layout + '" id="sm-root"></div></div></div>';
-        container.innerHTML = html;
-
-        var catsDiv = document.getElementById('sm-cats');
-        var rootDiv = document.getElementById('sm-root');
-
-        activeCats.forEach(function(cat, idx) {
-            var link = document.createElement('a');
-            link.href = '#';
-            link.className = 'category-link' + (idx === 0 ? ' active' : '');
-            link.textContent = cat.name;
-            link.dataset.id = cat.id;
-            link.onclick = function(e) {
-                e.preventDefault();
-                setActive(cat.id);
-                displayItems(cat.id, d.itemsByCategory);
-                if (s.showDropdown) { var sel = document.getElementById('sm-select'); if (sel) sel.value = cat.id; }
-            };
-            catsDiv.appendChild(link);
-        });
-
-        if (s.showSearch) {
-            var search = document.getElementById('sm-search');
-            if (search) {
-                search.oninput = function(e) {
-                    var term = e.target.value.toLowerCase();
-                    Array.from(catsDiv.children).forEach(function(child) {
-                        if (child.classList && child.classList.contains('category-toolbar')) return;
-                        child.style.display = child.textContent.toLowerCase().includes(term) ? '' : 'none';
+            const s = ${settingsJson};
+            const url = "${escapedUrl}";
+            const container = document.getElementById('spoton-menu-embed');
+            if (!container) return;
+    
+            function parseSpotOnJSON(jsonObj) {
+                const catsRaw = jsonObj.menu?.categories || jsonObj.categories || [];
+                const itemsRaw = jsonObj.items || [];
+                const catMap = new Map(), itemsByCat = new Map(), itemsFull = new Map();
+                catsRaw.forEach(c => { if (c.active !== false && c.id) { catMap.set(c.id, c.name.trim()); itemsByCat.set(c.id, []); } });
+                itemsRaw.forEach(item => {
+                    if (item.active === false) return;
+                    itemsFull.set(item.id, item);
+                    (item.category_ids || []).forEach(cid => {
+                        if (catMap.has(cid)) {
+                            let priceAmt = item.price?.amount || 0;
+                            if (item.category_references) {
+                                let ref = item.category_references.find(r => r.category_id === cid);
+                                if (ref?.price) priceAmt = ref.price.amount;
+                            }
+                            itemsByCat.get(cid).push({
+                                id: item.id, name: item.name, description: item.description || "",
+                                price: (priceAmt / 100).toFixed(2), imageUrl: item.image_url || item.thumbnail_url || ""
+                            });
+                        }
                     });
-                };
+                });
+                let finalCats = [], finalItems = {};
+                for (let [cid, name] of catMap.entries()) {
+                    let items = itemsByCat.get(cid);
+                    if (items?.length) { finalCats.push({ id: cid, name }); finalItems[cid] = items; }
+                }
+                return { categories: finalCats, itemsByCategory: finalItems };
             }
-        }
-        if (s.showDropdown) {
-            var select = document.getElementById('sm-select');
-            if (select) {
-                select.innerHTML = activeCats.map(function(c) { return '<option value="' + c.id + '">' + esc(c.name) + '</option>'; }).join('');
-                select.onchange = function(e) {
-                    setActive(e.target.value);
-                    displayItems(e.target.value, d.itemsByCategory);
-                };
-                if (activeCats[0]) select.value = activeCats[0].id;
+    
+            function fetchWithProxy(url) {
+                return fetch(url).catch(err => {
+                    console.warn('Direct fetch failed, trying CORS proxy...', err);
+                    return fetch('https://corsproxy.io/?' + encodeURIComponent(url));
+                });
             }
-        }
-
-        if (activeCats.length) {
-            displayItems(activeCats[0].id, d.itemsByCategory);
-            setActive(activeCats[0].id);
-        }
-    }
-
-    function setActive(id) {
-        document.querySelectorAll('#sm-cats .category-link').forEach(function(l) {
-            if (l.dataset.id === id) l.classList.add('active'); else l.classList.remove('active');
-        });
-    }
-
-    function displayItems(cid, itemsByCategory) {
-        var rootDiv = document.getElementById('sm-root');
-        var items = itemsByCategory[cid] || [];
-        rootDiv.innerHTML = '';
-        var isList = s.layout === 'list-image-left' || s.layout === 'list-image-right';
-        var imgH = '';
-        if (!isList) { imgH = s.layout === 'hero-grid' ? '240px' : s.layout === 'compact-cards' ? '160px' : '200px'; }
-        items.forEach(function(item) {
-            var card = document.createElement('div');
-            card.className = 'list-item';
-            if (s.showModifiers) {
-                var full = itemsFull.get(item.id);
-                var hasMods = full && full.modifier_groups && full.modifier_groups.length > 0;
-                if (hasMods) {
-                    card.style.cursor = 'pointer';
-                    card.addEventListener('click', (function(id, name) { return function() { openModifierModal(id, name); }; })(item.id, item.name));
+    
+            fetchWithProxy(url)
+                .then(res => {
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return res.json();
+                })
+                .then(raw => {
+                    const d = parseSpotOnJSON(raw);
+                    const activeCats = d.categories.filter(cat => !s.excluded.includes(cat.name));
+                    if (!activeCats.length) {
+                        container.innerHTML = '<div style="padding:20px;text-align:center;">No categories available</div>';
+                        return;
+                    }
+                    const style = document.createElement('style');
+                    style.textContent = \`${styleString}\`;
+                    document.head.appendChild(style);
+                    renderMenuHTML(d, s, container, activeCats);
+                })
+                .catch(err => {
+                    container.innerHTML = '<div style="padding:20px;text-align:center;">Failed to load menu: ' + err.message + '</div>';
+                });
+    
+            function renderMenuHTML(d, s, container, activeCats) {
+                let html = '<div class="spoton-embed"><div class="menu-layout tabs-' + s.tabsPos + '">';
+                html += '<div class="categories-container" id="embedCats" style="justify-content:' + (s.tabAlign === 'left' ? 'flex-start' : s.tabAlign === 'center' ? 'center' : 'flex-end') + ';">';
+                if ((s.showSearch || s.showDropdown) && (s.tabsPos === 'left' || s.tabsPos === 'right')) {
+                    html += '<div class="category-toolbar">';
+                    if (s.showSearch) html += '<input type="text" class="category-search" id="embedSearch" placeholder="Search categories...">';
+                    if (s.showDropdown) html += '<select class="category-select" id="embedSelect"></select>';
+                    html += '</div>';
+                }
+                html += '</div>';
+                if ((s.showSearch || s.showDropdown) && (s.tabsPos === 'top' || s.tabsPos === 'bottom')) {
+                    html += '<div class="category-toolbar">';
+                    if (s.showSearch) html += '<input type="text" class="category-search" id="embedSearch" placeholder="Search categories...">';
+                    if (s.showDropdown) html += '<select class="category-select" id="embedSelect"></select>';
+                    html += '</div>';
+                }
+                html += '<div class="menu-root layout-' + s.layout + '" id="embedRoot"></div></div></div>';
+                container.innerHTML = html;
+    
+                const catsDiv = document.getElementById('embedCats');
+                const rootDiv = document.getElementById('embedRoot');
+    
+                function renderCategories() {
+                    catsDiv.innerHTML = '';
+                    if ((s.showSearch || s.showDropdown) && (s.tabsPos === 'left' || s.tabsPos === 'right')) {
+                        let tb = '<div class="category-toolbar">';
+                        if (s.showSearch) tb += '<input type="text" class="category-search" id="embedSearch" placeholder="Search...">';
+                        if (s.showDropdown) tb += '<select class="category-select" id="embedSelect"></select>';
+                        tb += '</div>';
+                        catsDiv.innerHTML = tb;
+                    }
+                    activeCats.forEach((cat, idx) => {
+                        const link = document.createElement('a');
+                        link.href = '#';
+                        link.className = 'category-link' + (idx === 0 ? ' active' : '');
+                        link.textContent = cat.name;
+                        link.dataset.id = cat.id;
+                        link.onclick = (e) => {
+                            e.preventDefault();
+                            setActive(cat.id);
+                            displayItems(cat.id);
+                        };
+                        catsDiv.appendChild(link);
+                    });
+                    if (s.showSearch) {
+                        const search = document.getElementById('embedSearch');
+                        if (search) {
+                            search.oninput = (e) => {
+                                const term = e.target.value.toLowerCase();
+                                Array.from(catsDiv.children).forEach(child => {
+                                    if (child.classList && child.classList.contains('category-toolbar')) return;
+                                    child.style.display = child.textContent.toLowerCase().includes(term) ? '' : 'none';
+                                });
+                            };
+                        }
+                    }
+                    if (s.showDropdown) {
+                        const select = document.getElementById('embedSelect');
+                        if (select) {
+                            select.innerHTML = activeCats.map(c => '<option value="' + c.id + '">' + escapeHtml(c.name) + '</option>').join('');
+                            select.onchange = (e) => {
+                                const id = e.target.value;
+                                setActive(id);
+                                displayItems(id);
+                            };
+                            if (activeCats[0]) select.value = activeCats[0].id;
+                        }
+                    }
+                }
+    
+                function setActive(id) {
+                    document.querySelectorAll('#embedCats .category-link').forEach(link => {
+                        if (link.dataset.id === id) link.classList.add('active');
+                        else link.classList.remove('active');
+                    });
+                }
+    
+                function displayItems(cid) {
+                    const items = d.itemsByCategory[cid] || [];
+                    rootDiv.innerHTML = '';
+                    const isList = s.layout === 'list-image-left' || s.layout === 'list-image-right';
+                    let imgHeight = '';
+                    if (!isList) {
+                        if (s.layout === 'hero-grid') imgHeight = '240px';
+                        else if (s.layout === 'compact-cards') imgHeight = '160px';
+                        else imgHeight = '200px';
+                    }
+                    items.forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = 'list-item';
+                        const hasImage = !!(s.showImages && item.imageUrl);
+                        let thumb = '';
+                        if (isList) {
+                            thumb = '<div class="item-thumbnail-wrapper" style="width:120px;height:120px;background:' + s.cardBgColor + ';overflow:hidden;">' + (hasImage ? '<img class="list-item-image" src="' + item.imageUrl + '" alt="' + escapeHtml(item.name) + '">' : '') + '</div>';
+                        } else {
+                            thumb = '<div class="item-thumbnail-wrapper" style="height:' + imgHeight + ';background:' + s.cardBgColor + ';overflow:hidden;">' + (hasImage ? '<img class="list-item-image" src="' + item.imageUrl + '" alt="' + escapeHtml(item.name) + '">' : '') + '</div>';
+                        }
+                        const priceText = (item.price && parseFloat(item.price) !== 0) ? '$' + item.price : 'Price Varies';
+                        card.innerHTML = thumb + '<div class="item-content"><div class="list-item-name">' + escapeHtml(item.name) + '</div><div class="list-item-description">' + escapeHtml(item.description || '') + '</div><div class="list-item-price' + (!s.showPrices ? ' price-hidden' : '') + '">' + priceText + '</div></div>';
+                        rootDiv.appendChild(card);
+                    });
+                }
+    
+                function escapeHtml(str) {
+                    if (!str) return '';
+                    return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
+                }
+    
+                renderCategories();
+                if (activeCats.length) {
+                    displayItems(activeCats[0].id);
+                    setActive(activeCats[0].id);
                 }
             }
-            var imgSrc = safeUrl(item.imageUrl);
-            var hasImg = !!(s.showImages && imgSrc);
-            var thumb = '';
-            if (isList) {
-                thumb = '<div class="item-thumbnail-wrapper" style="width:120px;height:120px;flex-shrink:0;background:' + s.cardBgColor + ';overflow:hidden;">' + (hasImg ? '<img class="list-item-image" src="' + imgSrc + '" alt="' + esc(item.name) + '">' : '') + '</div>';
-            } else {
-                thumb = '<div class="item-thumbnail-wrapper" style="height:' + imgH + ';background:' + s.cardBgColor + ';overflow:hidden;">' + (hasImg ? '<img class="list-item-image" src="' + imgSrc + '" alt="' + esc(item.name) + '">' : '') + '</div>';
-            }
-            var priceText = (item.price && parseFloat(item.price) !== 0) ? '$' + item.price : 'Price Varies';
-            card.innerHTML = thumb + '<div class="item-content"><div class="list-item-name">' + esc(item.name) + '</div><div class="list-item-description">' + esc(item.description || '') + '</div><div class="list-item-price' + (!s.showPrices ? ' price-hidden' : '') + '">' + priceText + '</div></div>';
-            rootDiv.appendChild(card);
-        });
-    }
-})();`;
-
+        })();`;
+    
         return '<div id="spoton-menu-embed"></div>\n<script>\n' + embedScript + '\n</' + 'script>';
     }
 
