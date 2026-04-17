@@ -483,29 +483,31 @@ function debounce(func, wait) {
         return { categories: finalCats, itemsByCategory: finalItems, itemsFull };
     }
 
-    async function loadFromUrl(url) {
-        if (!url) {
-            showStatus('Please enter a JSON URL', 'error');
-            return;
-        }
-        showStatus('Loading menu from URL...', 'info');
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const json = await response.json();
-            const parsed = parseSpotOnJSON(json);
-            if (!parsed.categories.length) throw new Error('No active categories found');
-            currentMenuData = parsed;
-            currentItemsMap = parsed.itemsFull;
-            excludedCategories = [];
-            buildExcludeWidget();
-            renderMenu();
-            showStatus(`Loaded ${parsed.categories.length} categories, ${Object.values(parsed.itemsByCategory).flat().length} items`, 'success');
-        } catch (err) {
-            showStatus(`Failed to load URL: ${err.message}`, 'error');
-            currentMenuData = null;
-        }
+   async function loadFromUrl(url) {
+    if (!url) {
+        showStatus('Please enter a JSON URL', 'error');
+        return;
     }
+    showStatus('Loading menu from URL...', 'info');
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        const json = await response.json();
+        console.log('JSON loaded successfully:', json);
+        const parsed = parseSpotOnJSON(json);
+        if (!parsed.categories.length) throw new Error('No active categories found');
+        currentMenuData = parsed;
+        currentItemsMap = parsed.itemsFull;
+        excludedCategories = [];
+        buildExcludeWidget();
+        renderMenu();
+        showStatus(`Loaded ${parsed.categories.length} categories, ${Object.values(parsed.itemsByCategory).flat().length} items`, 'success');
+    } catch (err) {
+        console.error('Load error:', err);
+        showStatus(`Failed to load URL: ${err.message}`, 'error');
+        currentMenuData = null;
+    }
+}
 
     function buildExcludeWidget() {
         let container = document.getElementById('excludeWidget');
