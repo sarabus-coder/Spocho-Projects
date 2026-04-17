@@ -471,25 +471,45 @@
 
     // ─── Load from URL ───────────────────────────────────────────────────────────
     async function loadFromUrl(url) {
-        if (!url) { showStatus('Please enter a JSON URL', 'error'); return; }
-        showStatus('Loading menu from URL...', 'info');
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('HTTP ' + response.status);
-            const json = await response.json();
-            const parsed = parseSpotOnJSON(json);
-            if (!parsed.categories.length) throw new Error('No active categories found');
-            currentMenuData = parsed;
-            currentItemsMap = parsed.itemsFull;
-            excludedCategories = [];
-            buildExcludeWidget();
-            renderMenu();
-            showStatus('Loaded ' + parsed.categories.length + ' categories, ' + Object.values(parsed.itemsByCategory).flat().length + ' items', 'success');
-        } catch (err) {
-            showStatus('Failed to load URL: ' + err.message, 'error');
-            currentMenuData = null;
-        }
+    if (!url) {
+        showStatus('Please enter a JSON URL', 'error');
+        return;
     }
+    showStatus('Loading menu from URL...', 'info');
+    
+    // Function to attempt fetch with optional proxy
+    async function tryFetch(fetchUrl) {
+        const response = await fetch(fetchUrl);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json();
+    }
+
+    try {
+        let json;
+        try {
+            // Try direct fetch first
+            json = await tryFetch(url);
+        } catch (directError) {
+            console.warn('Direct fetch failed, trying CORS proxy...', directError);
+            // Fallback to a public CORS proxy
+            const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+            json = await tryFetch(proxyUrl);
+        }
+        
+        const parsed = parseSpotOnJSON(json);
+        if (!parsed.categories.length) throw new Error('No active categories found');
+        currentMenuData = parsed;
+        currentItemsMap = parsed.itemsFull;
+        excludedCategories = [];
+        buildExcludeWidget();
+        renderMenu();
+        showStatus(`Loaded ${parsed.categories.length} categories, ${Object.values(parsed.itemsByCategory).flat().length} items`, 'success');
+    } catch (err) {
+        console.error('Load error:', err);
+        showStatus(`Failed to load URL: ${err.message}`, 'error');
+        currentMenuData = null;
+    }
+}
 
     // ─── Build exclude widget ────────────────────────────────────────────────────
     function buildExcludeWidget() {
