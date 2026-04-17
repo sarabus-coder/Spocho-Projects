@@ -750,7 +750,7 @@ function debounce(func, wait) {
         const url = document.getElementById('jsonUrl').value.trim();
         if (!url) return '<!-- No JSON URL provided. Please enter a URL and load the menu first. -->';
         if (!currentMenuData) return '<!-- Menu not loaded. Please click "Load" to fetch the menu data first. -->';
-
+    
         const settings = {
             layout: document.getElementById('layoutType').value,
             tabsPos: document.querySelector('input[name="tabsPosition"]:checked').value,
@@ -794,16 +794,131 @@ function debounce(func, wait) {
             descFontSize: document.getElementById('descFontSize').value,
             descFontWeight: document.getElementById('descFontWeight').value
         };
-
+    
         const settingsJson = JSON.stringify(settings);
         const escapedUrl = url.replace(/"/g, '\\"');
-
-        const embedScript = `(function(){
+    
+        // Build the complete embed HTML including modal
+        return `<div id="spoton-menu-embed"></div>
+    <div id="spoton-modifier-modal" class="spoton-modal-overlay">
+        <div class="spoton-modal-content">
+            <div class="spoton-modal-header">
+                <h3 id="spoton-modal-item-name">Item Name</h3>
+                <button class="spoton-modal-close">&times;</button>
+            </div>
+            <div class="spoton-modal-body" id="spoton-modal-body">
+                <div class="spoton-no-modifiers">Loading...</div>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+    .spoton-modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+    }
+    .spoton-modal-overlay.active { display: flex; }
+    .spoton-modal-content {
+        max-width: 550px;
+        width: 90%;
+        max-height: 85vh;
+        background: ${settings.cardBgColor};
+        border-radius: ${settings.cardRadiusTL}px ${settings.cardRadiusTR}px ${settings.cardRadiusBR}px ${settings.cardRadiusBL}px;
+        border: 1px solid ${settings.cardBorderColor};
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    .spoton-modal-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid ${settings.cardBorderColor};
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: ${settings.cardBgColor};
+    }
+    .spoton-modal-header h3 {
+        color: ${settings.cardTitleColor};
+        font-family: '${settings.titleFontFamily}', sans-serif;
+        font-size: ${settings.titleFontSize}px;
+        font-weight: ${settings.titleFontWeight};
+        margin: 0;
+    }
+    .spoton-modal-close {
+        background: none;
+        border: none;
+        font-size: 28px;
+        cursor: pointer;
+        color: ${settings.activeTabColor};
+    }
+    .spoton-modal-body {
+        padding: 20px 24px;
+        overflow-y: auto;
+        background: ${settings.cardBgColor};
+    }
+    .spoton-modifier-group {
+        margin-bottom: 20px;
+    }
+    .spoton-modifier-group-name {
+        color: ${settings.cardTitleColor};
+        font-family: '${settings.titleFontFamily}', sans-serif;
+        font-size: ${settings.titleFontSize}px;
+        font-weight: ${settings.titleFontWeight};
+        margin-bottom: 8px;
+    }
+    .spoton-modifier-limits {
+        color: ${settings.activeTabColor};
+        font-family: '${settings.descFontFamily}', sans-serif;
+        font-size: ${settings.descFontSize}px;
+        font-weight: ${settings.descFontWeight};
+        margin-bottom: 10px;
+    }
+    .spoton-modifier-option {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        font-size: 13px;
+        border-bottom: 1px solid ${settings.cardBorderColor};
+    }
+    .spoton-modifier-name {
+        color: ${settings.cardTitleColor};
+        font-family: '${settings.descFontFamily}', sans-serif;
+        font-size: ${settings.descFontSize}px;
+    }
+    .spoton-modifier-price {
+        color: ${settings.activeTabColor};
+        font-weight: 500;
+    }
+    .spoton-modifier-price.extra { font-weight: 600; }
+    .spoton-no-modifiers {
+        text-align: center;
+        padding: 30px;
+        font-style: italic;
+        color: ${settings.cardTitleColor};
+    }
+    </style>
+    
+    <script>
+    (function(){
         const s = ${settingsJson};
         const url = "${escapedUrl}";
         const container = document.getElementById('spoton-menu-embed');
+        const modal = document.getElementById('spoton-modifier-modal');
+        const modalTitle = document.getElementById('spoton-modal-item-name');
+        const modalBody = document.getElementById('spoton-modal-body');
+        const modalClose = modal.querySelector('.spoton-modal-close');
         if (!container) return;
-
+    
+        // --- PARSER ---
         function parseSpotOnJSON(jsonObj) {
             const catsRaw = jsonObj.menu?.categories || jsonObj.categories || [];
             const itemsRaw = jsonObj.items || [];
@@ -831,28 +946,63 @@ function debounce(func, wait) {
                 let items = itemsByCat.get(cid);
                 if (items?.length) { finalCats.push({ id: cid, name }); finalItems[cid] = items; }
             }
-            return { categories: finalCats, itemsByCategory: finalItems };
+            return { categories: finalCats, itemsByCategory: finalItems, itemsFull };
         }
-
+    
+        let menuData = null;
+        let itemsMap = new Map();
+    
+        function openModifierModal(itemId, itemName) {
+            if (!modal) return;
+            const fullItem = itemsMap.get(itemId);
+            if (!fullItem || !fullItem.modifier_groups || !fullItem.modifier_groups.length) {
+                modalBody.innerHTML = '<div class="spoton-no-modifiers">No modifiers available for this item.</div>';
+                modal.classList.add('active');
+                return;
+            }
+            modalTitle.textContent = itemName;
+            let html = '';
+            fullItem.modifier_groups.forEach(g => {
+                const limits = g.limits || {};
+                const limitText = [limits.min ? `Min: ${limits.min}` : '', limits.max ? `Max: ${limits.max}` : ''].filter(Boolean).join(' | ');
+                html += \`<div class="spoton-modifier-group">
+                    <div class="spoton-modifier-group-name">\${escapeHtml(g.name || 'Options')}</div>
+                    \${limitText ? \`<div class="spoton-modifier-limits">\${limitText}</div>\` : ''}
+                    <div class="spoton-modifier-options">\`;
+                (g.modifiers || []).forEach(m => {
+                    const price = m.price?.amount || 0;
+                    html += \`<div class="spoton-modifier-option">
+                        <span class="spoton-modifier-name">\${escapeHtml(m.name)}</span>
+                        <span class="spoton-modifier-price \${price > 0 ? 'extra' : ''}">\${price > 0 ? \`+\$\${(price/100).toFixed(2)}\` : ''}</span>
+                    </div>\`;
+                });
+                html += \`</div></div>\`;
+            });
+            modalBody.innerHTML = html;
+            modal.classList.add('active');
+        }
+    
+        function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'); }
+    
         fetch(url)
             .then(res => res.json())
             .then(raw => {
-                const d = parseSpotOnJSON(raw);
-                const activeCats = d.categories.filter(cat => !s.excluded.includes(cat.name));
+                const parsed = parseSpotOnJSON(raw);
+                menuData = parsed;
+                itemsMap = parsed.itemsFull;
+                const activeCats = menuData.categories.filter(cat => !s.excluded.includes(cat.name));
                 if (!activeCats.length) {
                     container.innerHTML = '<div style="padding:20px;text-align:center;">No categories available</div>';
                     return;
                 }
-
+    
                 const style = document.createElement('style');
                 style.textContent = \`${generateStyleString(settings)}\`;
                 document.head.appendChild(style);
-                renderMenuHTML(d, s, container, activeCats);
+                renderMenuHTML(menuData, s, container, activeCats);
             })
-            .catch(err => {
-                container.innerHTML = '<div style="padding:20px;text-align:center;">Failed to load menu: ' + err.message + '</div>';
-            });
-
+            .catch(err => { container.innerHTML = '<div style="padding:20px;text-align:center;">Failed to load menu: ' + err.message + '</div>'; });
+    
         function renderMenuHTML(d, s, container, activeCats) {
             let html = \`<div class="spoton-embed"><div class="menu-layout tabs-\${s.tabsPos}">\`;
             html += \`<div class="categories-container" id="embedCats" style="justify-content: \${s.tabAlign === 'left' ? 'flex-start' : s.tabAlign === 'center' ? 'center' : 'flex-end'};">\`;
@@ -871,10 +1021,10 @@ function debounce(func, wait) {
             }
             html += \`<div class="menu-root layout-\${s.layout}" id="embedRoot"></div></div></div>\`;
             container.innerHTML = html;
-
+    
             const catsDiv = document.getElementById('embedCats');
             const rootDiv = document.getElementById('embedRoot');
-
+    
             function renderCategories() {
                 catsDiv.innerHTML = '';
                 if ((s.showSearch || s.showDropdown) && (s.tabsPos === 'left' || s.tabsPos === 'right')) {
@@ -922,14 +1072,14 @@ function debounce(func, wait) {
                     }
                 }
             }
-
+    
             function setActive(id) {
                 document.querySelectorAll('#embedCats .category-link').forEach(link => {
                     if (link.dataset.id === id) link.classList.add('active');
                     else link.classList.remove('active');
                 });
             }
-
+    
             function displayItems(cid) {
                 const items = d.itemsByCategory[cid] || [];
                 rootDiv.innerHTML = '';
@@ -943,6 +1093,13 @@ function debounce(func, wait) {
                 items.forEach(item => {
                     const card = document.createElement('div');
                     card.className = 'list-item';
+                    const hasMods = s.showModifiers && itemsMap.get(item.id)?.modifier_groups?.length > 0;
+                    if (hasMods) {
+                        card.classList.add('has-modifiers');
+                        card.onclick = () => openModifierModal(item.id, item.name);
+                    } else {
+                        card.classList.add('no-modifiers');
+                    }
                     const hasImage = !!(s.showImages && item.imageUrl);
                     let thumb = '';
                     if (isList) {
@@ -955,21 +1112,20 @@ function debounce(func, wait) {
                     rootDiv.appendChild(card);
                 });
             }
-
-            function escapeHtml(str) {
-                if (!str) return '';
-                return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
-            }
-
+    
             renderCategories();
             if (activeCats.length) {
                 displayItems(activeCats[0].id);
                 setActive(activeCats[0].id);
             }
         }
-    })();`;
-
-        return `<div id="spoton-menu-embed"></div>\n` + `<script>\n${embedScript}\n</` + `script>`;
+    
+        if (modalClose) {
+            modalClose.onclick = () => modal.classList.remove('active');
+            window.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
+        }
+    })();
+    <\/script>`;
     }
 
     function generateStyleString(s) {
@@ -990,7 +1146,7 @@ function debounce(func, wait) {
             text-decoration: none; color: ${s.defaultTabTextColor}; font-family: '${s.tabFontFamily}', sans-serif;
             font-size: ${s.tabFontSize}px; font-weight: ${s.tabFontWeight}; cursor: pointer; white-space: nowrap; display: inline-block;
         }
-        .spoton-embed .tabs-left .category-link, .spoton-embed .tabs-right .category-link { white-space: normal; text-align: center; word-break: break-word; }
+        .spoton-embed .tabs-left .category-link, .spoton-embed .tabs-right .category-link {white-space: normal !important; text-align: center; word-break: break-word; max-width: 100%;}
         .spoton-embed .category-link.active { background: ${s.activeTabColor}; color: ${s.activeTabTextColor}; border-color: ${s.activeTabColor}; }
         .spoton-embed .menu-root { flex: 1; }
         .spoton-embed .layout-classic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 24px; }
@@ -1022,7 +1178,7 @@ function debounce(func, wait) {
         }
         @media (max-width: 768px) {
             .spoton-embed .menu-layout.tabs-left, .spoton-embed .menu-layout.tabs-right { flex-direction: column; }
-            .spoton-embed .tabs-left .categories-container, .spoton-embed .tabs-right .categories-container { flex-direction: row; flex-wrap: wrap; min-width: auto; }
+            .spoton-embed .tabs-left .categories-container, .spoton-embed .tabs-right .categories-container { flex-direction: column; flex-wrap: wrap;  min-width: 150px; max-width: 200px;}
             .spoton-embed .layout-list-image-left .list-item, .spoton-embed .layout-list-image-right .list-item { flex-direction: column; }
             .spoton-embed .layout-list-image-left .item-thumbnail-wrapper, .spoton-embed .layout-list-image-right .item-thumbnail-wrapper { width: 100% !important; height: 180px !important; }
         }
