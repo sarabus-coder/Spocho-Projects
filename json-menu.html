@@ -426,26 +426,30 @@ function debounce(func, wait) {
     }
     
 // Reload fonts when font inputs change
-function attachFontLoaders() {
+    let fontLoadTimer = null;
+    
+    function attachFontLoaders() {
         const fontFields = ['tabFontFamily', 'titleFontFamily', 'descFontFamily', 'modalTitleFont', 'modalModifierFont'];
         fontFields.forEach(id => {
             const el = document.getElementById(id);
             if (!el || el.hasAttribute('data-font-listener')) return;
             el.setAttribute('data-font-listener', 'true');
     
-            // Load font immediately on input (debounced) and on change
-            const loadFontDebounced = debounce(() => {
+            const handleFontChange = async () => {
                 const family = el.value.trim();
-                if (family) loadGoogleFont(family);
-                // Optionally re-render to apply new font (renderMenu already called by styleInputs)
-            }, 300);
-    
-            el.addEventListener('input', loadFontDebounced);
-            el.addEventListener('change', () => {
-                const family = el.value.trim();
-                if (family) loadGoogleFont(family);
+                if (family && family !== 'Inter') {
+                    await loadGoogleFont(family);
+                }
+                // Re‑render the menu so the new font family is applied to the CSS
                 if (currentMenuData) renderMenu();
+            };
+    
+            // Debounce to avoid too many requests while typing
+            el.addEventListener('input', () => {
+                clearTimeout(fontLoadTimer);
+                fontLoadTimer = setTimeout(handleFontChange, 400);
             });
+            el.addEventListener('change', handleFontChange);
         });
     }
 
@@ -1053,6 +1057,18 @@ function attachFontLoaders() {
         const el = document.getElementById(id);
         if (el && el.value.trim()) loadGoogleFont(el.value.trim());
     });
+
+    // Load fonts for the initial values
+    (async () => {
+        const fontFields = ['tabFontFamily', 'titleFontFamily', 'descFontFamily', 'modalTitleFont', 'modalModifierFont'];
+        for (const id of fontFields) {
+            const el = document.getElementById(id);
+            if (el && el.value.trim() && el.value.trim() !== 'Inter') {
+                await loadGoogleFont(el.value.trim());
+            }
+        }
+        if (currentMenuData) renderMenu();
+    })();
     function showStatus(msg, type) { let c = document.getElementById('menuPreview'); let d = document.createElement('div'); d.className = `status ${type}`; d.textContent = msg; let old = c.querySelector('.status'); if (old) old.remove(); c.insertBefore(d, c.firstChild); if (type !== 'error') setTimeout(() => { if (d.parentNode) d.remove(); }, 4000); }
     function escapeHtml(s) { if (!s) return ''; return s.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'); }
 </script>
