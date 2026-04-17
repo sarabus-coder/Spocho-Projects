@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SpotOn Menu Studio – Full Featured + Modal Typography</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        img.list-item-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0a0c10;
+            color: #e2e8f0;
+        }
+
+        /* Header */
+        .studio-header {
+            background: #111315;
+            border-bottom: 1px solid #2a2e35;
+            padding: 20px 32px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            background: rgba(17,19,21,0.95);
+        }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .logo-area { display: flex; align-items: center; gap: 16px; }
+        .logo { height: 40px; object-fit: contain; filter: brightness(0) invert(1); }
+        .header-text h1 { font-size: 20px; font-weight: 600; color: white; }
+        .header-text p { font-size: 13px; color: #94a3b8; }
+        .badge { background: #1e293b; color: #60a5fa; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+
+        /* Layout */
+        .studio-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 32px;
+        }
+        .controls-panel {
+            background: #111315;
+            border-radius: 24px;
+            border: 1px solid #2a2e35;
+            overflow-y: auto;
+            position: sticky;
+            top: 88px;
+            max-height: calc(100vh - 120px);
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .panel-section { width: 100%; padding: 20px 24px; border-bottom: 1px solid #2a2e35; }
+        .panel-section:last-child { border-bottom: none; }
+        .section-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #f1f5f9; display: flex; align-items: center; gap: 8px; }
+        .subsection-title { font-size: 14px; font-weight: 600; margin: 16px 0 12px 0; color: #cbd5e1; border-left: 3px solid #3b82f6; padding-left: 10px; }
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #cbd5e1; }
+        .helper-text { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+        .control-group input, .control-group select, .control-group textarea {
+            width: 100%; padding: 8px 12px; border: 1px solid #2a2e35; border-radius: 10px;
+            font-size: 13px; background: #1a1d21; color: #e2e8f0;
+        }
+        .radio-group, .toggle-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .radio-group label, .toggle-group label {
+            display: inline-flex; align-items: center; gap: 6px; font-weight: normal;
+            background: #1a1d21; padding: 6px 14px; border-radius: 40px; border: 1px solid #2a2e35;
+            cursor: pointer; color: #cbd5e1; font-size: 13px;
+        }
+        .color-input { display: flex; gap: 10px; align-items: center; }
+        .color-input input { width: 44px; height: 44px; padding: 3px; border-radius: 10px; cursor: pointer; }
+        .padding-grid, .radius-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 20px; padding: 0 24px 24px; }
+        .btn { flex: 1; padding: 10px; border-radius: 40px; font-weight: 600; font-size: 13px; cursor: pointer; text-align: center; border: none; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-secondary { background: #2a2e35; color: #e2e8f0; border: 1px solid #3a3f47; }
+
+        .preview-panel {
+            background: #111315;
+            border-radius: 24px;
+            border: 1px solid #2a2e35;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-header { padding: 16px 24px; border-bottom: 1px solid #2a2e35; display: flex; justify-content: space-between; align-items: center; }
+        .menu-preview { padding: 24px; background: #0a0c10; min-height: 500px; overflow-y: auto; flex: 1; }
+
+        /* Preview styles */
+        .menu-layout { display: flex; gap: 24px; }
+        .menu-layout.tabs-top { flex-direction: column; }
+        .menu-layout.tabs-bottom { flex-direction: column-reverse; }
+        .menu-layout.tabs-left { flex-direction: row; }
+        .menu-layout.tabs-right { flex-direction: row-reverse; }
+        .tabs-left .menu-root, .tabs-right .menu-root { align-self: flex-start; }
+        .categories-container { display: flex; flex-wrap: wrap; gap: 10px; }
+        .tabs-left .categories-container, .tabs-right .categories-container { flex-direction: column; min-width: 150px; max-width: 200px; }
+        .tabs-left .category-link, .tabs-right .category-link { white-space: normal; text-align: center; word-break: break-word; }
+        .category-link {
+            padding: 8px 14px; background: #1a1d21; border: 1px solid #2a2e35; border-radius: 40px;
+            text-decoration: none; color: #cbd5e1; font-size: 13px; font-weight: 500; cursor: pointer;
+            transition: all 0.2s; white-space: nowrap; display: inline-block;
+        }
+        .category-link.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+        .menu-root { flex: 1; }
+        .layout-classic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 24px; }
+        .layout-hero-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 28px; }
+        .layout-compact-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+        .layout-split-view { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        /* List views */
+        .layout-list-image-left, .layout-list-image-right {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .layout-list-image-left .list-item {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            align-items: stretch;
+            width: 100%;
+            overflow: hidden;
+        }
+        .layout-list-image-right .list-item {
+            display: flex;
+            flex-direction: row-reverse;
+            gap: 20px;
+            align-items: stretch;
+            width: 100%;
+            overflow: hidden;
+        }
+        .layout-list-image-left .item-thumbnail-wrapper,
+        .layout-list-image-right .item-thumbnail-wrapper {
+            margin: 0;
+            padding: 0;
+            background: inherit;
+            overflow: hidden;
+            flex-shrink: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .layout-list-image-left .list-item-image,
+        .layout-list-image-right .list-item-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+        .layout-list-image-left .item-content,
+        .layout-list-image-right .item-content {
+            flex: 1;
+            padding: 12px 0;
+        }
+        .layout-list-image-right .item-content {
+            padding-left: 16px;
+        }
+        .list-item {
+            background: #111315; border-radius: 16px; overflow: hidden; border: 1px solid #2a2e35;
+            display: flex; flex-direction: column; height: 100%; transition: transform 0.2s, box-shadow 0.2s; padding: 0;
+        }
+        .list-item.has-modifiers { cursor: pointer; }
+        .list-item.has-modifiers:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .list-item.no-modifiers { cursor: default; }
+        .item-thumbnail-wrapper { margin: 0; padding: 0; background: inherit; overflow: hidden; flex-shrink: 0; width: 100%; display: flex; align-items: center; justify-content: center; }
+        .item-content { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+        .list-item-name { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+        .list-item-description { font-size: 12px; margin-bottom: 10px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .list-item-price { font-size: 15px; font-weight: 700; margin-top: auto; }
+        .price-hidden { display: none; }
+        .category-toolbar { margin-bottom: 12px; display: flex; gap: 12px; flex-wrap: wrap; }
+        .tabs-left .category-toolbar, .tabs-right .category-toolbar { flex-direction: column; margin-bottom: 8px; }
+        .category-search { padding: 8px 12px; border: 1px solid #2a2e35; border-radius: 40px; font-size: 13px; background: #1a1d21; color: #e2e8f0; width: 100%; }
+        .category-select { padding: 8px 12px; border: 1px solid #2a2e35; border-radius: 40px; font-size: 13px; background: #1a1d21; color: #e2e8f0; width: 100%; }
+
+        /* Modals */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modifier-modal-content {
+            max-width: 550px; width: 90%; max-height: 85vh; display: flex; flex-direction: column;
+            overflow: hidden; transition: all 0.2s ease;
+        }
+        .modifier-modal-header { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .modifier-modal-header h3 { font-size: 18px; margin: 0; }
+        .modal-close { background: none; border: none; font-size: 28px; cursor: pointer; transition: color 0.2s; }
+        .modal-close:hover { color: #ef4444 !important; }
+        .modifier-modal-body { padding: 20px 24px; overflow-y: auto; flex: 1; }
+        .modifier-group { margin-bottom: 20px; }
+        .modifier-group:last-child { margin-bottom: 0; }
+        .modifier-group-name { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+        .modifier-limits { font-size: 11px; margin-bottom: 10px; }
+        .modifier-option { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; font-size: 13px; border-bottom: 1px solid; }
+        .modifier-option:last-child { border-bottom: none; }
+        .modifier-price { font-weight: 500; }
+        .modifier-price.extra { font-weight: 600; }
+        .modifier-modal-body .no-modifiers { text-align: center; padding: 30px; font-style: italic; }
+
+        .code-container { background: #0a0c10; border-radius: 16px; padding: 16px; position: relative; border: 1px solid #2a2e35; }
+        .code-container pre { color: #e2e8f0; font-family: monospace; font-size: 12px; overflow-x: auto; white-space: pre-wrap; }
+        .copy-code-btn { position: absolute; top: 12px; right: 12px; background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 30px; cursor: pointer; font-size: 12px; }
+
+        .exclude-widget { border: 1px solid #2a2e35; border-radius: 12px; background: #1a1d21; }
+        .exclude-trigger { padding: 10px 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; color: #cbd5e1; font-size: 13px; }
+        .exclude-trigger:hover { background: #2a2e35; }
+        .exclude-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 14px; border-top: 1px solid #2a2e35; }
+        .exclude-chip { background: #2a2e35; padding: 4px 8px 4px 12px; border-radius: 20px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; color: #e2e8f0; }
+        .exclude-chip-remove { cursor: pointer; font-size: 14px; color: #94a3b8; }
+        .exclude-chip-remove:hover { color: #ef4444; }
+        .exclude-dropdown { display: none; padding: 12px; border-top: 1px solid #2a2e35; max-height: 200px; overflow-y: auto; background: #1a1d21; }
+        .exclude-dropdown.show { display: block; }
+        .exclude-option {
+            display: flex; align-items: center; gap: 8px; padding: 8px 0; cursor: pointer;
+            color: #cbd5e1; font-size: 13px;
+        }
+        .exclude-option input[type="checkbox"] {
+            width: 16px; height: 16px; min-width: 16px; min-height: 16px;
+            flex-shrink: 0; margin: 0; cursor: pointer;
+        }
+        .exclude-option:hover { background: #2a2e35; }
+        .status { padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; font-size: 13px; }
+        .status.success { background: #14532d; color: #86efac; border-left: 4px solid #22c55e; }
+        .status.error { background: #7f1a1a; color: #fecaca; border-left: 4px solid #ef4444; }
+        .status.info { background: #0c4a6e; color: #bae6fd; border-left: 4px solid #0ea5e9; }
+
+        @media (max-width: 768px) {
+            .studio-container { grid-template-columns: 1fr; padding: 20px; }
+            .controls-panel { position: static; max-height: none; }
+            .menu-layout.tabs-left, .menu-layout.tabs-right { flex-direction: column; }
+            .tabs-left .categories-container, .tabs-right .categories-container { flex-direction: row; flex-wrap: wrap; min-width: auto; max-width: none; }
+            .layout-split-view { grid-template-columns: 1fr; }
+            .layout-list-image-left .list-item, .layout-list-image-right .list-item { flex-direction: row; }
+            .layout-list-image-left .item-thumbnail-wrapper, .layout-list-image-right .item-thumbnail-wrapper { width: 100% !important; height: 180px !important; }
+        }
+    </style>
+</head>
+<body>
+<div class="studio-header">
+    <div class="header-content">
+        <div class="logo-area">
+            <img src="https://posphilly.com/wp-content/uploads/2022/12/cropped-SpotOn_Logo-removebg-preview11.png" alt="SpotOn" class="logo">
+            <div class="header-text"><h1>Menu Studio – Full Featured</h1><p>Upload JSON, customize, generate compact embed code</p></div>
+        </div>
+        <div class="badge">✨ Click items with modifiers</div>
+    </div>
+</div>
+
+<div class="studio-container">
+    <div class="controls-panel">
+        <div class="panel-section">
+            <div class="section-title">📂 Menu Source</div>
+            <div class="control-group">
+                <label>Menu JSON URL</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="jsonUrl" placeholder="https://example.com/menu.json" style="flex: 1;">
+                    <button id="loadUrlBtn" class="btn btn-secondary" style="width: auto; padding: 8px 16px;">Load</button>
+                </div>
+                <div class="helper-text">Enter the URL of your SpotOn JSON file. The preview will load from this URL.</div>
+            </div>
+            <div class="control-group">
+                <label>Excluded Categories</label>
+                <div id="excludeWidget" class="exclude-widget"></div>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <div class="section-title">📐 Layout & Tabs</div>
+            <div class="control-group">
+                <label>Layout Style</label>
+                <select id="layoutType">
+                    <option value="classic-grid">Classic Grid</option>
+                    <option value="hero-grid">Hero Grid (Large Images)</option>
+                    <option value="list-image-left">List with Image Left</option>
+                    <option value="list-image-right">List with Image Right</option>
+                    <option value="compact-cards">Compact Cards</option>
+                    <option value="split-view">Split View (2 columns)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Tabs Position</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="tabsPosition" value="top" checked> Top</label>
+                    <label><input type="radio" name="tabsPosition" value="bottom"> Bottom</label>
+                    <label><input type="radio" name="tabsPosition" value="left"> Left</label>
+                    <label><input type="radio" name="tabsPosition" value="right"> Right</label>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Tab Alignment</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="tabAlign" value="left" checked> Left</label>
+                    <label><input type="radio" name="tabAlign" value="center"> Center</label>
+                    <label><input type="radio" name="tabAlign" value="right"> Right</label>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Extra Features</label>
+                <div class="toggle-group">
+                    <label><input type="checkbox" id="showImages" checked> Show Images</label>
+                    <label><input type="checkbox" id="showPrices" checked> Show Prices</label>
+                    <label><input type="checkbox" id="showModifiers" checked> Show Modifiers</label>
+                    <label><input type="checkbox" id="showCategorySearch"> Category Search</label>
+                    <label><input type="checkbox" id="showCategoryDropdown"> Category Dropdown</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <div class="section-title">🎨 Tab Styling</div>
+            <div class="control-group"><label>Default Tab</label><div class="color-input"><input type="color" id="defaultTabColor" value="#1a1d21"><span id="defaultTabColorValue">#1a1d21</span></div></div>
+            <div class="control-group"><label>Default Text</label><div class="color-input"><input type="color" id="defaultTabTextColor" value="#cbd5e1"><span id="defaultTabTextColorValue">#cbd5e1</span></div></div>
+            <div class="control-group"><label>Active Tab</label><div class="color-input"><input type="color" id="activeTabColor" value="#3b82f6"><span id="activeTabColorValue">#3b82f6</span></div></div>
+            <div class="control-group"><label>Active Text</label><div class="color-input"><input type="color" id="activeTabTextColor" value="#ffffff"><span id="activeTabTextColorValue">#ffffff</span></div></div>
+            <div class="control-group"><label>Tab Border Color</label><div class="color-input"><input type="color" id="tabBorderColor" value="#2a2e35"><span id="tabBorderColorValue">#2a2e35</span></div></div>
+            <div class="control-group"><label>Tab Border Width (px)</label><input type="number" id="tabBorderWidth" value="1" min="0" max="5" step="0.5"></div>
+            <div class="control-group"><label>Tab Border Radius (px)</label><div class="radius-grid"><div><span>TL</span><input type="number" id="tabRadiusTL" value="40"></div><div><span>TR</span><input type="number" id="tabRadiusTR" value="40"></div><div><span>BR</span><input type="number" id="tabRadiusBR" value="40"></div><div><span>BL</span><input type="number" id="tabRadiusBL" value="40"></div></div></div>
+        </div>
+
+        <div class="panel-section">
+            <div class="section-title">🃏 Card Styling</div>
+            <div class="control-group"><label>Card Background</label><div class="color-input"><input type="color" id="cardBgColor" value="#111315"><span id="cardBgColorValue">#111315</span></div></div>
+            <div class="control-group"><label>Card Border</label><div class="color-input"><input type="color" id="cardBorderColor" value="#2a2e35"><input type="number" id="cardBorderWidth" value="1" min="0" step="0.5" style="width:70px"> px</div></div>
+            <div class="control-group"><label>Card Radius (px)</label><div class="radius-grid"><div><span>TL</span><input type="number" id="cardRadiusTL" value="16"></div><div><span>TR</span><input type="number" id="cardRadiusTR" value="16"></div><div><span>BR</span><input type="number" id="cardRadiusBR" value="16"></div><div><span>BL</span><input type="number" id="cardRadiusBL" value="16"></div></div></div>
+            <div class="control-group"><label>Card Padding (px)</label><div class="padding-grid"><div><span>Top</span><input type="number" id="cardPaddingTop" value="16"></div><div><span>Right</span><input type="number" id="cardPaddingRight" value="16"></div><div><span>Bottom</span><input type="number" id="cardPaddingBottom" value="16"></div><div><span>Left</span><input type="number" id="cardPaddingLeft" value="16"></div></div></div>
+            <div class="control-group"><label>Card Title Color</label><div class="color-input"><input type="color" id="cardTitleColor" value="#f1f5f9"><span id="cardTitleColorValue">#f1f5f9</span></div></div>
+            <div class="control-group"><label>Description Text Color</label><div class="color-input"><input type="color" id="descTextColor" value="#94a3b8"><span id="descTextColorValue">#94a3b8</span></div></div>
+        </div>
+
+        <div class="panel-section">
+            <div class="section-title">🔤 Typography (Cards & Tabs)</div>
+            <div class="control-group"><label>Tab Button Font</label><div class="typography-grid" style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px;"><input type="text" id="tabFontFamily" list="fontList" value="Inter"><input type="number" id="tabFontSize" value="13"><select id="tabFontWeight"><option value="400">Normal</option><option value="500" selected>Medium</option><option value="600">Semi-bold</option><option value="700">Bold</option></select></div></div>
+            <div class="control-group"><label>Card Title Font</label><div class="typography-grid" style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px;"><input type="text" id="titleFontFamily" list="fontList" value="Inter"><input type="number" id="titleFontSize" value="17"><select id="titleFontWeight"><option value="400">Normal</option><option value="500">Medium</option><option value="600" selected>Semi-bold</option><option value="700">Bold</option></select></div></div>
+            <div class="control-group"><label>Description Font</label><div class="typography-grid" style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px;"><input type="text" id="descFontFamily" list="fontList" value="Inter"><input type="number" id="descFontSize" value="12"><select id="descFontWeight"><option value="400" selected>Normal</option><option value="500">Medium</option></select></div></div>
+            <datalist id="fontList"><option>Inter</option><option>Roboto</option><option>Open Sans</option><option>Lato</option><option>Poppins</option><option>Montserrat</option><option>Nunito</option><option>Playfair Display</option><option>Merriweather</option><option>Raleway</option><option>Oswald</option><option>Source Sans Pro</option><option>Ubuntu</option><option>Roboto Condensed</option><option>Cabin</option><option>Dosis</option><option>Quicksand</option><option>Work Sans</option><option>Barlow</option><option>Fira Sans</option><option>Josefin Sans</option><option>Mulish</option><option>Manrope</option><option>Karla</option><option>Heebo</option><option>Comfortaa</option><option>Overpass</option><option>DM Sans</option><option>Figtree</option><option>Plus Jakarta Sans</option></datalist>
+            <div class="helper-text">Google Fonts will be loaded automatically</div>
+        </div>
+
+        <div class="panel-section">
+            <div class="section-title">🔧 Modifiers Modal</div>
+            <div class="control-group">
+                <label><input type="checkbox" id="inheritCardStyle" checked> Inherit card styling (background, radius, border, colors &amp; typography)</label>
+                <div class="helper-text">When unchecked, you can customize modal separately below</div>
+            </div>
+            <div id="customModalStyles" style="display: none;">
+                <div class="subsection-title">Custom Modal Style</div>
+                <div class="control-group"><label>Modal Background</label><div class="color-input"><input type="color" id="modalBgColor" value="#1a1d21"><span id="modalBgColorValue">#1a1d21</span></div></div>
+                <div class="control-group"><label>Modal Text Color</label><div class="color-input"><input type="color" id="modalTextColor" value="#f1f5f9"><span id="modalTextColorValue">#f1f5f9</span></div></div>
+                <div class="control-group"><label>Accent Color (prices &amp; limits)</label><div class="color-input"><input type="color" id="modalAccentColor" value="#3b82f6"><span id="modalAccentColorValue">#3b82f6</span></div></div>
+                <div class="control-group"><label>Modal Border Radius (px)</label><div class="radius-grid"><div><span>TL</span><input type="number" id="modalRadiusTL" value="24"></div><div><span>TR</span><input type="number" id="modalRadiusTR" value="24"></div><div><span>BR</span><input type="number" id="modalRadiusBR" value="24"></div><div><span>BL</span><input type="number" id="modalRadiusBL" value="24"></div></div></div>
+                <div class="control-group"><label>Separator Line Color</label><div class="color-input"><input type="color" id="modalLineColor" value="#2a2e35"><span id="modalLineColorValue">#2a2e35</span></div></div>
+                <div class="subsection-title">Modal Typography</div>
+                <div class="control-group"><label>Modal Title Font</label><div class="typography-grid" style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px;"><input type="text" id="modalTitleFont" list="fontList" value="Inter"><input type="number" id="modalTitleSize" value="18"><select id="modalTitleWeight"><option value="600" selected>Semi-bold</option><option value="400">Normal</option><option value="500">Medium</option><option value="700">Bold</option></select></div></div>
+                <div class="control-group"><label>Modifier Text Font</label><div class="typography-grid" style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px;"><input type="text" id="modalModifierFont" list="fontList" value="Inter"><input type="number" id="modalModifierSize" value="13"><select id="modalModifierWeight"><option value="400" selected>Normal</option><option value="500">Medium</option></select></div></div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary" id="showCodeBtn">📋 Generate Embed Code</button>
+        </div>
+    </div>
+
+    <div class="preview-panel">
+        <div class="preview-header"><h2>Menu Preview</h2><div class="preview-badge">💡 Click any item with modifiers</div></div>
+        <div class="menu-preview" id="menuPreview"><div class="status info">Enter a JSON URL and click Load to start designing your menu</div></div>
+    </div>
+</div>
+
+<div id="modifierModal" class="modal-overlay">
+    <div class="modifier-modal-content" id="modifierModalContent">
+        <div class="modifier-modal-header"><h3 id="modalItemName">Item Name</h3><button class="modal-close" onclick="closeModifierModal()">&times;</button></div>
+        <div class="modifier-modal-body" id="modifierModalBody"><div class="no-modifiers">Loading...</div></div>
+    </div>
+</div>
+
+<div id="codeModal" class="modal-overlay" style="z-index:2000;">
+    <div class="modifier-modal-content" style="max-width:850px;">
+        <div class="modifier-modal-header"><h3>Embed Code – Copy into Webflow</h3><button class="modal-close" onclick="closeCodeModal()">&times;</button></div>
+        <div class="modifier-modal-body" style="padding:0;"><div class="code-container"><button class="copy-code-btn" id="modalCopyBtn">Copy</button><pre id="embedCodeDisplay" style="white-space:pre-wrap; max-height:500px; overflow:auto;"></pre></div></div>
+        <div style="padding:16px 24px; border-top:1px solid #2a2e35; display:flex; justify-content:flex-end;"><button class="btn btn-secondary" onclick="closeCodeModal()">Close</button><button class="btn btn-primary" id="modalFooterCopyBtn" style="margin-left:12px;">Copy to Clipboard</button></div>
+    </div>
+</div>
+
+<script>
+    // ─── Global state ───────────────────────────────────────────────────────────
+    let currentMenuData = null, excludedCategories = [], currentItemsMap = new Map();
+    let loadedFonts = new Set();
+
+    // ─── Font loader ─────────────────────────────────────────────────────────────
+    function loadGoogleFont(family) {
+        if (!family || family === 'Inter' || loadedFonts.has(family)) return;
+        loadedFonts.add(family);
+        const link = document.createElement('link');
+        link.href = 'https://fonts.googleapis.com/css2?family=' + family.replace(/ /g, '+') + ':wght@400;500;600;700&display=swap';
+        link.rel = 'stylesheet';
+        document.head.appendChild(link);
+    }
+
+    // ─── Escape helper (safe for both text content and HTML attributes) ──────────
+    function escapeHtml(s) {
+        if (!s) return '';
+        return s.replace(/[&<>"']/g, function(m) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+        });
+    }
+
+    // ─── JSON parser ─────────────────────────────────────────────────────────────
+    function parseSpotOnJSON(jsonObj) {
+        const catsRaw = (jsonObj.menu && jsonObj.menu.categories) || jsonObj.categories || [];
+        const itemsRaw = jsonObj.items || [];
+        const catMap = new Map(), itemsByCat = new Map(), itemsFull = new Map();
+        catsRaw.forEach(function(c) {
+            if (c.active !== false && c.id) { catMap.set(c.id, c.name.trim()); itemsByCat.set(c.id, []); }
+        });
+        itemsRaw.forEach(function(item) {
+            if (item.active === false) return;
+            itemsFull.set(item.id, item);
+            (item.category_ids || []).forEach(function(cid) {
+                if (catMap.has(cid)) {
+                    let priceAmt = (item.price && item.price.amount) || 0;
+                    if (item.category_references) {
+                        const ref = item.category_references.find(function(r) { return r.category_id === cid; });
+                        if (ref && ref.price) priceAmt = ref.price.amount;
+                    }
+                    itemsByCat.get(cid).push({
+                        id: item.id, name: item.name, description: item.description || '',
+                        price: (priceAmt / 100).toFixed(2), imageUrl: item.image_url || item.thumbnail_url || ''
+                    });
+                }
+            });
+        });
+        const finalCats = [], finalItems = {};
+        for (const [cid, name] of catMap.entries()) {
+            const items = itemsByCat.get(cid);
+            if (items && items.length) { finalCats.push({ id: cid, name: name }); finalItems[cid] = items; }
+        }
+        return { categories: finalCats, itemsByCategory: finalItems, itemsFull: itemsFull };
+    }
+
+    // ─── URL sanitizer (blocks javascript: and data: injection) ─────────────────
+    function sanitizeUrl(url) {
+        if (!url) return '';
+        return /^https?:\/\//i.test(url) ? url : '';
+    }
+
+    // ─── Load from URL ───────────────────────────────────────────────────────────
+    async function loadFromUrl(url) {
+        if (!url) { showStatus('Please enter a JSON URL', 'error'); return; }
+        showStatus('Loading menu from URL...', 'info');
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            const json = await response.json();
+            const parsed = parseSpotOnJSON(json);
+            if (!parsed.categories.length) throw new Error('No active categories found');
+            currentMenuData = parsed;
+            currentItemsMap = parsed.itemsFull;
+            excludedCategories = [];
+            buildExcludeWidget();
+            renderMenu();
+            showStatus('Loaded ' + parsed.categories.length + ' categories, ' + Object.values(parsed.itemsByCategory).flat().length + ' items', 'success');
+        } catch (err) {
+            showStatus('Failed to load URL: ' + err.message, 'error');
+            currentMenuData = null;
+        }
+    }
+
+    // ─── Build exclude widget ────────────────────────────────────────────────────
+    function buildExcludeWidget() {
+        const container = document.getElementById('excludeWidget');
+        if (!container || !currentMenuData) return;
+        const categories = currentMenuData.categories;
+        container.innerHTML = '<div class="exclude-trigger"><span>Select categories to exclude</span><span>▼</span></div><div class="exclude-chips" id="excludeChips"></div><div class="exclude-dropdown" id="excludeDropdown"></div>';
+        const trigger = container.querySelector('.exclude-trigger');
+        const dropdown = container.querySelector('#excludeDropdown');
+        const chips = container.querySelector('#excludeChips');
+        dropdown.innerHTML = categories.map(function(c) {
+            return '<label class="exclude-option"><input type="checkbox" value="' + escapeHtml(c.name) + '" ' + (excludedCategories.includes(c.name) ? 'checked' : '') + '><span>' + escapeHtml(c.name) + '</span></label>';
+        }).join('');
+        trigger.onclick = function(e) { e.stopPropagation(); dropdown.classList.toggle('show'); };
+        document.addEventListener('click', function(e) { if (!container.contains(e.target)) dropdown.classList.remove('show'); });
+        function update() {
+            excludedCategories = Array.from(dropdown.querySelectorAll('input:checked')).map(function(cb) { return cb.value; });
+            chips.innerHTML = excludedCategories.map(function(n) {
+                return '<div class="exclude-chip"><span>' + escapeHtml(n) + '</span><span class="exclude-chip-remove" data-name="' + escapeHtml(n) + '">✕</span></div>';
+            }).join('');
+            chips.querySelectorAll('.exclude-chip-remove').forEach(function(btn) {
+                btn.onclick = function() {
+                    const name = btn.dataset.name;
+                    const cb = Array.from(dropdown.querySelectorAll('input')).find(function(c) { return c.value === name; });
+                    if (cb) cb.checked = false;
+                    update();
+                    renderMenu();
+                };
+            });
+            renderMenu();
+        }
+        dropdown.querySelectorAll('input').forEach(function(cb) { cb.addEventListener('change', update); });
+        update();
+    }
+
+    // ─── Render menu ─────────────────────────────────────────────────────────────
+    function renderMenu() {
+        if (!currentMenuData) return;
+        const { categories, itemsByCategory } = currentMenuData;
+        const activeCats = categories.filter(function(c) { return !excludedCategories.includes(c.name); });
+        const layout = document.getElementById('layoutType').value;
+        const tabsPos = document.querySelector('input[name="tabsPosition"]:checked').value;
+        const tabAlign = document.querySelector('input[name="tabAlign"]:checked').value;
+        const showImages = document.getElementById('showImages').checked;
+        const showPrices = document.getElementById('showPrices').checked;
+        const showModifiers = document.getElementById('showModifiers').checked;
+        const showSearch = document.getElementById('showCategorySearch').checked;
+        const showDropdown = document.getElementById('showCategoryDropdown').checked;
+        const container = document.getElementById('menuPreview');
+
+        let html = '<div class="menu-layout tabs-' + tabsPos + '">';
+        html += '<div class="categories-container" id="categoriesContainer" style="justify-content:' + (tabAlign === 'left' ? 'flex-start' : tabAlign === 'center' ? 'center' : 'flex-end') + ';">';
+        if ((showSearch || showDropdown) && (tabsPos === 'left' || tabsPos === 'right')) {
+            html += '<div class="category-toolbar">';
+            if (showSearch) html += '<input type="text" class="category-search" id="catSearch" placeholder="Search categories...">';
+            if (showDropdown) html += '<select class="category-select" id="catSelect"></select>';
+            html += '</div>';
+        }
+        html += '</div>';
+        if ((showSearch || showDropdown) && (tabsPos === 'top' || tabsPos === 'bottom')) {
+            html += '<div class="category-toolbar">';
+            if (showSearch) html += '<input type="text" class="category-search" id="catSearch" placeholder="Search categories...">';
+            if (showDropdown) html += '<select class="category-select" id="catSelect"></select>';
+            html += '</div>';
+        }
+        html += '<div class="menu-root layout-' + layout + '" id="menuRoot"></div></div>';
+        container.innerHTML = html;
+
+        const catsDiv = document.getElementById('categoriesContainer');
+        activeCats.forEach(function(cat, idx) {
+            const link = document.createElement('a');
+            link.href = '#';
+            link.className = 'category-link' + (idx === 0 ? ' active' : '');
+            link.textContent = cat.name;
+            link.dataset.categoryId = cat.id;
+            link.onclick = function(e) {
+                e.preventDefault();
+                setActiveCategory(cat.id);
+                displayItems(cat.id, itemsByCategory, showImages, showPrices, layout, showModifiers);
+                if (showDropdown) {
+                    const sel = document.getElementById('catSelect');
+                    if (sel) sel.value = cat.id;
+                }
+            };
+            catsDiv.appendChild(link);
+        });
+
+        if (showSearch) {
+            const search = document.getElementById('catSearch');
+            if (search) {
+                search.oninput = function(e) {
+                    const term = e.target.value.toLowerCase();
+                    Array.from(catsDiv.children).forEach(function(child) {
+                        if (child.classList && child.classList.contains('category-toolbar')) return;
+                        child.style.display = child.textContent.toLowerCase().includes(term) ? '' : 'none';
+                    });
+                };
+            }
+        }
+        if (showDropdown) {
+            const select = document.getElementById('catSelect');
+            if (select) {
+                select.innerHTML = activeCats.map(function(c) { return '<option value="' + c.id + '">' + escapeHtml(c.name) + '</option>'; }).join('');
+                select.onchange = function(e) {
+                    const cid = e.target.value;
+                    setActiveCategory(cid);
+                    displayItems(cid, itemsByCategory, showImages, showPrices, layout, showModifiers);
+                };
+                if (activeCats[0]) select.value = activeCats[0].id;
+            }
+        }
+
+        if (activeCats.length) {
+            displayItems(activeCats[0].id, itemsByCategory, showImages, showPrices, layout, showModifiers);
+            setActiveCategory(activeCats[0].id);
+        }
+        applyCardStyles();
+    }
+
+    function setActiveCategory(cid) {
+        document.querySelectorAll('.category-link').forEach(function(l) {
+            if (l.dataset.categoryId === cid) l.classList.add('active');
+            else l.classList.remove('active');
+        });
+    }
+
+    // ─── Display items ────────────────────────────────────────────────────────────
+    function displayItems(cid, itemsByCategory, showImages, showPrices, layout, showModifiers) {
+        const root = document.getElementById('menuRoot');
+        const items = itemsByCategory[cid] || [];
+        root.innerHTML = '';
+        const isList = layout === 'list-image-left' || layout === 'list-image-right';
+        const cardBg = document.getElementById('cardBgColor').value;
+        let imgHeight = '';
+        if (!isList) {
+            if (layout === 'hero-grid') imgHeight = '240px';
+            else if (layout === 'compact-cards') imgHeight = '160px';
+            else imgHeight = '200px';
+        }
+        items.forEach(function(item) {
+            const card = document.createElement('div');
+            card.className = 'list-item';
+            const full = currentItemsMap.get(item.id);
+            const hasMods = full && full.modifier_groups && full.modifier_groups.length > 0;
+            if (showModifiers && hasMods) {
+                card.classList.add('has-modifiers');
+                card.onclick = (function(id, name) { return function() { openModifierModal(id, name); }; })(item.id, item.name);
+            } else {
+                card.classList.add('no-modifiers');
+            }
+            const safeUrl = sanitizeUrl(item.imageUrl);
+            const hasImage = !!(showImages && safeUrl);
+            let thumb = '';
+            if (isList) {
+                thumb = '<div class="item-thumbnail-wrapper" style="width:120px;height:120px;flex-shrink:0;background:' + cardBg + ';overflow:hidden;">' + (hasImage ? '<img class="list-item-image" src="' + safeUrl + '" alt="' + escapeHtml(item.name) + '">' : '') + '</div>';
+            } else {
+                thumb = '<div class="item-thumbnail-wrapper" style="height:' + imgHeight + ';background:' + cardBg + ';overflow:hidden;">' + (hasImage ? '<img class="list-item-image" src="' + safeUrl + '" alt="' + escapeHtml(item.name) + '">' : '') + '</div>';
+            }
+            const priceText = (item.price && parseFloat(item.price) !== 0) ? '$' + item.price : 'Price Varies';
+            card.innerHTML = thumb + '<div class="item-content"><div class="list-item-name">' + escapeHtml(item.name) + '</div><div class="list-item-description">' + escapeHtml(item.description || '') + '</div><div class="list-item-price' + (!showPrices ? ' price-hidden' : '') + '">' + priceText + '</div></div>';
+            root.appendChild(card);
+        });
+    }
+
+    // ─── Apply card styles ────────────────────────────────────────────────────────
+    function applyCardStyles() {
+        const defaultBg = document.getElementById('defaultTabColor').value;
+        const defaultText = document.getElementById('defaultTabTextColor').value;
+        const activeBg = document.getElementById('activeTabColor').value;
+        const activeText = document.getElementById('activeTabTextColor').value;
+        const tabBorderColor = document.getElementById('tabBorderColor').value;
+        const tabBorderWidth = document.getElementById('tabBorderWidth').value;
+        const tabRadTL = document.getElementById('tabRadiusTL').value;
+        const tabRadTR = document.getElementById('tabRadiusTR').value;
+        const tabRadBR = document.getElementById('tabRadiusBR').value;
+        const tabRadBL = document.getElementById('tabRadiusBL').value;
+        const cardBg = document.getElementById('cardBgColor').value;
+        const cardBorderColor = document.getElementById('cardBorderColor').value;
+        const cardBorderWidth = document.getElementById('cardBorderWidth').value;
+        const padT = document.getElementById('cardPaddingTop').value;
+        const padR = document.getElementById('cardPaddingRight').value;
+        const padB = document.getElementById('cardPaddingBottom').value;
+        const padL = document.getElementById('cardPaddingLeft').value;
+        const radTL = document.getElementById('cardRadiusTL').value;
+        const radTR = document.getElementById('cardRadiusTR').value;
+        const radBR = document.getElementById('cardRadiusBR').value;
+        const radBL = document.getElementById('cardRadiusBL').value;
+        const cardTitleColor = document.getElementById('cardTitleColor').value;
+        const descTextColor = document.getElementById('descTextColor').value;
+        const tabFont = document.getElementById('tabFontFamily').value;
+        const tabSize = document.getElementById('tabFontSize').value;
+        const tabWeight = document.getElementById('tabFontWeight').value;
+        const titleFont = document.getElementById('titleFontFamily').value;
+        const titleSize = document.getElementById('titleFontSize').value;
+        const titleWeight = document.getElementById('titleFontWeight').value;
+        const descFont = document.getElementById('descFontFamily').value;
+        const descSize = document.getElementById('descFontSize').value;
+        const descWeight = document.getElementById('descFontWeight').value;
+        loadGoogleFont(tabFont); loadGoogleFont(titleFont); loadGoogleFont(descFont);
+        const old = document.getElementById('dynamic-styles');
+        if (old) old.remove();
+        const style = document.createElement('style');
+        style.id = 'dynamic-styles';
+        style.textContent = [
+            '.category-link { background:' + defaultBg + '; color:' + defaultText + '; border:' + tabBorderWidth + 'px solid ' + tabBorderColor + '; border-radius:' + tabRadTL + 'px ' + tabRadTR + 'px ' + tabRadBR + 'px ' + tabRadBL + 'px; font-family:\'' + tabFont + '\',sans-serif; font-size:' + tabSize + 'px; font-weight:' + tabWeight + '; }',
+            '.category-link.active { background:' + activeBg + '; color:' + activeText + '; border-color:' + activeBg + '; }',
+            '.list-item { background:' + cardBg + '; border-radius:' + radTL + 'px ' + radTR + 'px ' + radBR + 'px ' + radBL + 'px; border:' + cardBorderWidth + 'px solid ' + cardBorderColor + '; }',
+            '.list-item .item-content { padding:' + padT + 'px ' + padR + 'px ' + padB + 'px ' + padL + 'px; }',
+            '.list-item-name { color:' + cardTitleColor + '; font-family:\'' + titleFont + '\',sans-serif; font-size:' + titleSize + 'px; font-weight:' + titleWeight + '; }',
+            '.list-item-description { color:' + descTextColor + '; font-family:\'' + descFont + '\',sans-serif; font-size:' + descSize + 'px; font-weight:' + descWeight + '; line-clamp:2; -webkit-line-clamp:2; display:-webkit-box; -webkit-box-orient:vertical; overflow:hidden; }',
+            '.list-item-price { color:' + activeBg + '; }',
+            '.category-search, .category-select { background:' + defaultBg + '; color:' + defaultText + '; border:' + tabBorderWidth + 'px solid ' + tabBorderColor + '; border-radius:' + tabRadTL + 'px ' + tabRadTR + 'px ' + tabRadBR + 'px ' + tabRadBL + 'px; font-family:\'' + tabFont + '\',sans-serif; font-size:' + tabSize + 'px; font-weight:' + tabWeight + '; }'
+        ].join('\n');
+        document.head.appendChild(style);
+    }
+
+    // ─── Apply modal styles ───────────────────────────────────────────────────────
+    function applyModalStyles() {
+        const inherit = document.getElementById('inheritCardStyle').checked;
+        const modalContent = document.getElementById('modifierModalContent');
+        if (!modalContent) return;
+        const header = modalContent.querySelector('.modifier-modal-header');
+        const body = modalContent.querySelector('.modifier-modal-body');
+        const title = modalContent.querySelector('h3');
+        const old = document.getElementById('modal-styles');
+        if (old) old.remove();
+        const s = document.createElement('style');
+        s.id = 'modal-styles';
+
+        if (inherit) {
+            const cardBg = document.getElementById('cardBgColor').value;
+            const cardTitleColor = document.getElementById('cardTitleColor').value;
+            const activeColor = document.getElementById('activeTabColor').value;
+            const borderColor = document.getElementById('cardBorderColor').value;
+            const radTL = document.getElementById('cardRadiusTL').value;
+            const radTR = document.getElementById('cardRadiusTR').value;
+            const radBR = document.getElementById('cardRadiusBR').value;
+            const radBL = document.getElementById('cardRadiusBL').value;
+            const titleFont = document.getElementById('titleFontFamily').value;
+            const titleSize = document.getElementById('titleFontSize').value;
+            const titleWeight = document.getElementById('titleFontWeight').value;
+            const descFont = document.getElementById('descFontFamily').value;
+            const descSize = document.getElementById('descFontSize').value;
+            const descWeight = document.getElementById('descFontWeight').value;
+            loadGoogleFont(titleFont); loadGoogleFont(descFont);
+            modalContent.style.background = cardBg;
+            modalContent.style.borderRadius = radTL + 'px ' + radTR + 'px ' + radBR + 'px ' + radBL + 'px';
+            modalContent.style.border = '1px solid ' + borderColor;
+            if (header) { header.style.background = cardBg; header.style.borderBottom = '1px solid ' + borderColor; }
+            if (body) body.style.background = cardBg;
+            if (title) title.style.color = cardTitleColor;
+            s.textContent = [
+                '.modifier-group-name { color:' + cardTitleColor + '; font-family:\'' + titleFont + '\',sans-serif; font-size:' + titleSize + 'px; font-weight:' + titleWeight + '; }',
+                '.modifier-limits { color:' + activeColor + '; font-family:\'' + descFont + '\',sans-serif; font-size:' + descSize + 'px; font-weight:' + descWeight + '; }',
+                '.modifier-option { border-bottom-color:' + borderColor + '; }',
+                '.modifier-name { color:' + cardTitleColor + '; font-family:\'' + descFont + '\',sans-serif; font-size:' + descSize + 'px; font-weight:' + descWeight + '; }',
+                '.modifier-price { color:' + activeColor + '; font-family:\'' + descFont + '\',sans-serif; font-size:' + descSize + 'px; font-weight:' + descWeight + '; }',
+                '.modifier-price.extra { color:' + activeColor + '; }',
+                '.modifier-modal-body .no-modifiers { color:' + cardTitleColor + '; font-family:\'' + descFont + '\',sans-serif; font-size:' + descSize + 'px; }',
+                '.modal-close { color:' + cardTitleColor + '; }'
+            ].join('\n');
+        } else {
+            const modalBg = document.getElementById('modalBgColor').value;
+            const modalTextColor = document.getElementById('modalTextColor').value;
+            const accentColor = document.getElementById('modalAccentColor').value;
+            const lineColor = document.getElementById('modalLineColor').value;
+            const radTL = document.getElementById('modalRadiusTL').value;
+            const radTR = document.getElementById('modalRadiusTR').value;
+            const radBR = document.getElementById('modalRadiusBR').value;
+            const radBL = document.getElementById('modalRadiusBL').value;
+            const titleFont = document.getElementById('modalTitleFont').value;
+            const titleSize = document.getElementById('modalTitleSize').value;
+            const titleWeight = document.getElementById('modalTitleWeight').value;
+            const modFont = document.getElementById('modalModifierFont').value;
+            const modSize = document.getElementById('modalModifierSize').value;
+            const modWeight = document.getElementById('modalModifierWeight').value;
+            loadGoogleFont(titleFont); loadGoogleFont(modFont);
+            modalContent.style.background = modalBg;
+            modalContent.style.borderRadius = radTL + 'px ' + radTR + 'px ' + radBR + 'px ' + radBL + 'px';
+            modalContent.style.border = '1px solid ' + lineColor;
+            if (header) { header.style.background = modalBg; header.style.borderBottom = '1px solid ' + lineColor; }
+            if (body) body.style.background = modalBg;
+            if (title) title.style.color = modalTextColor;
+            s.textContent = [
+                '.modifier-group-name { color:' + modalTextColor + '; font-family:\'' + titleFont + '\',sans-serif; font-size:' + titleSize + 'px; font-weight:' + titleWeight + '; }',
+                '.modifier-limits { color:' + accentColor + '; font-family:\'' + modFont + '\',sans-serif; font-size:' + modSize + 'px; font-weight:' + modWeight + '; }',
+                '.modifier-option { border-bottom-color:' + lineColor + '; }',
+                '.modifier-name { color:' + modalTextColor + '; font-family:\'' + modFont + '\',sans-serif; font-size:' + modSize + 'px; font-weight:' + modWeight + '; }',
+                '.modifier-price { color:' + accentColor + '; font-family:\'' + modFont + '\',sans-serif; font-size:' + modSize + 'px; font-weight:' + modWeight + '; }',
+                '.modifier-price.extra { color:' + accentColor + '; }',
+                '.modifier-modal-body .no-modifiers { color:' + modalTextColor + '; font-family:\'' + modFont + '\',sans-serif; font-size:' + modSize + 'px; }',
+                '.modal-close { color:' + modalTextColor + '; }'
+            ].join('\n');
+        }
+        document.head.appendChild(s);
+    }
+
+    // ─── Modifier modal ───────────────────────────────────────────────────────────
+    window.openModifierModal = function(id, name) {
+        const modal = document.getElementById('modifierModal');
+        const body = document.getElementById('modifierModalBody');
+        const title = document.getElementById('modalItemName');
+        if (!modal) return;
+        title.textContent = name;
+        applyModalStyles();
+        const full = currentItemsMap.get(id);
+        if (!full || !full.modifier_groups || !full.modifier_groups.length) {
+            body.innerHTML = '<div class="no-modifiers">No modifiers available for this item.</div>';
+            modal.classList.add('active');
+            return;
+        }
+        let html = '';
+        full.modifier_groups.forEach(function(g) {
+            const limits = g.limits || {};
+            const limitText = [limits.min ? 'Min: ' + limits.min : '', limits.max ? 'Max: ' + limits.max : ''].filter(Boolean).join(' | ');
+            html += '<div class="modifier-group"><div class="modifier-group-name">' + escapeHtml(g.name || 'Options') + '</div>';
+            if (limitText) html += '<div class="modifier-limits">' + limitText + '</div>';
+            html += '<div class="modifier-options">';
+            (g.modifiers || []).forEach(function(m) {
+                const price = (m.price && m.price.amount) || 0;
+                html += '<div class="modifier-option"><span class="modifier-name">' + escapeHtml(m.name) + '</span><span class="modifier-price' + (price > 0 ? ' extra' : '') + '">' + (price > 0 ? '+$' + (price / 100).toFixed(2) : '') + '</span></div>';
+            });
+            html += '</div></div>';
+        });
+        body.innerHTML = html;
+        modal.classList.add('active');
+    };
+
+    window.closeModifierModal = function() {
+        document.getElementById('modifierModal').classList.remove('active');
+    };
+
+    // Close modifier modal on overlay click
+    document.getElementById('modifierModal').addEventListener('click', function(e) {
+        if (e.target === this) window.closeModifierModal();
+    });
+
+    // ─── Generate embed code ──────────────────────────────────────────────────────
+    function generateEmbedCode() {
+        const url = document.getElementById('jsonUrl').value.trim();
+        if (!url) return '<!-- No JSON URL provided. Please enter a URL and load the menu first. -->';
+        if (!currentMenuData) return '<!-- Menu not loaded. Please click "Load" to fetch the menu data first. -->';
+
+        const isInherit = document.getElementById('inheritCardStyle').checked;
+
+        // Compute modal style values once (baked into embed at generation time)
+        const mBg     = isInherit ? document.getElementById('cardBgColor').value      : document.getElementById('modalBgColor').value;
+        const mText   = isInherit ? document.getElementById('cardTitleColor').value    : document.getElementById('modalTextColor').value;
+        const mAccent = isInherit ? document.getElementById('activeTabColor').value    : document.getElementById('modalAccentColor').value;
+        const mLine   = isInherit ? document.getElementById('cardBorderColor').value   : document.getElementById('modalLineColor').value;
+        const mRadTL  = isInherit ? document.getElementById('cardRadiusTL').value      : document.getElementById('modalRadiusTL').value;
+        const mRadTR  = isInherit ? document.getElementById('cardRadiusTR').value      : document.getElementById('modalRadiusTR').value;
+        const mRadBR  = isInherit ? document.getElementById('cardRadiusBR').value      : document.getElementById('modalRadiusBR').value;
+        const mRadBL  = isInherit ? document.getElementById('cardRadiusBL').value      : document.getElementById('modalRadiusBL').value;
+        const mTFont  = isInherit ? document.getElementById('titleFontFamily').value   : document.getElementById('modalTitleFont').value;
+        const mTSize  = isInherit ? document.getElementById('titleFontSize').value     : document.getElementById('modalTitleSize').value;
+        const mTWt    = isInherit ? document.getElementById('titleFontWeight').value   : document.getElementById('modalTitleWeight').value;
+        const mMFont  = isInherit ? document.getElementById('descFontFamily').value    : document.getElementById('modalModifierFont').value;
+        const mMSize  = isInherit ? document.getElementById('descFontSize').value      : document.getElementById('modalModifierSize').value;
+        const mMWt    = isInherit ? document.getElementById('descFontWeight').value    : document.getElementById('modalModifierWeight').value;
+
+        const settings = {
+            layout:            document.getElementById('layoutType').value,
+            tabsPos:           document.querySelector('input[name="tabsPosition"]:checked').value,
+            tabAlign:          document.querySelector('input[name="tabAlign"]:checked').value,
+            showImages:        document.getElementById('showImages').checked,
+            showPrices:        document.getElementById('showPrices').checked,
+            showModifiers:     document.getElementById('showModifiers').checked,
+            showSearch:        document.getElementById('showCategorySearch').checked,
+            showDropdown:      document.getElementById('showCategoryDropdown').checked,
+            excluded:          excludedCategories,
+            defaultTabColor:   document.getElementById('defaultTabColor').value,
+            defaultTabTextColor: document.getElementById('defaultTabTextColor').value,
+            activeTabColor:    document.getElementById('activeTabColor').value,
+            activeTabTextColor: document.getElementById('activeTabTextColor').value,
+            tabBorderColor:    document.getElementById('tabBorderColor').value,
+            tabBorderWidth:    document.getElementById('tabBorderWidth').value,
+            tabRadiusTL:       document.getElementById('tabRadiusTL').value,
+            tabRadiusTR:       document.getElementById('tabRadiusTR').value,
+            tabRadiusBR:       document.getElementById('tabRadiusBR').value,
+            tabRadiusBL:       document.getElementById('tabRadiusBL').value,
+            cardBgColor:       document.getElementById('cardBgColor').value,
+            cardBorderColor:   document.getElementById('cardBorderColor').value,
+            cardBorderWidth:   document.getElementById('cardBorderWidth').value,
+            cardPaddingTop:    document.getElementById('cardPaddingTop').value,
+            cardPaddingRight:  document.getElementById('cardPaddingRight').value,
+            cardPaddingBottom: document.getElementById('cardPaddingBottom').value,
+            cardPaddingLeft:   document.getElementById('cardPaddingLeft').value,
+            cardRadiusTL:      document.getElementById('cardRadiusTL').value,
+            cardRadiusTR:      document.getElementById('cardRadiusTR').value,
+            cardRadiusBR:      document.getElementById('cardRadiusBR').value,
+            cardRadiusBL:      document.getElementById('cardRadiusBL').value,
+            cardTitleColor:    document.getElementById('cardTitleColor').value,
+            descTextColor:     document.getElementById('descTextColor').value,
+            tabFontFamily:     document.getElementById('tabFontFamily').value,
+            tabFontSize:       document.getElementById('tabFontSize').value,
+            tabFontWeight:     document.getElementById('tabFontWeight').value,
+            titleFontFamily:   document.getElementById('titleFontFamily').value,
+            titleFontSize:     document.getElementById('titleFontSize').value,
+            titleFontWeight:   document.getElementById('titleFontWeight').value,
+            descFontFamily:    document.getElementById('descFontFamily').value,
+            descFontSize:      document.getElementById('descFontSize').value,
+            descFontWeight:    document.getElementById('descFontWeight').value
+        };
+
+        const settingsJson = JSON.stringify(settings);
+        const escapedUrl   = url.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+
+        // Modal inner HTML (baked styles)
+        const modalInnerHTML = '<div style=\\"max-width:550px;width:90%;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;background:' + mBg + ';border-radius:' + mRadTL + 'px ' + mRadTR + 'px ' + mRadBR + 'px ' + mRadBL + 'px;border:1px solid ' + mLine + ';\\">' +
+            '<div style=\\"padding:20px 24px;display:flex;justify-content:space-between;align-items:center;background:' + mBg + ';border-bottom:1px solid ' + mLine + ';\\">' +
+            '<h3 id=\\"sm-modal-title\\" style=\\"font-size:18px;margin:0;color:' + mText + ';font-family:\\\\'' + mTFont + '\\\\',sans-serif;font-weight:' + mTWt + ';\\"></h3>' +
+            '<button id=\\"sm-modal-close\\" style=\\"background:none;border:none;font-size:28px;cursor:pointer;color:' + mText + ';\\">&times;</button>' +
+            '</div>' +
+            '<div id=\\"sm-modal-body\\" style=\\"padding:20px 24px;overflow-y:auto;flex:1;background:' + mBg + ';\\"></div>' +
+            '</div>';
+
+        const embedScript = `(function(){
+    var s = ${settingsJson};
+    var url = "${escapedUrl}";
+    var container = document.getElementById('spoton-menu-embed');
+    if (!container) return;
+
+    // Inject Google Fonts
+    var fontsToLoad = [s.tabFontFamily, s.titleFontFamily, s.descFontFamily].filter(function(f) { return f && f !== 'Inter'; });
+    fontsToLoad.forEach(function(f) {
+        var l = document.createElement('link');
+        l.rel = 'stylesheet';
+        l.href = 'https://fonts.googleapis.com/css2?family=' + f.replace(/ /g,'+') + ':wght@400;500;600;700&display=swap';
+        document.head.appendChild(l);
+    });
+
+    // Escape helper
+    function esc(str) {
+        if (!str) return '';
+        var m = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
+        return str.replace(/[&<>"']/g, function(c) { return m[c]; });
+    }
+
+    // URL sanitizer (blocks javascript: and data: injection)
+    function safeUrl(url) {
+        if (!url) return '';
+        return /^https?:\\/\\//i.test(url) ? url : '';
+    }
+
+    // Parser
+    function parseMenu(raw) {
+        var catsRaw = (raw.menu && raw.menu.categories) || raw.categories || [];
+        var itemsRaw = raw.items || [];
+        var catMap = new Map(), itemsByCat = new Map(), itemsFull = new Map();
+        catsRaw.forEach(function(c) {
+            if (c.active !== false && c.id) { catMap.set(c.id, c.name.trim()); itemsByCat.set(c.id, []); }
+        });
+        itemsRaw.forEach(function(item) {
+            if (item.active === false) return;
+            itemsFull.set(item.id, item);
+            (item.category_ids || []).forEach(function(cid) {
+                if (catMap.has(cid)) {
+                    var pa = (item.price && item.price.amount) || 0;
+                    if (item.category_references) {
+                        var ref = item.category_references.find(function(r) { return r.category_id === cid; });
+                        if (ref && ref.price) pa = ref.price.amount;
+                    }
+                    itemsByCat.get(cid).push({ id: item.id, name: item.name, description: item.description || '', price: (pa/100).toFixed(2), imageUrl: item.image_url || item.thumbnail_url || '' });
+                }
+            });
+        });
+        var cats = [], items = {};
+        catMap.forEach(function(name, cid) {
+            var arr = itemsByCat.get(cid);
+            if (arr && arr.length) { cats.push({id:cid,name:name}); items[cid] = arr; }
+        });
+        return { categories: cats, itemsByCategory: items, itemsFull: itemsFull };
+    }
+
+    // Inject CSS
+    var style = document.createElement('style');
+    style.textContent = \`${generateStyleString(settings)}\`;
+    document.head.appendChild(style);
+
+    // Build modifier modal (if modifiers enabled)
+    var modModal = null;
+    var itemsFull = new Map();
+    if (s.showModifiers) {
+        modModal = document.createElement('div');
+        modModal.id = 'sm-modal-overlay';
+        modModal.style.cssText = 'display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:10000;align-items:center;justify-content:center;';
+        modModal.innerHTML = "${modalInnerHTML}";
+        document.body.appendChild(modModal);
+        document.getElementById('sm-modal-close').onclick = function() { modModal.style.display = 'none'; };
+        modModal.addEventListener('click', function(e) { if (e.target === modModal) modModal.style.display = 'none'; });
+    }
+
+    function openModifierModal(id, name) {
+        if (!modModal) return;
+        var full = itemsFull.get(id);
+        if (!full || !full.modifier_groups || !full.modifier_groups.length) return;
+        document.getElementById('sm-modal-title').textContent = name;
+        var html = '';
+        full.modifier_groups.forEach(function(g) {
+            var lim = g.limits || {};
+            var limTxt = [lim.min ? 'Min: ' + lim.min : '', lim.max ? 'Max: ' + lim.max : ''].filter(Boolean).join(' | ');
+            html += '<div style="margin-bottom:20px;">';
+            html += '<div style="font-size:15px;font-weight:600;margin-bottom:8px;color:${mText};font-family:\\'${mTFont}\\',sans-serif;">' + esc(g.name || 'Options') + '</div>';
+            if (limTxt) html += '<div style="font-size:11px;margin-bottom:10px;color:${mAccent};">' + limTxt + '</div>';
+            html += '<div>';
+            var mods = g.modifiers || [];
+            mods.forEach(function(m, i) {
+                var price = (m.price && m.price.amount) || 0;
+                var isLast = i === mods.length - 1;
+                html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:13px;' + (isLast ? '' : 'border-bottom:1px solid ${mLine};') + '">';
+                html += '<span style="color:${mText};font-family:\\'${mMFont}\\',sans-serif;font-weight:${mMWt};">' + esc(m.name) + '</span>';
+                html += '<span style="color:' + (price > 0 ? '${mAccent}' : '${mText}') + ';font-family:\\'${mMFont}\\',sans-serif;font-weight:' + (price > 0 ? '600' : '400') + ';">' + (price > 0 ? '+$' + (price/100).toFixed(2) : '') + '</span>';
+                html += '</div>';
+            });
+            html += '</div></div>';
+        });
+        document.getElementById('sm-modal-body').innerHTML = html;
+        modModal.style.display = 'flex';
+    }
+
+    fetch(url)
+        .then(function(res) {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return res.json();
+        })
+        .then(function(raw) {
+            var d = parseMenu(raw);
+            itemsFull = d.itemsFull;
+            var activeCats = d.categories.filter(function(c) { return !s.excluded.includes(c.name); });
+            if (!activeCats.length) {
+                container.innerHTML = '<div style="padding:20px;text-align:center;">No categories available</div>';
+                return;
+            }
+            renderMenu(d, activeCats);
+        })
+        .catch(function(err) {
+            container.innerHTML = '<div style="padding:20px;text-align:center;">Failed to load menu: ' + err.message + '</div>';
+        });
+
+    function renderMenu(d, activeCats) {
+        var html = '<div class="spoton-embed"><div class="menu-layout tabs-' + s.tabsPos + '">';
+        html += '<div class="categories-container" id="sm-cats" style="justify-content:' + (s.tabAlign === 'left' ? 'flex-start' : s.tabAlign === 'center' ? 'center' : 'flex-end') + ';">';
+        if ((s.showSearch || s.showDropdown) && (s.tabsPos === 'left' || s.tabsPos === 'right')) {
+            html += '<div class="category-toolbar">';
+            if (s.showSearch) html += '<input type="text" class="category-search" id="sm-search" placeholder="Search categories...">';
+            if (s.showDropdown) html += '<select class="category-select" id="sm-select"></select>';
+            html += '</div>';
+        }
+        html += '</div>';
+        if ((s.showSearch || s.showDropdown) && (s.tabsPos === 'top' || s.tabsPos === 'bottom')) {
+            html += '<div class="category-toolbar">';
+            if (s.showSearch) html += '<input type="text" class="category-search" id="sm-search" placeholder="Search categories...">';
+            if (s.showDropdown) html += '<select class="category-select" id="sm-select"></select>';
+            html += '</div>';
+        }
+        html += '<div class="menu-root layout-' + s.layout + '" id="sm-root"></div></div></div>';
+        container.innerHTML = html;
+
+        var catsDiv = document.getElementById('sm-cats');
+        var rootDiv = document.getElementById('sm-root');
+
+        activeCats.forEach(function(cat, idx) {
+            var link = document.createElement('a');
+            link.href = '#';
+            link.className = 'category-link' + (idx === 0 ? ' active' : '');
+            link.textContent = cat.name;
+            link.dataset.id = cat.id;
+            link.onclick = function(e) {
+                e.preventDefault();
+                setActive(cat.id);
+                displayItems(cat.id, d.itemsByCategory);
+                if (s.showDropdown) { var sel = document.getElementById('sm-select'); if (sel) sel.value = cat.id; }
+            };
+            catsDiv.appendChild(link);
+        });
+
+        if (s.showSearch) {
+            var search = document.getElementById('sm-search');
+            if (search) {
+                search.oninput = function(e) {
+                    var term = e.target.value.toLowerCase();
+                    Array.from(catsDiv.children).forEach(function(child) {
+                        if (child.classList && child.classList.contains('category-toolbar')) return;
+                        child.style.display = child.textContent.toLowerCase().includes(term) ? '' : 'none';
+                    });
+                };
+            }
+        }
+        if (s.showDropdown) {
+            var select = document.getElementById('sm-select');
+            if (select) {
+                select.innerHTML = activeCats.map(function(c) { return '<option value="' + c.id + '">' + esc(c.name) + '</option>'; }).join('');
+                select.onchange = function(e) {
+                    setActive(e.target.value);
+                    displayItems(e.target.value, d.itemsByCategory);
+                };
+                if (activeCats[0]) select.value = activeCats[0].id;
+            }
+        }
+
+        if (activeCats.length) {
+            displayItems(activeCats[0].id, d.itemsByCategory);
+            setActive(activeCats[0].id);
+        }
+    }
+
+    function setActive(id) {
+        document.querySelectorAll('#sm-cats .category-link').forEach(function(l) {
+            if (l.dataset.id === id) l.classList.add('active'); else l.classList.remove('active');
+        });
+    }
+
+    function displayItems(cid, itemsByCategory) {
+        var rootDiv = document.getElementById('sm-root');
+        var items = itemsByCategory[cid] || [];
+        rootDiv.innerHTML = '';
+        var isList = s.layout === 'list-image-left' || s.layout === 'list-image-right';
+        var imgH = '';
+        if (!isList) { imgH = s.layout === 'hero-grid' ? '240px' : s.layout === 'compact-cards' ? '160px' : '200px'; }
+        items.forEach(function(item) {
+            var card = document.createElement('div');
+            card.className = 'list-item';
+            if (s.showModifiers) {
+                var full = itemsFull.get(item.id);
+                var hasMods = full && full.modifier_groups && full.modifier_groups.length > 0;
+                if (hasMods) {
+                    card.style.cursor = 'pointer';
+                    card.addEventListener('click', (function(id, name) { return function() { openModifierModal(id, name); }; })(item.id, item.name));
+                }
+            }
+            var imgSrc = safeUrl(item.imageUrl);
+            var hasImg = !!(s.showImages && imgSrc);
+            var thumb = '';
+            if (isList) {
+                thumb = '<div class="item-thumbnail-wrapper" style="width:120px;height:120px;flex-shrink:0;background:' + s.cardBgColor + ';overflow:hidden;">' + (hasImg ? '<img class="list-item-image" src="' + imgSrc + '" alt="' + esc(item.name) + '">' : '') + '</div>';
+            } else {
+                thumb = '<div class="item-thumbnail-wrapper" style="height:' + imgH + ';background:' + s.cardBgColor + ';overflow:hidden;">' + (hasImg ? '<img class="list-item-image" src="' + imgSrc + '" alt="' + esc(item.name) + '">' : '') + '</div>';
+            }
+            var priceText = (item.price && parseFloat(item.price) !== 0) ? '$' + item.price : 'Price Varies';
+            card.innerHTML = thumb + '<div class="item-content"><div class="list-item-name">' + esc(item.name) + '</div><div class="list-item-description">' + esc(item.description || '') + '</div><div class="list-item-price' + (!s.showPrices ? ' price-hidden' : '') + '">' + priceText + '</div></div>';
+            rootDiv.appendChild(card);
+        });
+    }
+})();`;
+
+        return '<div id="spoton-menu-embed"></div>\n<script>\n' + embedScript + '\n</' + 'script>';
+    }
+
+    // ─── CSS string for embed ─────────────────────────────────────────────────────
+    function generateStyleString(s) {
+        return [
+            '.spoton-embed * { margin:0; padding:0; box-sizing:border-box; }',
+            '.spoton-embed { font-family: system-ui, -apple-system, sans-serif; }',
+            '.spoton-embed img { width:100%; height:100%; object-fit:cover; object-position:center; display:block; }',
+            '.spoton-embed .menu-layout { display:flex; gap:24px; }',
+            '.spoton-embed .menu-layout.tabs-top { flex-direction:column; }',
+            '.spoton-embed .menu-layout.tabs-bottom { flex-direction:column-reverse; }',
+            '.spoton-embed .menu-layout.tabs-left { flex-direction:row; }',
+            '.spoton-embed .menu-layout.tabs-right { flex-direction:row-reverse; }',
+            '.spoton-embed .tabs-left .menu-root, .spoton-embed .tabs-right .menu-root { align-self:flex-start; }',
+            '.spoton-embed .categories-container { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; }',
+            '.spoton-embed .tabs-left .categories-container, .spoton-embed .tabs-right .categories-container { flex-direction:column; min-width:150px; max-width:200px; }',
+            '.spoton-embed .category-link { padding:8px 14px; background:' + s.defaultTabColor + '; border:' + s.tabBorderWidth + 'px solid ' + s.tabBorderColor + '; border-radius:' + s.tabRadiusTL + 'px ' + s.tabRadiusTR + 'px ' + s.tabRadiusBR + 'px ' + s.tabRadiusBL + 'px; text-decoration:none; color:' + s.defaultTabTextColor + '; font-family:\'' + s.tabFontFamily + '\',sans-serif; font-size:' + s.tabFontSize + 'px; font-weight:' + s.tabFontWeight + '; cursor:pointer; white-space:nowrap; display:inline-block; transition:all 0.2s; }',
+            '.spoton-embed .tabs-left .category-link, .spoton-embed .tabs-right .category-link { white-space:normal; text-align:center; word-break:break-word; }',
+            '.spoton-embed .category-link.active { background:' + s.activeTabColor + '; color:' + s.activeTabTextColor + '; border-color:' + s.activeTabColor + '; }',
+            '.spoton-embed .menu-root { flex:1; }',
+            '.spoton-embed .layout-classic-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:24px; }',
+            '.spoton-embed .layout-hero-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:28px; }',
+            '.spoton-embed .layout-compact-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:16px; }',
+            '.spoton-embed .layout-split-view { display:grid; grid-template-columns:repeat(2,1fr); gap:24px; }',
+            '.spoton-embed .layout-list-image-left, .spoton-embed .layout-list-image-right { display:flex; flex-direction:column; gap:20px; }',
+            '.spoton-embed .layout-list-image-left .list-item { display:flex; flex-direction:row; gap:20px; align-items:stretch; }',
+            '.spoton-embed .layout-list-image-right .list-item { display:flex; flex-direction:row-reverse; gap:20px; align-items:stretch; }',
+            '.spoton-embed .layout-list-image-left .item-thumbnail-wrapper, .spoton-embed .layout-list-image-right .item-thumbnail-wrapper { width:120px; height:120px; flex-shrink:0; overflow:hidden; display:flex; align-items:center; justify-content:center; }',
+            '.spoton-embed .layout-list-image-left .item-content, .spoton-embed .layout-list-image-right .item-content { flex:1; padding:12px 0; }',
+            '.spoton-embed .layout-list-image-right .item-content { padding-left:16px; }',
+            '.spoton-embed .list-item { background:' + s.cardBgColor + '; border-radius:' + s.cardRadiusTL + 'px ' + s.cardRadiusTR + 'px ' + s.cardRadiusBR + 'px ' + s.cardRadiusBL + 'px; border:' + s.cardBorderWidth + 'px solid ' + s.cardBorderColor + '; overflow:hidden; display:flex; flex-direction:column; height:100%; transition:transform 0.2s, box-shadow 0.2s; }',
+            '.spoton-embed .list-item[style*="cursor: pointer"]:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,0.3); }',
+            '.spoton-embed .item-thumbnail-wrapper { background:' + s.cardBgColor + '; overflow:hidden; flex-shrink:0; margin:0; padding:0; display:flex; align-items:center; justify-content:center; }',
+            '.spoton-embed .item-content { padding:' + s.cardPaddingTop + 'px ' + s.cardPaddingRight + 'px ' + s.cardPaddingBottom + 'px ' + s.cardPaddingLeft + 'px; flex:1; display:flex; flex-direction:column; }',
+            '.spoton-embed .list-item-name { font-family:\'' + s.titleFontFamily + '\',sans-serif; font-size:' + s.titleFontSize + 'px; font-weight:' + s.titleFontWeight + '; margin-bottom:6px; color:' + s.cardTitleColor + '; }',
+            '.spoton-embed .list-item-description { font-family:\'' + s.descFontFamily + '\',sans-serif; font-size:' + s.descFontSize + 'px; font-weight:' + s.descFontWeight + '; color:' + s.descTextColor + '; margin-bottom:10px; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }',
+            '.spoton-embed .list-item-price { font-size:15px; font-weight:700; color:' + s.activeTabColor + '; margin-top:auto; }',
+            '.spoton-embed .price-hidden { display:none; }',
+            '.spoton-embed .category-toolbar { margin-bottom:12px; display:flex; gap:12px; flex-wrap:wrap; }',
+            '.spoton-embed .category-search, .spoton-embed .category-select { padding:8px 12px; border:1px solid ' + s.tabBorderColor + '; border-radius:' + s.tabRadiusTL + 'px ' + s.tabRadiusTR + 'px ' + s.tabRadiusBR + 'px ' + s.tabRadiusBL + 'px; background:' + s.defaultTabColor + '; color:' + s.defaultTabTextColor + '; font-family:\'' + s.tabFontFamily + '\',sans-serif; font-size:' + s.tabFontSize + 'px; font-weight:' + s.tabFontWeight + '; }',
+            '@media (max-width:768px) {',
+            '  .spoton-embed .menu-layout.tabs-left, .spoton-embed .menu-layout.tabs-right { flex-direction:column; }',
+            '  .spoton-embed .tabs-left .categories-container, .spoton-embed .tabs-right .categories-container { flex-direction:row; flex-wrap:wrap; min-width:auto; }',
+            '  .spoton-embed .layout-list-image-left .list-item, .spoton-embed .layout-list-image-right .list-item { flex-direction:column; }',
+            '  .spoton-embed .layout-list-image-left .item-thumbnail-wrapper, .spoton-embed .layout-list-image-right .item-thumbnail-wrapper { width:100% !important; height:180px !important; }',
+            '  .spoton-embed .layout-split-view { grid-template-columns:1fr; }',
+            '}'
+        ].join('\n');
+    }
+
+    // ─── Embed code modal ─────────────────────────────────────────────────────────
+    function showEmbedCode() {
+        document.getElementById('embedCodeDisplay').textContent = generateEmbedCode();
+        document.getElementById('codeModal').classList.add('active');
+    }
+    function closeCodeModal() { document.getElementById('codeModal').classList.remove('active'); }
+    function copyCode() {
+        const code = document.getElementById('embedCodeDisplay').textContent;
+        navigator.clipboard.writeText(code).then(function() {
+            const btn = document.getElementById('modalCopyBtn');
+            const orig = btn.textContent;
+            btn.textContent = '✓ Copied!';
+            setTimeout(function() { btn.textContent = orig; }, 2000);
+        }).catch(function() { alert('Manual copy required'); });
+    }
+
+    document.getElementById('showCodeBtn').onclick = showEmbedCode;
+    document.getElementById('modalCopyBtn').onclick = copyCode;
+    document.getElementById('modalFooterCopyBtn').onclick = copyCode;
+    window.closeCodeModal = closeCodeModal;
+
+    document.getElementById('codeModal').addEventListener('click', function(e) {
+        if (e.target === this) closeCodeModal();
+    });
+
+    // ─── Event listeners ──────────────────────────────────────────────────────────
+    const styleInputs = [
+        'layoutType', 'showImages', 'showPrices', 'showModifiers', 'showCategorySearch', 'showCategoryDropdown',
+        'defaultTabColor', 'defaultTabTextColor', 'activeTabColor', 'activeTabTextColor',
+        'tabBorderColor', 'tabBorderWidth', 'tabRadiusTL', 'tabRadiusTR', 'tabRadiusBR', 'tabRadiusBL',
+        'cardBgColor', 'cardBorderColor', 'cardBorderWidth',
+        'cardPaddingTop', 'cardPaddingRight', 'cardPaddingBottom', 'cardPaddingLeft',
+        'cardRadiusTL', 'cardRadiusTR', 'cardRadiusBR', 'cardRadiusBL',
+        'cardTitleColor', 'descTextColor',
+        'tabFontFamily', 'tabFontSize', 'tabFontWeight',
+        'titleFontFamily', 'titleFontSize', 'titleFontWeight',
+        'descFontFamily', 'descFontSize', 'descFontWeight'
+    ];
+    styleInputs.forEach(function(id) {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', function() { if (currentMenuData) renderMenu(); });
+    });
+
+    document.querySelectorAll('input[name="tabsPosition"], input[name="tabAlign"]').forEach(function(r) {
+        r.addEventListener('change', function() { if (currentMenuData) renderMenu(); });
+    });
+
+    // Color pickers: sync hex display spans
+    const colorIds = [
+        'defaultTabColor', 'defaultTabTextColor', 'activeTabColor', 'activeTabTextColor',
+        'tabBorderColor', 'cardBgColor', 'cardBorderColor', 'cardTitleColor', 'descTextColor',
+        'modalBgColor', 'modalTextColor', 'modalAccentColor', 'modalLineColor'
+    ];
+    colorIds.forEach(function(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', function() {
+                const span = document.getElementById(id + 'Value');
+                if (span) span.innerText = el.value;
+                if (currentMenuData && !id.startsWith('modal')) renderMenu();
+            });
+        }
+    });
+
+    document.getElementById('inheritCardStyle').addEventListener('change', function(e) {
+        document.getElementById('customModalStyles').style.display = e.target.checked ? 'none' : 'block';
+        if (currentMenuData) renderMenu();
+    });
+
+    ['modalTitleFont', 'modalTitleSize', 'modalTitleWeight', 'modalModifierFont', 'modalModifierSize', 'modalModifierWeight',
+     'modalBgColor', 'modalTextColor', 'modalAccentColor', 'modalLineColor',
+     'modalRadiusTL', 'modalRadiusTR', 'modalRadiusBR', 'modalRadiusBL'].forEach(function(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', function() {
+                if (currentMenuData && !document.getElementById('inheritCardStyle').checked) applyModalStyles();
+            });
+        }
+    });
+
+    document.getElementById('loadUrlBtn').addEventListener('click', function() {
+        const url = document.getElementById('jsonUrl').value.trim();
+        if (url) loadFromUrl(url);
+    });
+
+    document.getElementById('jsonUrl').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const url = this.value.trim();
+            if (url) loadFromUrl(url);
+        }
+    });
+
+    // ─── Status helper ────────────────────────────────────────────────────────────
+    function showStatus(msg, type) {
+        const c = document.getElementById('menuPreview');
+        const d = document.createElement('div');
+        d.className = 'status ' + type;
+        d.textContent = msg;
+        const old = c.querySelector('.status');
+        if (old) old.remove();
+        c.insertBefore(d, c.firstChild);
+        if (type !== 'error') setTimeout(function() { if (d.parentNode) d.remove(); }, 4000);
+    }
+</script>
+</body>
+</html>
