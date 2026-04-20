@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SpotOn Menu Studio – Lite | Colors & Typography Only</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0a0c10;
+            color: #e2e8f0;
+        }
+
+        .studio-header {
+            background: #111315;
+            border-bottom: 1px solid #2a2e35;
+            padding: 16px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            background: rgba(17,19,21,0.95);
+        }
+
+        .header-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo {
+            height: 38px;
+            object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+
+        .header-text h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .header-text p {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        .badge {
+            background: #1e293b;
+            color: #60a5fa;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .studio-container {
+            max-width: 1300px;
+            margin: 32px auto;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 28px;
+        }
+
+        .controls-panel {
+            background: #111315;
+            border-radius: 24px;
+            border: 1px solid #2a2e35;
+            overflow-y: auto;
+            position: sticky;
+            top: 88px;
+            max-height: calc(100vh - 110px);
+            scrollbar-width: thin;
+        }
+
+        .panel-section {
+            padding: 20px 22px;
+            border-bottom: 1px solid #2a2e35;
+        }
+
+        .panel-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #cbd5e1;
+        }
+
+        .helper-text {
+            font-size: 0.7rem;
+            color: #6c7a91;
+            margin-top: 6px;
+        }
+
+        .color-input {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .color-input input {
+            width: 44px;
+            height: 44px;
+            padding: 2px;
+            border-radius: 12px;
+            background: #1a1d21;
+            border: 1px solid #2a2e35;
+            cursor: pointer;
+        }
+
+        .color-input span {
+            font-size: 0.85rem;
+            font-family: monospace;
+            background: #1a1d21;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        .typography-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .typography-grid input, .typography-grid select {
+            padding: 8px 10px;
+            border-radius: 12px;
+            border: 1px solid #2a2e35;
+            background: #1a1d21;
+            color: #e2e8f0;
+            font-size: 0.8rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-align: center;
+            border: none;
+            transition: 0.2s;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        .btn-secondary {
+            background: #2a2e35;
+            color: #e2e8f0;
+            border: 1px solid #3a3f47;
+        }
+        .btn-secondary:hover {
+            background: #3a3f47;
+        }
+
+        .preview-panel {
+            background: #111315;
+            border-radius: 24px;
+            border: 1px solid #2a2e35;
+            overflow: hidden;
+        }
+
+        .preview-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #2a2e35;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .menu-preview {
+            padding: 24px;
+            background: #0a0c10;
+            min-height: 520px;
+        }
+
+        /* Preview styles */
+        .simplified-menu .categories-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 28px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 12px;
+        }
+
+        .simplified-menu .category-tab {
+            padding: 8px 20px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+            white-space: nowrap;
+            background: var(--tab-bg);
+            color: var(--tab-text);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .simplified-menu .category-tab.active {
+            background: var(--active-tab-bg);
+            color: var(--tab-text);  /* same text color for both states */
+            border-color: var(--active-tab-bg);
+        }
+
+        .simplified-menu .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 24px;
+        }
+
+        .simplified-menu .menu-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            border: none;  /* card border removed */
+        }
+
+        .simplified-menu .card-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .simplified-menu .card-img-empty {
+            width: 100%;
+            height: 180px;
+            background: var(--card-bg);
+        }
+
+        .simplified-menu .card-content {
+            padding: 16px;
+        }
+
+        .simplified-menu .item-title {
+            font-size: var(--title-size);
+            font-weight: var(--title-weight);
+            font-family: var(--title-font);
+            color: var(--title-color);
+            margin-bottom: 6px;
+        }
+
+        .simplified-menu .item-desc {
+            font-size: var(--desc-size);
+            font-weight: var(--desc-weight);
+            font-family: var(--desc-font);
+            color: var(--desc-color);
+            opacity: 0.85;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .simplified-menu .item-price {
+            font-size: var(--price-size);
+            font-weight: var(--price-weight);
+            font-family: var(--price-font);
+            color: var(--price-color);
+            font-weight: 700;
+        }
+
+        .status {
+            padding: 12px 16px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+        }
+        .status.info {
+            background: #0c4a6e;
+            color: #bae6fd;
+            border-left: 4px solid #0ea5e9;
+        }
+        .status.success {
+            background: #14532d;
+            color: #86efac;
+        }
+        .hidden {
+            display: none;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #111315;
+            border-radius: 28px;
+            max-width: 820px;
+            width: 90%;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #2a2e35;
+        }
+        .modal-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid #2a2e35;
+            display: flex;
+            justify-content: space-between;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #94a3b8;
+        }
+        .modal-body {
+            padding: 20px 24px;
+            overflow-y: auto;
+        }
+        .code-container {
+            background: #0a0c10;
+            border-radius: 16px;
+            padding: 16px;
+            position: relative;
+            border: 1px solid #2a2e35;
+        }
+        .code-container pre {
+            color: #e2e8f0;
+            font-family: 'Monaco', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 420px;
+        }
+        .copy-code-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #3b82f6;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            font-size: 11px;
+        }
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #2a2e35;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        @media (max-width: 780px) {
+            .studio-container {
+                grid-template-columns: 1fr;
+                padding: 16px;
+            }
+            .controls-panel {
+                position: static;
+                max-height: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="studio-header">
+    <div class="header-content">
+        <div class="logo-area">
+            <img src="https://posphilly.com/wp-content/uploads/2022/12/cropped-SpotOn_Logo-removebg-preview11.png" alt="SpotOn" class="logo">
+            <div class="header-text">
+                <h1>Menu Studio • Lite</h1>
+                <p>Colors + Typography only — card border removed, unified tab text color</p>
+            </div>
+        </div>
+        <div class="badge">Live preview | minimal style</div>
+    </div>
+</div>
+
+<div class="studio-container">
+    <div class="controls-panel">
+        <div class="panel-section">
+            <div class="section-title">🍽️ Merchant & Data</div>
+            <div class="control-group">
+                <label>Merchant ID</label>
+                <input type="text" id="merchantId" placeholder="Enter Merchant ID" value="">
+                <div class="helper-text">Required to load live menu. Click Refresh.</div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-secondary" id="refreshBtn">↻ Refresh Menu</button>
+                <button class="btn btn-primary" id="showCodeBtn">📋 Generate Embed Code</button>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <div class="section-title">🎨 Colors</div>
+            <div class="control-group">
+                <label>Card Background</label>
+                <div class="color-input">
+                    <input type="color" id="cardBgColor" value="#111315">
+                    <span id="cardBgValue">#111315</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Tab Background (inactive)</label>
+                <div class="color-input">
+                    <input type="color" id="tabBgColor" value="#1a1d21">
+                    <span id="tabBgValue">#1a1d21</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Active Tab Background</label>
+                <div class="color-input">
+                    <input type="color" id="activeTabBgColor" value="#3b82f6">
+                    <span id="activeTabBgValue">#3b82f6</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Tab Text Color (both states)</label>
+                <div class="color-input">
+                    <input type="color" id="tabTextColor" value="#e2e8f0">
+                    <span id="tabTextColorValue">#e2e8f0</span>
+                </div>
+                <div class="helper-text">Applied to inactive & active tabs</div>
+            </div>
+            <div class="control-group">
+                <label>Title Text Color</label>
+                <div class="color-input">
+                    <input type="color" id="titleColor" value="#f1f5f9">
+                    <span id="titleColorValue">#f1f5f9</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Description Text Color</label>
+                <div class="color-input">
+                    <input type="color" id="descColor" value="#94a3b8">
+                    <span id="descColorValue">#94a3b8</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Price Text Color</label>
+                <div class="color-input">
+                    <input type="color" id="priceColor" value="#60a5fa">
+                    <span id="priceColorValue">#60a5fa</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <div class="section-title">🔤 Google Fonts & Typography</div>
+            <div class="control-group">
+                <label>Tab Font</label>
+                <div class="typography-grid">
+                    <input type="text" id="tabFontFamily" list="fontList" placeholder="Font family" value="Inter">
+                    <input type="number" id="tabFontSize" value="14" step="1" min="10" placeholder="Size">
+                    <select id="tabFontWeight">
+                        <option value="400">400 Normal</option>
+                        <option value="500">500 Medium</option>
+                        <option value="600" selected>600 SemiBold</option>
+                        <option value="700">700 Bold</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Title Font (item name)</label>
+                <div class="typography-grid">
+                    <input type="text" id="titleFontFamily" list="fontList" value="Inter">
+                    <input type="number" id="titleFontSize" value="18" step="1" min="10">
+                    <select id="titleFontWeight">
+                        <option value="500">500 Medium</option>
+                        <option value="600" selected>600 SemiBold</option>
+                        <option value="700">700 Bold</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Description Font</label>
+                <div class="typography-grid">
+                    <input type="text" id="descFontFamily" list="fontList" value="Inter">
+                    <input type="number" id="descFontSize" value="13" step="1" min="10">
+                    <select id="descFontWeight">
+                        <option value="400" selected>400 Normal</option>
+                        <option value="500">500 Medium</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Price Font</label>
+                <div class="typography-grid">
+                    <input type="text" id="priceFontFamily" list="fontList" value="Inter">
+                    <input type="number" id="priceFontSize" value="16" step="1" min="10">
+                    <select id="priceFontWeight">
+                        <option value="600">600 SemiBold</option>
+                        <option value="700" selected>700 Bold</option>
+                    </select>
+                </div>
+            </div>
+            <div class="helper-text">Type any Google Font name (Inter, Poppins, Roboto, etc.) — auto loaded</div>
+        </div>
+        <datalist id="fontList">
+            <option>Inter</option><option>Roboto</option><option>Poppins</option><option>Open Sans</option><option>Lato</option>
+            <option>Montserrat</option><option>Nunito</option><option>Playfair Display</option><option>Raleway</option><option>Quicksand</option>
+            <option>Work Sans</option><option>DM Sans</option><option>Plus Jakarta Sans</option><option>Space Grotesk</option>
+        </datalist>
+    </div>
+
+    <div class="preview-panel">
+        <div class="preview-header">
+            <h2>📱 Menu Preview (live styles)</h2>
+            <div class="badge">colors + fonts | borderless cards</div>
+        </div>
+        <div class="menu-preview" id="menuPreview">
+            <div class="status info">Enter Merchant ID and click Refresh to load menu</div>
+        </div>
+    </div>
+</div>
+
+<div id="codeModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Embed Code — copy into Webflow / any site</h3>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="code-container">
+                <button class="copy-code-btn" id="modalCopyBtn">Copy Code</button>
+                <pre id="embedCodeDisplay"></pre>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeModal()">Close</button>
+            <button class="btn-primary" id="modalFooterCopyBtn">Copy to Clipboard</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const googleFontsList = ["Inter","Roboto","Poppins","Open Sans","Lato","Montserrat","Nunito","Playfair Display","Raleway","Quicksand","Work Sans","DM Sans","Plus Jakarta Sans","Space Grotesk","Figtree","Jost","Manrope","Rubik","Oswald","Cabin"];
+    const fontDatalist = document.getElementById('fontList');
+    googleFontsList.forEach(f => { let opt = document.createElement('option'); opt.value = f; fontDatalist.appendChild(opt); });
+
+    class LiteMenuStudio {
+        constructor() {
+            this.menuData = null;
+            this.categoryNames = {};
+            this.itemsByCategory = {};
+            this.activeCategoryId = null;
+            this.fontLinks = new Set();
+            this.init();
+        }
+
+        init() {
+            document.getElementById('refreshBtn').addEventListener('click', () => this.loadMenu());
+            document.getElementById('showCodeBtn').addEventListener('click', () => this.showEmbedCode());
+            const colorIds = ['cardBgColor','tabBgColor','activeTabBgColor','tabTextColor','titleColor','descColor','priceColor'];
+            colorIds.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.addEventListener('input', (e) => {
+                    document.getElementById(id+'Value').innerText = e.target.value;
+                    this.applyStylesToPreview();
+                });
+            });
+            const fontInputs = ['tabFontFamily','tabFontSize','tabFontWeight','titleFontFamily','titleFontSize','titleFontWeight','descFontFamily','descFontSize','descFontWeight','priceFontFamily','priceFontSize','priceFontWeight'];
+            fontInputs.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.addEventListener('input', () => this.applyStylesToPreview());
+                if(el && el.tagName === 'SELECT') el.addEventListener('change', () => this.applyStylesToPreview());
+            });
+            this.loadMenu();
+        }
+
+        async loadMenu() {
+            const mid = document.getElementById('merchantId').value.trim();
+            if (!mid) {
+                this.loadSampleData();
+                return;
+            }
+            this.showStatus('Loading live menu...', 'info');
+            try {
+                const date = new Date().toISOString().slice(0,10);
+                const url = `https://qa-ecommerce-api.spoton.com/v1/restaurants/${mid}/menu-groups?orderDateTime=${date}T10:22:25-05:00&orderTypeId=3uxw5e1y0vgz3dwi1we2ioj1lq`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('API error');
+                const cats = await res.json();
+                this.categoryNames = {};
+                this.itemsByCategory = {};
+                cats.forEach(c => {
+                    if (c.menuItems && c.menuItems.length) {
+                        this.categoryNames[c.id] = c.name.trim();
+                        this.itemsByCategory[c.id] = c.menuItems;
+                    }
+                });
+                if (Object.keys(this.itemsByCategory).length === 0) throw new Error('No categories');
+                this.renderMenuPreview();
+                this.showStatus('Menu loaded!', 'success');
+            } catch(e) {
+                console.warn(e);
+                this.loadSampleData();
+            }
+        }
+
+        loadSampleData() {
+            this.categoryNames = { sample1: 'Appetizers', sample2: 'Main Courses', sample3: 'Desserts', sample4: 'Drinks' };
+            this.itemsByCategory = {
+                sample1: [
+                    { name:'Bruschetta', description:'Toasted bread with tomatoes & basil', price:'9.99', imageUrl:'' },
+                    { name:'Spring Rolls', description:'Crispy veggie rolls', price:'8.99', imageUrl:'https://placehold.co/400x240/1a1d21/white?text=Sample+Image' }
+                ],
+                sample2: [
+                    { name:'Grilled Salmon', description:'Fresh Atlantic salmon', price:'24.99', imageUrl:'' },
+                    { name:'Steak Frites', description:'Ribeye with fries', price:'28.99', imageUrl:'' }
+                ],
+                sample3: [
+                    { name:'Tiramisu', description:'Classic Italian dessert', price:'7.99', imageUrl:'' }
+                ],
+                sample4: [
+                    { name:'House Wine', description:'Red or white', price:'0', imageUrl:'' }
+                ]
+            };
+            this.renderMenuPreview();
+            this.showStatus('Using sample data — enter valid Merchant ID for live menu', 'info');
+        }
+
+        renderMenuPreview() {
+            const container = document.getElementById('menuPreview');
+            const categories = Object.keys(this.itemsByCategory);
+            if (!categories.length) { container.innerHTML = '<div class="status info">No categories found</div>'; return; }
+            if (!this.activeCategoryId || !this.itemsByCategory[this.activeCategoryId]) this.activeCategoryId = categories[0];
+            let html = `<div class="simplified-menu" id="simplifiedMenuRoot">`;
+            html += `<div class="categories-row" id="liteCategoriesRow">`;
+            categories.forEach(cid => {
+                const activeClass = (this.activeCategoryId === cid) ? 'active' : '';
+                html += `<a href="#" class="category-tab ${activeClass}" data-catid="${cid}">${this.escapeHtml(this.categoryNames[cid])}</a>`;
+            });
+            html += `</div><div class="items-grid" id="liteItemsGrid"></div></div>`;
+            container.innerHTML = html;
+            document.querySelectorAll('#liteCategoriesRow .category-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const cid = tab.dataset.catid;
+                    this.activeCategoryId = cid;
+                    this.renderMenuPreview();
+                });
+            });
+            this.displayCurrentCategoryItems();
+            this.applyStylesToPreview();
+        }
+
+        displayCurrentCategoryItems() {
+            const grid = document.getElementById('liteItemsGrid');
+            if (!grid) return;
+            const items = this.itemsByCategory[this.activeCategoryId] || [];
+            grid.innerHTML = '';
+            const cardBg = document.getElementById('cardBgColor').value;
+            items.forEach(item => {
+                const priceValue = (item.price && parseFloat(item.price) !== 0) ? `$${item.price}` : 'Price Varies';
+                const hasImage = item.imageUrl && item.imageUrl.trim() !== '';
+                const imageHtml = hasImage 
+                    ? `<img class="card-img" src="${this.escapeHtml(item.imageUrl)}" alt="${this.escapeHtml(item.name)}" loading="lazy">`
+                    : `<div class="card-img-empty" style="background: ${cardBg};"></div>`;
+                const card = document.createElement('div');
+                card.className = 'menu-card';
+                card.innerHTML = `
+                    ${imageHtml}
+                    <div class="card-content">
+                        <div class="item-title">${this.escapeHtml(item.name)}</div>
+                        <div class="item-desc">${this.escapeHtml(item.description || '')}</div>
+                        <div class="item-price">${priceValue}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        applyStylesToPreview() {
+            const cardBg = document.getElementById('cardBgColor').value;
+            const tabBg = document.getElementById('tabBgColor').value;
+            const activeTabBg = document.getElementById('activeTabBgColor').value;
+            const tabText = document.getElementById('tabTextColor').value;
+            const titleColor = document.getElementById('titleColor').value;
+            const descColor = document.getElementById('descColor').value;
+            const priceColor = document.getElementById('priceColor').value;
+
+            const tabFont = document.getElementById('tabFontFamily').value;
+            const tabSize = document.getElementById('tabFontSize').value;
+            const tabWeight = document.getElementById('tabFontWeight').value;
+            const titleFont = document.getElementById('titleFontFamily').value;
+            const titleSize = document.getElementById('titleFontSize').value;
+            const titleWeight = document.getElementById('titleFontWeight').value;
+            const descFont = document.getElementById('descFontFamily').value;
+            const descSize = document.getElementById('descFontSize').value;
+            const descWeight = document.getElementById('descFontWeight').value;
+            const priceFont = document.getElementById('priceFontFamily').value;
+            const priceSize = document.getElementById('priceFontSize').value;
+            const priceWeight = document.getElementById('priceFontWeight').value;
+
+            this.loadFont(tabFont);
+            this.loadFont(titleFont);
+            this.loadFont(descFont);
+            this.loadFont(priceFont);
+
+            let styleTag = document.getElementById('livePreviewStyles');
+            if (!styleTag) {
+                styleTag = document.createElement('style');
+                styleTag.id = 'livePreviewStyles';
+                document.head.appendChild(styleTag);
+            }
+            styleTag.textContent = `
+                .simplified-menu {
+                    --card-bg: ${cardBg};
+                    --tab-bg: ${tabBg};
+                    --active-tab-bg: ${activeTabBg};
+                    --tab-text: ${tabText};
+                    --title-color: ${titleColor};
+                    --desc-color: ${descColor};
+                    --price-color: ${priceColor};
+                    --title-font: '${titleFont}', sans-serif;
+                    --desc-font: '${descFont}', sans-serif;
+                    --price-font: '${priceFont}', sans-serif;
+                    --title-size: ${titleSize}px;
+                    --desc-size: ${descSize}px;
+                    --price-size: ${priceSize}px;
+                    --title-weight: ${titleWeight};
+                    --desc-weight: ${descWeight};
+                    --price-weight: ${priceWeight};
+                }
+                .simplified-menu .category-tab {
+                    background: var(--tab-bg) !important;
+                    color: var(--tab-text) !important;
+                    font-family: '${tabFont}', sans-serif !important;
+                    font-size: ${tabSize}px !important;
+                    font-weight: ${tabWeight} !important;
+                }
+                .simplified-menu .category-tab.active {
+                    background: var(--active-tab-bg) !important;
+                    color: var(--tab-text) !important;
+                }
+                .simplified-menu .menu-card {
+                    background: var(--card-bg) !important;
+                    border: none !important;
+                }
+                .simplified-menu .card-img-empty {
+                    background: var(--card-bg) !important;
+                }
+                .simplified-menu .item-title {
+                    color: var(--title-color) !important;
+                    font-family: var(--title-font) !important;
+                    font-size: var(--title-size) !important;
+                    font-weight: var(--title-weight) !important;
+                }
+                .simplified-menu .item-desc {
+                    color: var(--desc-color) !important;
+                    font-family: var(--desc-font) !important;
+                    font-size: var(--desc-size) !important;
+                    font-weight: var(--desc-weight) !important;
+                }
+                .simplified-menu .item-price {
+                    color: var(--price-color) !important;
+                    font-family: var(--price-font) !important;
+                    font-size: var(--price-size) !important;
+                    font-weight: var(--price-weight) !important;
+                }
+            `;
+        }
+
+        loadFont(fontFamily) {
+            if (!fontFamily || fontFamily === 'Inter') return;
+            const key = fontFamily.replace(/ /g, '-').toLowerCase();
+            if (this.fontLinks.has(key)) return;
+            const link = document.createElement('link');
+            link.href = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:wght@400;500;600;700&display=swap`;
+            link.rel = 'stylesheet';
+            document.head.appendChild(link);
+            this.fontLinks.add(key);
+        }
+
+        generateEmbedCode() {
+            const mid = document.getElementById('merchantId').value.trim();
+            const cardBg = document.getElementById('cardBgColor').value;
+            const tabBg = document.getElementById('tabBgColor').value;
+            const activeTabBg = document.getElementById('activeTabBgColor').value;
+            const tabText = document.getElementById('tabTextColor').value;
+            const titleColor = document.getElementById('titleColor').value;
+            const descColor = document.getElementById('descColor').value;
+            const priceColor = document.getElementById('priceColor').value;
+
+            const tabFont = document.getElementById('tabFontFamily').value;
+            const tabSize = document.getElementById('tabFontSize').value;
+            const tabWeight = document.getElementById('tabFontWeight').value;
+            const titleFont = document.getElementById('titleFontFamily').value;
+            const titleSize = document.getElementById('titleFontSize').value;
+            const titleWeight = document.getElementById('titleFontWeight').value;
+            const descFont = document.getElementById('descFontFamily').value;
+            const descSize = document.getElementById('descFontSize').value;
+            const descWeight = document.getElementById('descFontWeight').value;
+            const priceFont = document.getElementById('priceFontFamily').value;
+            const priceSize = document.getElementById('priceFontSize').value;
+            const priceWeight = document.getElementById('priceFontWeight').value;
+
+            const fontsSet = new Set([tabFont, titleFont, descFont, priceFont].filter(f => f && f !== 'Inter'));
+            let fontLinksHtml = '';
+            fontsSet.forEach(f => {
+                fontLinksHtml += `<link href="https://fonts.googleapis.com/css2?family=${f.replace(/ /g, '+')}:wght@400;500;600;700&display=swap" rel="stylesheet">\n`;
+            });
+
+            return `<!-- SpotOn Lite Menu Embed - borderless cards + unified tab text color -->
+${fontLinksHtml}
+<style>
+.spoton-lite-menu .categories-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.spoton-lite-menu .category-tab { padding: 8px 20px; border-radius: 40px; text-decoration: none; cursor: pointer; background: ${tabBg}; color: ${tabText}; font-family: '${tabFont}', sans-serif; font-size: ${tabSize}px; font-weight: ${tabWeight}; border: 1px solid rgba(255,255,255,0.1); transition: 0.2s; display: inline-block; }
+.spoton-lite-menu .category-tab.active { background: ${activeTabBg}; color: ${tabText}; border-color: ${activeTabBg}; }
+.spoton-lite-menu .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 24px; }
+.spoton-lite-menu .menu-card { background: ${cardBg}; border-radius: 20px; overflow: hidden; border: none; }
+.spoton-lite-menu .card-img { width: 100%; height: 180px; object-fit: cover; display: block; }
+.spoton-lite-menu .card-img-empty { width: 100%; height: 180px; background: ${cardBg}; }
+.spoton-lite-menu .card-content { padding: 16px; }
+.spoton-lite-menu .item-title { font-family: '${titleFont}', sans-serif; font-size: ${titleSize}px; font-weight: ${titleWeight}; color: ${titleColor}; margin-bottom: 6px; }
+.spoton-lite-menu .item-desc { font-family: '${descFont}', sans-serif; font-size: ${descSize}px; font-weight: ${descWeight}; color: ${descColor}; opacity: 0.85; margin-bottom: 10px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.spoton-lite-menu .item-price { font-family: '${priceFont}', sans-serif; font-size: ${priceSize}px; font-weight: ${priceWeight}; color: ${priceColor}; }
+@media (max-width: 600px) { .spoton-lite-menu .items-grid { gap: 16px; } }
+</style>
+<div class="spoton-lite-menu" id="spotonLiteApp"></div>
+<script>
+(function() {
+    const container = document.getElementById('spotonLiteApp');
+    if(!container) return;
+    const merchantId = "${mid}";
+    let categoryNames = {}, itemsByCat = {}, activeCat = null;
+    async function fetchData() {
+        if(!merchantId) { container.innerHTML = '<div style="padding:20px;text-align:center;">⚠️ No Merchant ID provided</div>'; return; }
+        try {
+            const date = new Date().toISOString().slice(0,10);
+            const url = \`https://qa-ecommerce-api.spoton.com/v1/restaurants/\${merchantId}/menu-groups?orderDateTime=\${date}T10:22:25-05:00&orderTypeId=3uxw5e1y0vgz3dwi1we2ioj1lq\`;
+            const res = await fetch(url);
+            if(!res.ok) throw new Error();
+            const cats = await res.json();
+            cats.forEach(c => {
+                if(c.menuItems?.length) {
+                    categoryNames[c.id] = c.name.trim();
+                    itemsByCat[c.id] = c.menuItems;
+                }
+            });
+            if(Object.keys(itemsByCat).length === 0) throw new Error();
+            render();
+        } catch(e) {
+            container.innerHTML = '<div style="padding:20px;color:#ef4444;">Failed to load menu. Check Merchant ID or network.</div>';
+        }
+    }
+    function render() {
+        const cats = Object.keys(itemsByCat);
+        if(!cats.length) return;
+        if(!activeCat || !itemsByCat[activeCat]) activeCat = cats[0];
+        let html = \`<div class="categories-row">\`;
+        cats.forEach(cid => {
+            html += \`<a href="#" class="category-tab \${activeCat === cid ? 'active' : ''}" data-cid="\${cid}">\${escapeHtml(categoryNames[cid])}</a>\`;
+        });
+        html += \`</div><div class="items-grid" id="liteGridEmbed"></div>\`;
+        container.innerHTML = html;
+        document.querySelectorAll('.category-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                activeCat = tab.dataset.cid;
+                render();
+            });
+        });
+        const grid = document.getElementById('liteGridEmbed');
+        const items = itemsByCat[activeCat] || [];
+        grid.innerHTML = items.map(item => {
+            const priceVal = (item.price && parseFloat(item.price) !== 0) ? \`$\${item.price}\` : 'Price Varies';
+            const hasImage = item.imageUrl && item.imageUrl.trim() !== '';
+            const imageHtml = hasImage 
+                ? \`<img class="card-img" src="\${escapeHtml(item.imageUrl)}" alt="\${escapeHtml(item.name)}" loading="lazy">\`
+                : \`<div class="card-img-empty"></div>\`;
+            return \`<div class="menu-card">\${imageHtml}<div class="card-content"><div class="item-title">\${escapeHtml(item.name)}</div><div class="item-desc">\${escapeHtml(item.description || '')}</div><div class="item-price">\${priceVal}</div></div></div>\`;
+        }).join('');
+    }
+    function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+    fetchData();
+})();
+<\/script>`;
+        }
+
+        showEmbedCode() {
+            const modal = document.getElementById('codeModal');
+            document.getElementById('embedCodeDisplay').textContent = this.generateEmbedCode();
+            modal.classList.add('active');
+        }
+
+        showStatus(msg, type) {
+            const container = document.getElementById('menuPreview');
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = msg;
+            const old = container.querySelector('.status');
+            if(old) old.remove();
+            container.insertBefore(div, container.firstChild);
+            setTimeout(() => { if(div.parentNode) div.remove(); }, 3000);
+        }
+
+        escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+    }
+
+    window.closeModal = () => document.getElementById('codeModal').classList.remove('active');
+    function copyModalCode() {
+        const code = document.getElementById('embedCodeDisplay').textContent;
+        navigator.clipboard.writeText(code).then(() => {
+            const btn = document.querySelector('#modalCopyBtn');
+            const orig = btn.textContent;
+            btn.textContent = '✓ Copied!';
+            setTimeout(() => btn.textContent = orig, 1800);
+        });
+    }
+    document.getElementById('modalCopyBtn').onclick = copyModalCode;
+    document.getElementById('modalFooterCopyBtn').onclick = copyModalCode;
+    new LiteMenuStudio();
+</script>
+</body>
+</html>
