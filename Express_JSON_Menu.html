@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SpotOn Menu Studio</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        img.list-item-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0a0c10;
+            color: #e2e8f0;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
+
+        /* Header */
+        .studio-header {
+            background: #111315;
+            border-bottom: 1px solid #2a2e35;
+            padding: 20px 32px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            background: rgba(17,19,21,0.95);
+        }
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .logo-area { display: flex; align-items: center; gap: 16px; }
+        .logo { height: 40px; object-fit: contain; filter: brightness(0) invert(1); }
+        .header-text h1 { font-size: 20px; font-weight: 600; color: white; }
+        .header-text p { font-size: 13px; color: #94a3b8; }
+        .badge { background: #1e293b; color: #60a5fa; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+
+        /* Layout */
+        .studio-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 32px;
+        }
+        .controls-panel {
+            background: #111315;
+            border-radius: 24px;
+            border: 1px solid #2a2e35;
+            overflow-y: auto;
+            position: sticky;
+            top: 88px;
+            max-height: calc(100vh - 120px);
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            min-width: 0;
+        }
+        .panel-section { width: 100%; padding: 20px 24px; border-bottom: 1px solid #2a2e35; }
+        .panel-section:last-child { border-bottom: none; }
+        .section-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #f1f5f9; display: flex; align-items: center; gap: 8px; }
+        .subsection-title { font-size: 14px; font-weight: 600; margin: 16px 0 12px 0; color: #cbd5e1; border-left: 3px solid #3b82f6; padding-left: 10px; }
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #cbd5e1; }
+        .helper-text { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+        .control-group input, .control-group select, .control-group textarea {
+            width: 100%; padding: 8px 12px; border: 1px solid #2a2e35; border-radius: 10px;
+            font-size: 13px; background: #1a1d21; color: #e2e8f0;
+        }
+        .radio-group, .toggle-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .radio-group label, .toggle-group label {
+            display: inline-flex; align-items: center; gap: 6px; font-weight: normal;
+            background: #1a1d21; padding: 6px 14px; border-radius: 40px; border: 1px solid #2a2e35;
+            cursor: pointer; color: #cbd5e1; font-size: 13px;
+        }
+        .color-input { display: flex; gap: 10px; align-items: center; }
+        .color-input input { width: 44px; height: 44px; padding: 3px; border-radius: 10px; cursor: pointer; }
+        .padding-grid, .radius-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
+        .action-buttons { display: flex; gap: 12px; margin-top: 20px; }
+        .btn { flex: 1; padding: 10px; border-radius: 40px; font-weight: 600; font-size: 13px; cursor: pointer; text-align: center; border: none; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-secondary { background: #2a2e35; color: #e2e8f0; border: 1px solid #3a3f47; }
+
+        .preview-panel {
+            background: #111315;
+            border-radius: 24px;
+            border: 1px solid #2a2e35;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .preview-header { padding: 16px 24px; border-bottom: 1px solid #2a2e35; display: flex; justify-content: space-between; align-items: center; }
+        .menu-preview { padding: 24px; background: #0a0c10; min-height: 500px; overflow-y: auto; flex: 1; }
+
+        /* Preview styles */
+        .menu-layout { display: flex; gap: 24px; }
+        .menu-layout.tabs-top { flex-direction: column; }
+        .menu-layout.tabs-bottom { flex-direction: column-reverse; }
+        .menu-layout.tabs-left { flex-direction: row; }
+        .menu-layout.tabs-right { flex-direction: row-reverse; }
+        .tabs-left .menu-root, .tabs-right .menu-root { align-self: flex-start; }
+        .categories-container { display: flex; flex-wrap: wrap; gap: 10px; }
+        .tabs-left .categories-container, .tabs-right .categories-container { flex-direction: column; min-width: 150px; max-width: 200px; }
+        .tabs-left .category-link, .tabs-right .category-link { white-space: normal; text-align: center; word-break: break-word; }
+        .category-link {
+            padding: 8px 14px; background: #1a1d21; border: 1px solid #2a2e35; border-radius: 40px;
+            text-decoration: none; color: #cbd5e1; font-size: 13px; font-weight: 500; cursor: pointer;
+            transition: all 0.2s; white-space: nowrap; display: inline-block;
+        }
+        .category-link.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+        .menu-root { flex: 1; }
+        .layout-classic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 24px; }
+        .layout-hero-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 28px; }
+        .layout-compact-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+        .layout-split-view { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        .layout-list-image-left, .layout-list-image-right {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .layout-list-image-left .list-item, .layout-list-image-right .list-item {
+            display: flex;
+            gap: 20px;
+            align-items: stretch;
+            width: 100%;
+            overflow: hidden;
+        }
+        .layout-list-image-left .list-item { flex-direction: row; }
+        .layout-list-image-right .list-item { flex-direction: row-reverse; }
+        .layout-list-image-left .item-thumbnail-wrapper,
+        .layout-list-image-right .item-thumbnail-wrapper {
+            width: 120px;
+            height: 120px;
+            flex-shrink: 0;
+            background: inherit;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .layout-list-image-left .list-item-image,
+        .layout-list-image-right .list-item-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+        .layout-list-image-left .item-content,
+        .layout-list-image-right .item-content {
+            flex: 1;
+            padding: 12px 0;
+        }
+        .layout-list-image-right .item-content {
+            padding-left: 16px;
+        }
+        .list-item {
+            background: #111315; border-radius: 16px; overflow: hidden; border: 1px solid #2a2e35;
+            display: flex; flex-direction: column; height: 100%; transition: transform 0.2s, box-shadow 0.2s; padding: 0;
+        }
+        .list-item.has-modifiers { cursor: pointer; }
+        .list-item.has-modifiers:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .list-item.no-modifiers { cursor: default; }
+        .item-thumbnail-wrapper {
+            margin: 0; padding: 0; background: inherit; overflow: hidden; flex-shrink: 0;
+            width: 100%; display: flex; align-items: center; justify-content: center;
+        }
+        .item-content { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+        .list-item-name { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+        .list-item-description { font-size: 12px; margin-bottom: 10px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .list-item-price { font-size: 15px; font-weight: 700; margin-top: auto; }
+        .price-hidden { display: none; }
+        .category-toolbar { margin-bottom: 12px; display: flex; gap: 12px; flex-wrap: wrap; }
+        .tabs-left .category-toolbar, .tabs-right .category-toolbar { flex-direction: column; margin-bottom: 8px; }
+        .category-search, .category-select {
+            padding: 8px 12px; border: 1px solid #2a2e35; border-radius: 40px; font-size: 13px;
+            background: #1a1d21; color: #e2e8f0; width: 100%;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modifier-modal-content {
+            max-width: 550px; width: 90%; max-height: 85vh; display: flex; flex-direction: column;
+            overflow: hidden; transition: all 0.2s ease;
+        }
+        .modifier-modal-header { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .modifier-modal-header h3 { font-size: 18px; margin: 0; }
+        .modal-close { background: none; border: none; font-size: 28px; cursor: pointer; transition: color 0.2s; }
+        .modifier-modal-body { padding: 20px 24px; overflow-y: auto; flex: 1; }
+        .modifier-group { margin-bottom: 20px; }
+        .modifier-group:last-child { margin-bottom: 0; }
+        .modifier-group-name { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+        .modifier-limits { font-size: 11px; margin-bottom: 10px; }
+        .modifier-option { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; font-size: 13px; border-bottom: 1px solid; }
+        .modifier-option:last-child { border-bottom: none; }
+        .modifier-price { font-weight: 500; }
+        .modifier-price.extra { font-weight: 600; }
+        .modifier-modal-body .no-modifiers { text-align: center; padding: 30px; font-style: italic; }
+
+        .code-container { background: #0a0c10; border-radius: 16px; padding: 16px; position: relative; border: 1px solid #2a2e35; }
+        .code-container pre { color: #e2e8f0; font-family: monospace; font-size: 12px; overflow-x: auto; white-space: pre-wrap; }
+        .copy-code-btn { position: absolute; top: 12px; right: 12px; background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 30px; cursor: pointer; font-size: 12px; }
+
+        .exclude-widget { border: 1px solid #2a2e35; border-radius: 12px; background: #1a1d21; }
+        .exclude-trigger { padding: 10px 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; color: #cbd5e1; font-size: 13px; }
+        .exclude-trigger:hover { background: #2a2e35; }
+        .exclude-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 14px; border-top: 1px solid #2a2e35; }
+        .exclude-chip { background: #2a2e35; padding: 4px 8px 4px 12px; border-radius: 20px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; color: #e2e8f0; }
+        .exclude-chip-remove { cursor: pointer; font-size: 14px; color: #94a3b8; }
+        .exclude-chip-remove:hover { color: #ef4444; }
+        .exclude-dropdown { display: none; padding: 12px; border-top: 1px solid #2a2e35; max-height: 200px; overflow-y: auto; background: #1a1d21; }
+        .exclude-dropdown.show { display: block; }
+        .exclude-option { display: flex; align-items: center; gap: 8px; padding: 8px 0; cursor: pointer; color: #cbd5e1; font-size: 13px; min-height: 36px; }
+        .exclude-option input { margin: 0; width: 16px; height: 16px; flex-shrink: 0; }
+        .exclude-option:hover { background: #2a2e35; }
+        .status { padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; font-size: 13px; }
+        .status.success { background: #14532d; color: #86efac; border-left: 4px solid #22c55e; }
+        .status.error { background: #7f1a1a; color: #fecaca; border-left: 4px solid #ef4444; }
+        .status.info { background: #0c4a6e; color: #bae6fd; border-left: 4px solid #0ea5e9; }
+
+        /* ---------- CODE MODAL BUTTONS (MATCH COPY STYLE) ---------- */
+        #codeModal .btn-primary {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        #codeModal .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        #codeModal .btn-secondary {
+            background: #2a2e35;
+            color: #e2e8f0;
+            border: 1px solid #3a3f47;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        #codeModal .btn-secondary:hover {
+            background: #1f2329;
+        }
+
+        /* keep footer layout clean */
+        #codeModal .modifier-modal-header + div + div {
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .studio-container { grid-template-columns: 1fr; padding: 20px; }
+            .controls-panel { position: static; max-height: none; }
+            .menu-layout.tabs-left, .menu-layout.tabs-right { flex-direction: column; }
+            .tabs-left .categories-container, .tabs-right .categories-container { flex-direction: row; flex-wrap: wrap; min-width: auto; max-width: none; }
+            .layout-split-view { grid-template-columns: 1fr; }
+            .layout-list-image-left .list-item, .layout-list-image-right .list-item { flex-direction: column; }
+            .layout-list-image-left .item-thumbnail-wrapper, .layout-list-image-right .item-thumbnail-wrapper { width: 100% !important; height: 180px !important; }
+        }
+    </style>
+</head>
+<body>
+<div class="studio-header">
+    <div class="header-content">
+        <div class="logo-area">
+            <img src="https://posphilly.com/wp-content/uploads/2022/12/cropped-SpotOn_Logo-removebg-preview11.png" alt="SpotOn" class="logo">
+            <div class="header-text"><h1>Menu Studio</h1><p>Full design control – generates standalone embed code</p></div>
+        </div>
+        <div class="badge">✨ All features active</div>
+    </div>
+</div>
+
+<div class="studio-container">
+    <div class="controls-panel">
+        <div class="panel-section">
+            <div class="section-title">📂 Menu Source</div>
+            <div class="control-group">
+                <label>Menu JSON URL</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="jsonUrl" placeholder="https://example.com/menu.json" style="flex: 1;">
+                    <button id="loadUrlBtn" class="btn btn-secondary" style="width: auto; padding: 8px 16px;">Load</button>
+                </div>
+                <div class="helper-text">Enter the URL of your SpotOn JSON file. The preview will load from this URL.</div>
+            </div>
+            <div class="control-group">
+                <label>Excluded Categories</label>
+                <div id="excludeWidget" class="exclude-widget"></div>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <div class="section-title">📐 Layout & Tabs</div>
+            <div class="control-group">
+                <label>Layout Style</label>
+                <select id="layoutType">
+                    <option value="classic-grid">Classic Grid</option>
+                    <option value="hero-grid">Hero Grid (Large Images)</option>
+                    <option value="list-image-left">List with Image Left</option>
+                    <option value="list-image-right">List with Image Right</option>
+                    <option value="compact-cards">Compact Cards</option>
+                    <option value="split-view">Split View (2 columns)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Tabs Position</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="tabsPosition" value="top" checked> Top</label>
+                    <label><input type="radio" name="tabsPosition" value="bottom"> Bottom</label>
+                    <label><input type="radio" name="tabsPosition" value="left"> Left</label>
+                    <label><input type="radio" name="tabsPosition" value="right"> Right</label>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Tab Alignment</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="tabAlign" value="left" checked> Left</label>
+                    <label><input type="radio" name="tabAlign" value="center"> Center</label>
+                    <label><input type="radio" name="tabAlign" value="right"> Right</label>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Extra Features</label>
+                <div class="toggle-group">
+                    <label><input type="checkbox" id="showImages" checked> Show Images</label>
+                    <label><input type="checkbox" id="showPrices" checked> Show Prices</label>
+                    <label><input type="checkbox" id="showCategorySearch"> Category Search</label>
+                    <label><input type="checkbox" id="showCategoryDropdown"> Category Dropdown</label>
+                    <label><input type="checkbox" id="showModifiers" checked> Show Modifiers (clickable items)</label>
+                </div>
+                <div class="helper-text">When "Show Modifiers" is off, items will not open the modifier modal.</div>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <div class="section-title">🎨 Tab Styling</div>
+            <div class="control-group"><label>Default Tab</label><div class="color-input"><input type="color" id="defaultTabColor" value="#1a1d21"><span id="defaultTabColorValue">#1a1d21</span></div></div>
+            <div class="control-group"><label>Default Text</label><div class="color-input"><input type="color" id="defaultTabTextColor" value="#cbd5e1"><span id="defaultTabTextColorValue">#cbd5e1</span></div></div>
+            <div class="control-group"><label>Active Tab</label><div class="color-input"><input type="color" id="activeTabColor" value="#3b82f6"><span id="activeTabColorValue">#3b82f6</span></div></div>
+            <div class="control-group"><label>Active Text</label><div class="color-input"><input type="color" id="activeTabTextColor" value="#ffffff"><span id="activeTabTextColorValue">#ffffff</span></div></div>
+            <div class="control-group"><label>Tab Border Color</label><div class="color-input"><input type="color" id="tabBorderColor" value="#2a2e35"><span id="tabBorderColorValue">#2a2e35</span></div></div>
+            <div class="control-group"><label>Tab Border Width (px)</label><input type="number" id="tabBorderWidth" value="1" min="0" max="5" step="0.5"></div>
+            <div class="control-group"><label>Tab Border Radius (px)</label><div class="radius-grid"><div><span>TL</span><input type="number" id="tabRadiusTL" value="40"></div><div><span>TR</span><input type="number" id="tabRadiusTR" value="40"></div><div><span>BR</span><input type="number" id="tabRadiusBR" value="40"></div><div><span>BL</span><input type="number" id="tabRadiusBL" value="40"></div></div></div>
+        </div>
+  <!-- CARD STYLING -->
+       <div class="panel-section">
+  <div class="section-title">🃏 Card Styling</div>
+
+  <!-- Card Background -->
+  <div class="control-group">
+    <label>Card Background</label>
+    <div class="color-input">
+      <input type="color" id="cardBgColor" value="#111315">
+      <span id="cardBgColorValue">#111315</span>
+    </div>
+  </div>
+
+  <!-- Card Border -->
+  <div class="control-group">
+    <label>Card Border</label>
+    <div class="color-input">
+      <input type="color" id="cardBorderColor" value="#2a2e35">
+      <input type="number" id="cardBorderWidth" value="1" min="0" step="0.5" style="width:70px"> px
+    </div>
+  </div>
+
+  <!-- Radius -->
+  <div class="control-group">
+    <label>Card Radius (px)</label>
+    <div class="radius-grid">
+      <div><span>TL</span><input type="number" id="cardRadiusTL" value="16"></div>
+      <div><span>TR</span><input type="number" id="cardRadiusTR" value="16"></div>
+      <div><span>BR</span><input type="number" id="cardRadiusBR" value="16"></div>
+      <div><span>BL</span><input type="number" id="cardRadiusBL" value="16"></div>
+    </div>
+  </div>
+
+  <!-- Padding -->
+  <div class="control-group">
+    <label>Card Padding (px)</label>
+    <div class="padding-grid">
+      <div><span>Top</span><input type="number" id="cardPaddingTop" value="16"></div>
+      <div><span>Right</span><input type="number" id="cardPaddingRight" value="16"></div>
+      <div><span>Bottom</span><input type="number" id="cardPaddingBottom" value="16"></div>
+      <div><span>Left</span><input type="number" id="cardPaddingLeft" value="16"></div>
+    </div>
+  </div>
+
+  <!-- Title Color -->
+  <div class="control-group">
+    <label>Card Title Color</label>
+    <div class="color-input">
+      <input type="color" id="cardTitleColor" value="#f1f5f9">
+      <span id="cardTitleColorValue">#f1f5f9</span>
+    </div>
+  </div>
+
+  <!-- Description Color -->
+  <div class="control-group">
+    <label>Description Text Color</label>
+    <div class="color-input">
+      <input type="color" id="descTextColor" value="#94a3b8">
+      <span id="descTextColorValue">#94a3b8</span>
+    </div>
+  </div>
+
+  <!-- ✅ FIXED PRICE COLOR (NOW MATCHES EVERYTHING) -->
+  <div class="control-group">
+    <label>Price Text Color</label>
+    <div class="color-input">
+      <input type="color" id="priceTextColor" value="#38bdf8">
+      <span id="priceTextColorValue">#38bdf8</span>
+    </div>
+  </div>
+
+</div>
+
+        <div class="panel-section">
+            <div class="section-title">🔤 Typography (Cards & Tabs)</div>
+            <div class="control-group"><label>Tab Font</label><div class="typography-grid" style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px;"><input type="text" id="tabFontFamily" list="fontList" value="Inter"><input type="number" id="tabFontSize" value="13"><select id="tabFontWeight"><option value="400">Normal</option><option value="500" selected>Medium</option><option value="600">Semi-bold</option><option value="700">Bold</option></select></div></div>
+            <div class="control-group"><label>Card Title Font</label><div class="typography-grid" style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px;"><input type="text" id="titleFontFamily" list="fontList" value="Inter"><input type="number" id="titleFontSize" value="17"><select id="titleFontWeight"><option value="400">Normal</option><option value="500">Medium</option><option value="600" selected>Semi-bold</option><option value="700">Bold</option></select></div></div>
+            <div class="control-group"><label>Description Font</label><div class="typography-grid" style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px;"><input type="text" id="descFontFamily" list="fontList" value="Inter"><input type="number" id="descFontSize" value="12"><select id="descFontWeight"><option value="400" selected>Normal</option><option value="500">Medium</option></select></div></div>
+            <div class="control-group"><label>Price Font</label>
+                <div class="typography-grid" style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px;">
+                    <input type="text" id="priceFontFamily" list="fontList" value="Inter">
+                    <input type="number" id="priceFontSize" value="15">
+                    <select id="priceFontWeight">
+                        <option value="400">Normal</option>
+                        <option value="500">Medium</option>
+                        <option value="600">Semi-bold</option>
+                        <option value="700" selected>Bold</option>
+                    </select>
+                </div>
+            </div>
+            <datalist id="fontList">
+                <option>Inter</option><option>Roboto</option><option>Open Sans</option><option>Lato</option><option>Poppins</option><option>Montserrat</option><option>Nunito</option><option>Playfair Display</option>
+                <option>Merriweather</option><option>Raleway</option><option>Oswald</option><option>Source Sans Pro</option><option>Ubuntu</option><option>Roboto Condensed</option><option>Cabin</option>
+                <option>Dosis</option><option>Quicksand</option><option>Work Sans</option><option>Barlow</option><option>Fira Sans</option><option>Josefin Sans</option><option>Mulish</option><option>Manrope</option>
+                <option>Karla</option><option>Heebo</option><option>Comfortaa</option><option>Overpass</option><option>DM Sans</option><option>Figtree</option><option>Plus Jakarta Sans</option>
+            </datalist>
+            <div class="helper-text">Type any Google Font name – it will be loaded automatically.</div>
+        </div>
+
+        <div class="panel-section">
+            <div class="section-title">🔧 Modifiers Modal</div>
+            <div class="control-group">
+                <label><input type="checkbox" id="inheritCardStyle" checked> Inherit card styling (background, radius, border, colors & typography)</label>
+                <div class="helper-text">When unchecked, you can customize modal separately below</div>
+            </div>
+            <div id="customModalStyles" style="display: none;">
+                <div class="subsection-title">Custom Modal Style</div>
+                <div class="control-group"><label>Modal Background</label><div class="color-input"><input type="color" id="modalBgColor" value="#1a1d21"><span id="modalBgColorValue">#1a1d21</span></div></div>
+                <div class="control-group"><label>Modal Text Color</label><div class="color-input"><input type="color" id="modalTextColor" value="#f1f5f9"><span id="modalTextColorValue">#f1f5f9</span></div></div>
+                <div class="control-group"><label>Accent Color (prices & limits)</label><div class="color-input"><input type="color" id="modalAccentColor" value="#3b82f6"><span id="modalAccentColorValue">#3b82f6</span></div></div>
+                <div class="control-group"><label>Modal Border Radius (px)</label><div class="radius-grid"><div><span>TL</span><input type="number" id="modalRadiusTL" value="24"></div><div><span>TR</span><input type="number" id="modalRadiusTR" value="24"></div><div><span>BR</span><input type="number" id="modalRadiusBR" value="24"></div><div><span>BL</span><input type="number" id="modalRadiusBL" value="24"></div></div></div>
+                <div class="control-group"><label>Separator Line Color</label><div class="color-input"><input type="color" id="modalLineColor" value="#2a2e35"><span id="modalLineColorValue">#2a2e35</span></div></div>
+                <div class="subsection-title">Modal Typography</div>
+                <div class="control-group"><label>Modal Title Font</label><div class="typography-grid" style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px;"><input type="text" id="modalTitleFont" list="fontList" value="Inter"><input type="number" id="modalTitleSize" value="18"><select id="modalTitleWeight"><option value="600" selected>Semi-bold</option><option value="400">Normal</option><option value="500">Medium</option><option value="700">Bold</option></select></div></div>
+                <div class="control-group"><label>Modifier Text Font</label><div class="typography-grid" style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px;"><input type="text" id="modalModifierFont" list="fontList" value="Inter"><input type="number" id="modalModifierSize" value="13"><select id="modalModifierWeight"><option value="400" selected>Normal</option><option value="500">Medium</option></select></div></div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary" id="showCodeBtn">📋 Generate Embed Code</button>
+        </div>
+    </div>
+
+    <div class="preview-panel">
+        <div class="preview-header"><h2>Menu Preview</h2><div class="preview-badge">💡 Click items with modifiers (if enabled)</div></div>
+        <div class="menu-preview" id="menuPreview"><div class="status info">Enter a JSON URL and click Load to start</div></div>
+    </div>
+</div>
+
+<div id="modifierModal" class="modal-overlay">
+    <div class="modifier-modal-content" id="modifierModalContent">
+        <div class="modifier-modal-header"><h3 id="modalItemName">Item Name</h3><button class="modal-close" onclick="closeModifierModal()">&times;</button></div>
+        <div class="modifier-modal-body" id="modifierModalBody"><div class="no-modifiers">Loading...</div></div>
+    </div>
+</div>
+
+<div id="codeModal" class="modal-overlay" style="z-index:2000;">
+    <div class="modifier-modal-content" style="max-width:850px;">
+        <div class="modifier-modal-header"><h3>Embed Code – Copy into Webflow</h3><button class="modal-close" onclick="closeCodeModal()">&times;</button></div>
+        <div class="modifier-modal-body" style="padding:0;">
+            <div class="code-container">
+                <pre id="embedCodeDisplay" style="white-space:pre-wrap; max-height:500px; overflow:auto;"></pre>
+                <div id="copySuccessMsg" style="display:none; position:absolute; top:12px; right:12px; background:#14532d; color:#86efac; padding:6px 10px; border-radius:20px; font-size:12px; border:1px solid #22c55e;">
+                    Copied to clipboard
+                </div>
+            </div>
+        </div>
+        <div style="padding:16px 24px; border-top:1px solid #2a2e35; display:flex; justify-content:flex-end;"><button class="btn-secondary" onclick="closeCodeModal()">Close</button><button class="btn-primary" id="modalFooterCopyBtn" style="margin-left:12px;">Copy to Clipboard</button></div>
+    </div>
+</div>
+
+<script>
+let currentMenuData = null;
+let excludedCategories = [];
+let currentItemsMap = new Map();
+let activeCategoryId = null;
+let categorySearchQuery = "";
+
+/* ------------------ GOOGLE FONT LOADER ------------------ */
+function loadFont(font) {
+    if (!font) return;
+    const id = "font-" + font.replace(/\s+/g, "-");
+
+    if (document.getElementById(id)) return;
+
+    const link = document.createElement("link");
+    link.id = id;
+    link.rel = "stylesheet";
+    link.href = `https://fonts.googleapis.com/css2?family=${font.replace(/ /g, "+")}:wght@300;400;500;600;700&display=swap`;
+
+    document.head.appendChild(link);
+}
+
+/* ------------------ PARSER ------------------ */
+function parseSpotOnJSON(jsonObj) {
+    const catsRaw = jsonObj.menu?.categories || jsonObj.categories || [];
+    const itemsRaw = jsonObj.items || [];
+
+    const catMap = new Map(), itemsByCat = new Map(), itemsFull = new Map();
+
+    catsRaw.forEach(c => {
+        if (c.active !== false && c.id) {
+            catMap.set(c.id, c.name.trim());
+            itemsByCat.set(c.id, []);
+        }
+    });
+
+    itemsRaw.forEach(item => {
+        if (item.active === false) return;
+
+        itemsFull.set(item.id, item);
+
+        (item.category_ids || []).forEach(cid => {
+            if (!catMap.has(cid)) return;
+
+            let priceAmt = item.price?.amount || 0;
+
+            itemsByCat.get(cid).push({
+                id: item.id,
+                name: item.name,
+                description: item.description || "",
+                price: (priceAmt / 100).toFixed(2),
+                imageUrl: item.image_url || item.thumbnail_url || ""
+            });
+        });
+    });
+
+    let finalCats = [], finalItems = {};
+    for (let [cid, name] of catMap.entries()) {
+        let items = itemsByCat.get(cid);
+        if (items?.length) {
+            finalCats.push({ id: cid, name });
+            finalItems[cid] = items;
+        }
+    }
+
+    return { categories: finalCats, itemsByCategory: finalItems, itemsFull };
+}
+
+/* ------------------ LOAD ------------------ */
+async function loadFromUrl(url) {
+    const res = await fetch(url);
+    const json = await res.json();
+
+    const parsed = parseSpotOnJSON(json);
+
+    currentMenuData = parsed;
+    currentItemsMap = parsed.itemsFull;
+
+    activeCategoryId = parsed.categories[0]?.id;
+
+    renderMenu();
+}
+
+/* ------------------ RENDER ------------------ */
+function renderMenu() {
+    if (!currentMenuData) return;
+
+    let { categories, itemsByCategory } = currentMenuData;
+
+    let layout = document.getElementById("layoutType").value;
+    let tabsPos = document.querySelector("input[name=tabsPosition]:checked").value;
+    let align = document.querySelector("input[name=tabAlign]:checked").value;
+
+    let activeCats = categories
+    .filter(c => !excludedCategories.includes(c.name))
+    .filter(c => c.name.toLowerCase().includes(categorySearchQuery.toLowerCase()));
+
+    if (!activeCategoryId) activeCategoryId = activeCats[0]?.id;
+
+    let showSearch = document.getElementById("showCategorySearch")?.checked;
+    let showDropdown = document.getElementById("showCategoryDropdown")?.checked;
+
+    let html = `<div class="menu-layout tabs-${tabsPos}">`;
+
+    // Build toolbar separately so it does NOT affect tab visibility/layout
+let toolbar = `<div class="category-toolbar">`;
+
+// search FIRST
+if (showSearch) {
+    toolbar += `
+        <input 
+            type="text" 
+            id="categorySearchInput"
+            class="category-search" 
+            placeholder="Search categories..."
+            value="${categorySearchQuery}"
+            oninput="handleCategorySearch(this.value)"
+        />
+    `;
+}
+
+// dropdown SECOND
+if (showDropdown) {
+    toolbar += `
+        <select class="category-select" onchange="selectCategory(this.value)">
+            ${activeCats.map(c => `
+                <option value="${c.id}" ${c.id === activeCategoryId ? "selected" : ""}>
+                    ${c.name}
+                </option>
+            `).join("")}
+        </select>
+    `;
+}
+
+toolbar += `</div>`;
+
+    html += toolbar;
+
+  // Categories container hidden when dropdown is enabled
+if (!showDropdown) {
+    html += `<div class="categories-container align-${align}">`;
+
+    activeCats.forEach(c=>{
+        html += `<div class="category-link ${c.id===activeCategoryId?'active':''}" onclick="selectCategory('${c.id}')">${c.name}</div>`;
+    });
+
+    html += `</div>`;
+}
+    html += `</div>
+        <div class="menu-root layout-${layout}" id="menuRoot"></div>
+    </div>`;
+
+    document.getElementById("menuPreview").innerHTML = html;
+    
+    displayItems(activeCategoryId);
+
+    applyStyles();
+}
+
+/* ------------------ CATEGORY ------------------ */
+function selectCategory(cid){
+    activeCategoryId = cid;
+    renderMenu();
+}
+
+function handleCategorySearch(value) {
+    categorySearchQuery = value;
+
+    if (!currentMenuData) return;
+
+    let visibleCats = currentMenuData.categories
+        .filter(c => !excludedCategories.includes(c.name))
+        .filter(c => c.name.toLowerCase().includes(categorySearchQuery.toLowerCase()));
+
+    // If current active category disappears, reset it
+    if (!visibleCats.find(c => c.id === activeCategoryId)) {
+        activeCategoryId = visibleCats[0]?.id || null;
+    }
+
+    renderMenu();
+}
+
+/* ------------------ ITEMS ------------------ */
+function displayItems(cid){
+    let root = document.getElementById("menuRoot");
+    let { itemsByCategory } = currentMenuData;
+
+    let showImages = document.getElementById("showImages").checked;
+    let showPrices = document.getElementById("showPrices").checked;
+
+    root.innerHTML = "";
+
+    (itemsByCategory[cid] || []).forEach(item=>{
+        root.innerHTML += `
+        <div class="list-item">
+            ${showImages && item.imageUrl ? `<div class="item-thumbnail-wrapper"><img class="list-item-image" src="${item.imageUrl}"></div>`:""}
+            <div class="item-content">
+                <div class="list-item-name">${item.name}</div>
+                <div class="list-item-description">${item.description}</div>
+                ${showPrices ? `<div class="list-item-price">$${item.price}</div>`:""}
+            </div>
+        </div>`;
+    });
+}
+
+/* ------------------ STYLES ------------------ */
+function applyStyles() {
+
+    const priceColor = document.getElementById("priceTextColor")?.value || "#38bdf8";
+
+    const tabFont = document.getElementById("tabFontFamily")?.value;
+    const titleFont = document.getElementById("titleFontFamily")?.value;
+    const descFont = document.getElementById("descFontFamily")?.value;
+    const priceFont = document.getElementById("priceFontFamily")?.value;
+
+    loadFont(tabFont);
+    loadFont(titleFont);
+    loadFont(descFont);
+    loadFont(priceFont);
+
+    const align = document.querySelector("input[name=tabAlign]:checked").value;
+
+    let style = document.getElementById("dynamicStyles");
+    if (!style) {
+        style = document.createElement("style");
+        style.id = "dynamicStyles";
+        document.head.appendChild(style);
+    }
+
+   style.textContent = `
+/* ---------- TAB ALIGN ---------- */
+.categories-container.align-left { justify-content: flex-start; }
+.categories-container.align-center { justify-content: center; }
+.categories-container.align-right { justify-content: flex-end; }
+
+/* ---------- TABS ---------- */
+#menuPreview .category-link {
+    background: ${document.getElementById("defaultTabColor")?.value};
+    color: ${document.getElementById("defaultTabTextColor")?.value};
+    border: ${document.getElementById("tabBorderWidth")?.value || 0}px solid ${document.getElementById("tabBorderColor")?.value};
+
+    border-radius:
+        ${document.getElementById("tabRadiusTL")?.value || 0}px
+        ${document.getElementById("tabRadiusTR")?.value || 0}px
+        ${document.getElementById("tabRadiusBR")?.value || 0}px
+        ${document.getElementById("tabRadiusBL")?.value || 0}px;
+
+    font-family: "${document.getElementById("tabFontFamily")?.value}", sans-serif;
+    font-size: ${document.getElementById("tabFontSize")?.value}px;
+    font-weight: ${document.getElementById("tabFontWeight")?.value};
+}
+
+#menuPreview .category-link.active {
+    background: ${document.getElementById("activeTabColor")?.value};
+    color: ${document.getElementById("activeTabTextColor")?.value};
+    border-color: ${document.getElementById("activeTabColor")?.value};
+}
+
+/* ---------- CARDS ---------- */
+#menuPreview .list-item {
+    background: ${document.getElementById("cardBgColor")?.value};
+
+    border: ${document.getElementById("cardBorderWidth")?.value || 0}px solid ${document.getElementById("cardBorderColor")?.value};
+
+    border-radius:
+        ${document.getElementById("cardRadiusTL")?.value || 0}px
+        ${document.getElementById("cardRadiusTR")?.value || 0}px
+        ${document.getElementById("cardRadiusBR")?.value || 0}px
+        ${document.getElementById("cardRadiusBL")?.value || 0}px;
+
+    padding:
+        ${document.getElementById("cardPaddingTop")?.value || 0}px
+        ${document.getElementById("cardPaddingRight")?.value || 0}px
+        ${document.getElementById("cardPaddingBottom")?.value || 0}px
+        ${document.getElementById("cardPaddingLeft")?.value || 0}px;
+}
+
+/* ---------- TEXT ---------- */
+#menuPreview .list-item-name {
+    color: ${document.getElementById("cardTitleColor")?.value};
+    font-family: ${document.getElementById("titleFontFamily")?.value};
+    font-size: ${document.getElementById("titleFontSize")?.value}px;
+    font-weight: ${document.getElementById("titleFontWeight")?.value};
+}
+
+#menuPreview .list-item-description {
+    color: ${document.getElementById("descTextColor")?.value};
+    font-family: ${document.getElementById("descFontFamily")?.value};
+    font-size: ${document.getElementById("descFontSize")?.value}px;
+    font-weight: ${document.getElementById("descFontWeight")?.value};
+}
+
+#menuPreview .list-item-price {
+    color: ${document.getElementById("priceTextColor")?.value};
+    font-family: ${document.getElementById("priceFontFamily")?.value};
+    font-size: ${document.getElementById("priceFontSize")?.value}px;
+    font-weight: ${document.getElementById("priceFontWeight")?.value};
+}
+`;
+}
+
+/* ------------------ CONTROLS ------------------ */
+function initControls() {
+
+    document.getElementById("layoutType").addEventListener("change", renderMenu);
+
+    document.querySelectorAll("input[name='tabsPosition']").forEach(r =>
+        r.addEventListener("change", renderMenu)
+    );
+
+    document.querySelectorAll("input[name='tabAlign']").forEach(r =>
+        r.addEventListener("change", renderMenu)
+    );
+
+    document.getElementById("showImages").addEventListener("change", renderMenu);
+    document.getElementById("showPrices").addEventListener("change", renderMenu);
+
+    // --- Independent toggles for category search/dropdown ---
+    const searchToggle = document.getElementById("showCategorySearch");
+    const dropdownToggle = document.getElementById("showCategoryDropdown");
+
+    if (searchToggle) {
+        searchToggle.addEventListener("change", renderMenu);
+    }
+
+    if (dropdownToggle) {
+        dropdownToggle.addEventListener("change", renderMenu);
+    }
+   [
+    "cardBgColor","cardTitleColor","descTextColor","priceTextColor",
+
+    "activeTabColor","defaultTabColor",
+    "defaultTabTextColor","activeTabTextColor",
+
+    "tabBorderColor","tabBorderWidth",
+    "cardBorderColor","cardBorderWidth",
+
+    "tabRadiusTL","tabRadiusTR","tabRadiusBR","tabRadiusBL",
+    "cardRadiusTL","cardRadiusTR","cardRadiusBR","cardRadiusBL",
+
+    "cardPaddingTop","cardPaddingRight","cardPaddingBottom","cardPaddingLeft",
+
+    "tabFontFamily","tabFontSize","tabFontWeight",
+    "titleFontFamily","titleFontSize","titleFontWeight",
+    "descFontFamily","descFontSize","descFontWeight",
+    "priceFontFamily","priceFontSize","priceFontWeight"
+].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    el.addEventListener("input", applyStyles);
+    el.addEventListener("change", applyStyles);
+});
+}
+
+function fixDatalistDropdowns() {
+    const fontInputs = [
+        "tabFontFamily",
+        "titleFontFamily",
+        "descFontFamily",
+        "priceFontFamily",
+        "modalTitleFont",
+        "modalModifierFont"
+    ];
+
+    fontInputs.forEach(id => {
+        const input = document.getElementById(id);
+        if (!input) return;
+
+        input.setAttribute("autocomplete", "off");
+        input.setAttribute("spellcheck", "false");
+
+        const openDropdown = (e) => {
+            // Prevent any default behavior that might interfere
+            if (e) e.preventDefault();
+
+            // Store current value
+            const prevValue = input.value;
+
+            // Focus first
+            input.focus();
+
+            // IMPORTANT: temporarily clear value so datalist shows ALL options
+            input.value = "";
+
+            // Try native picker first (best behaviour)
+            try {
+                if (typeof input.showPicker === "function") {
+                    input.showPicker();
+                }
+            } catch (err) {}
+
+            // Fallback: trigger input event so datalist refreshes fully
+            const event = new Event("input", { bubbles: true });
+            input.dispatchEvent(event);
+
+            // Restore value shortly AFTER dropdown has opened
+            // (keeps selection but avoids filtering out options)
+            setTimeout(() => {
+                input.value = prevValue;
+            }, 0);
+        };
+
+        // IMPORTANT: use pointerdown so dropdown opens BEFORE blur/focus conflicts
+        input.addEventListener("pointerdown", openDropdown);
+    });
+}
+
+/* ------------------ EMBED CODE GENERATION ------------------ */
+function generateEmbedCode() {
+    const config = {
+        jsonUrl: document.getElementById("jsonUrl")?.value || "",
+        layoutType: document.getElementById("layoutType")?.value,
+        tabsPosition: document.querySelector("input[name=tabsPosition]:checked")?.value,
+        tabAlign: document.querySelector("input[name=tabAlign]:checked")?.value,
+        showImages: document.getElementById("showImages")?.checked,
+        showPrices: document.getElementById("showPrices")?.checked,
+        showCategorySearch: document.getElementById("showCategorySearch")?.checked,
+        showCategoryDropdown: document.getElementById("showCategoryDropdown")?.checked,
+        excludedCategories: excludedCategories || []
+    };
+
+    const styles = {
+        cardBgColor: document.getElementById("cardBgColor")?.value,
+        cardTitleColor: document.getElementById("cardTitleColor")?.value,
+        descTextColor: document.getElementById("descTextColor")?.value,
+        priceTextColor: document.getElementById("priceTextColor")?.value
+    };
+
+    const embedCode = `
+<!-- SpotOn Menu Embed -->
+<div id="spoton-menu-root"></div>
+
+<script>
+window.SpotOnMenuConfig = ${JSON.stringify(config, null, 2)};
+window.SpotOnMenuStyles = ${JSON.stringify(styles, null, 2)};
+<\/script>
+
+<script src="https://YOUR-CDN-OR-HOSTED-SCRIPT/menu-embed.js"><\/script>
+`;
+
+    document.getElementById("embedCodeDisplay").textContent = embedCode.trim();
+}
+
+/* ------------------ INIT ------------------ */
+document.getElementById("loadUrlBtn").onclick = () =>
+    loadFromUrl(document.getElementById("jsonUrl").value);
+
+document.getElementById("showCodeBtn").addEventListener("click", () => {
+    generateEmbedCode();
+    document.getElementById("codeModal").classList.add("active");
+});
+
+
+function showCopySuccess() {
+    const el = document.getElementById("copySuccessMsg");
+    if (!el) return;
+    el.style.display = "block";
+    setTimeout(() => {
+        el.style.display = "none";
+    }, 2000);
+}
+
+document.getElementById("modalFooterCopyBtn").addEventListener("click", () => {
+    navigator.clipboard.writeText(document.getElementById("embedCodeDisplay").textContent);
+    showCopySuccess();
+});
+
+initControls();
+fixDatalistDropdowns();
+
+function closeCodeModal() {
+    document.getElementById("codeModal").classList.remove("active");
+}
+</script>
+</body>
+</html>
