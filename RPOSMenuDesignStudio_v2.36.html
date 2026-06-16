@@ -1,0 +1,1789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--SpotOn Menu Studio · Author: Sara Bustamante-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>SpotOn Menu Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0c10; color: #e2e8f0; }
+
+/* ── HEADER ── */
+.studio-header { background: rgba(17,19,21,0.95); border-bottom: 1px solid #2a2e35; padding: 16px 32px; position: sticky; top: 0; z-index: 10; backdrop-filter: blur(10px); }
+.header-content { max-width: 1800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.logo-area { display: flex; align-items: center; gap: 16px; }
+.logo { height: 36px; object-fit: contain; filter: brightness(0) invert(1); }
+.header-text h1 { font-size: 18px; font-weight: 600; color: white; }
+.badge { background: #1e293b; color: #60a5fa; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+
+/* ── LAYOUT ── */
+.studio-container { max-width: 1800px; margin: 0 auto; padding: 24px 40px; display: grid; grid-template-columns: 420px 1fr; gap: 28px; }
+
+/* ── CONTROLS PANEL ── */
+.controls-panel {
+  background: #111315; border-radius: 16px; border: 1px solid #2a2e35;
+  overflow-y: auto; position: sticky; top: 80px;
+  max-height: calc(100vh - 106px);
+  display: flex; flex-direction: column; width: 100%; min-width: 0;
+  scrollbar-width: thin; scrollbar-color: #2a2e35 transparent;
+}
+.controls-panel::-webkit-scrollbar { width: 4px; }
+.controls-panel::-webkit-scrollbar-thumb { background: #2a2e35; border-radius: 4px; }
+
+/* details/summary collapsible sections */
+details.panel-section { border-bottom: 1px solid #2a2e35; }
+details.panel-section:last-of-type { border-bottom: none; }
+details.panel-section summary {
+  cursor: pointer; list-style: none; padding: 11px 18px;
+  display: flex; align-items: center; gap: 9px; user-select: none;
+}
+details.panel-section summary::-webkit-details-marker { display: none; }
+details.panel-section summary::before {
+  content: "▶"; color: #60a5fa; font-size: 9px; flex-shrink: 0;
+  transition: transform 0.18s ease; display: inline-block;
+}
+details.panel-section[open] summary::before { transform: rotate(90deg); }
+details.panel-section[open] > summary + * { margin-top: 2px; }
+details.panel-section > *:not(summary) { padding: 0 18px 14px; }
+
+.section-title { font-size: 13px; font-weight: 500; color: #cbd5e1; display: flex; align-items: center; gap: 7px; margin: 0; line-height: 1.4; }
+
+/* controls */
+.control-group { margin-bottom: 10px; }
+.control-group:last-child { margin-bottom: 0; }
+.control-group label { display: block; font-size: 12px; font-weight: 500; margin-bottom: 5px; color: #94a3b8; }
+.helper-text { font-size: 11px; color: #475569; margin-top: 4px; line-height: 1.5; }
+
+.control-group input[type="text"],
+.control-group input[type="number"],
+.control-group select,
+.control-group textarea {
+  width: 100%; padding: 7px 10px; border: 1px solid #2a2e35; border-radius: 8px;
+  font-size: 13px; font-family: inherit; background: #1a1d21; color: #e2e8f0;
+  box-sizing: border-box; transition: border-color 0.15s, box-shadow 0.15s;
+}
+.control-group input:hover, .control-group select:hover { border-color: #3b82f6; }
+.control-group input:focus, .control-group select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.25); }
+
+/* radio pills */
+.radio-group { display: flex; gap: 5px; flex-wrap: wrap; }
+.radio-group label {
+  display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 400;
+  color: #94a3b8; background: #1a1d21; padding: 5px 10px; border-radius: 6px;
+  border: 1px solid #2a2e35; cursor: pointer; white-space: nowrap; transition: all 0.15s;
+}
+.radio-group label:has(input:checked) { background: #1e3a5f; border-color: #3b82f6; color: #93c5fd; }
+.radio-group input[type="radio"] { width: 12px; height: 12px; accent-color: #3b82f6; flex-shrink: 0; margin: 0; }
+
+/* toggle list */
+.toggle-group { display: flex; flex-direction: column; gap: 0; }
+.toggle-group label {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 13px; font-weight: 400; color: #cbd5e1;
+  padding: 7px 6px; border-radius: 6px; cursor: pointer; user-select: none; gap: 10px;
+}
+.toggle-group label:hover { background: #1a1d21; }
+.toggle-group input[type="checkbox"] { width: 14px; height: 14px; accent-color: #3b82f6; flex-shrink: 0; cursor: pointer; margin: 0; }
+
+/* subgroups */
+.subgroup-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #475569; margin: 12px 0 5px; padding-bottom: 4px; border-bottom: 1px solid #1e2330; }
+.subgroup-label:first-child { margin-top: 0; }
+.subgroup { background: #0d0f12; border-radius: 10px; padding: 10px; margin-bottom: 4px; }
+
+/* color row */
+.color-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 10px; }
+.color-row-item { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.color-row-item > span { font-size: 10px; color: #475569; font-weight: 500; }
+.color-row-item .color-input { flex-direction: column; gap: 3px; align-items: flex-start; }
+.color-row-item .color-input input[type="color"] { width: 36px; height: 36px; }
+.color-row-item .color-input span { font-size: 10px; color: #475569; font-family: monospace; }
+
+/* color-size-row */
+.color-size-row { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; margin-bottom: 10px; }
+.color-swatch-col, .size-col { display: flex; flex-direction: column; gap: 4px; }
+.color-swatch-col span, .size-col span { font-size: 10px; color: #475569; }
+.color-size-row input[type="color"] { width: 38px; height: 38px; padding: 2px; border-radius: 8px; border: 1px solid #2a2e35; background: #1a1d21; cursor: pointer; }
+.color-size-row input[type="number"] { width: 100%; padding: 7px 8px; border: 1px solid #2a2e35; border-radius: 8px; font-size: 13px; font-family: inherit; background: #1a1d21; color: #e2e8f0; box-sizing: border-box; }
+.color-size-row input[type="number"]:hover { border-color: #3b82f6; }
+.color-size-row input[type="number"]:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.25); }
+
+/* inline color input */
+.color-input { display: flex; gap: 8px; align-items: center; }
+.color-input input[type="color"] { width: 38px; height: 38px; padding: 3px; border-radius: 8px; cursor: pointer; border: 1px solid #2a2e35; background: #1a1d21; }
+
+/* typography grid 3-col */
+.typography-grid { display: grid; grid-template-columns: 1fr 58px 76px; gap: 6px; min-width: 0; }
+.typography-grid input, .typography-grid select {
+  padding: 7px 8px; border: 1px solid #2a2e35; border-radius: 8px; font-size: 12px;
+  font-family: inherit; background: #1a1d21; color: #e2e8f0; width: 100%; min-width: 0; box-sizing: border-box;
+}
+.typography-grid input:hover, .typography-grid select:hover { border-color: #3b82f6; }
+.typography-grid input:focus, .typography-grid select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.25); }
+
+/* typography grid 2-col (family + weight) */
+.typography-grid-2 { display: grid; grid-template-columns: 1fr 76px; gap: 6px; min-width: 0; }
+.typography-grid-2 input, .typography-grid-2 select {
+  padding: 7px 8px; border: 1px solid #2a2e35; border-radius: 8px; font-size: 12px;
+  font-family: inherit; background: #1a1d21; color: #e2e8f0; width: 100%; min-width: 0; box-sizing: border-box;
+}
+.typography-grid-2 input:hover, .typography-grid-2 select:hover { border-color: #3b82f6; }
+.typography-grid-2 input:focus, .typography-grid-2 select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.25); }
+
+.typo-col-labels { display: grid; grid-template-columns: 1fr 58px 76px; gap: 6px; margin-top: 3px; }
+.typo-col-labels span { font-size: 10px; color: #334155; padding-left: 2px; }
+.typo-col-labels-2 { display: grid; grid-template-columns: 1fr 76px; gap: 6px; margin-top: 3px; }
+.typo-col-labels-2 span { font-size: 10px; color: #334155; padding-left: 2px; }
+
+.font-note { font-size: 11px; color: #334155; margin-bottom: 8px; }
+.font-note a { color: #3b82f6; text-decoration: none; }
+.font-note a:hover { text-decoration: underline; }
+
+/* padding / radius grids */
+.padding-grid, .radius-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+.padding-grid > div, .radius-grid > div { display: flex; flex-direction: column; gap: 3px; }
+.padding-grid span, .radius-grid span { font-size: 10px; color: #475569; }
+.padding-grid input, .radius-grid input {
+  width: 100%; padding: 6px 8px; border: 1px solid #2a2e35; border-radius: 8px;
+  font-size: 12px; font-family: inherit; background: #1a1d21; color: #e2e8f0; box-sizing: border-box;
+}
+.padding-grid input:hover, .radius-grid input:hover { border-color: #3b82f6; }
+.padding-grid input:focus, .radius-grid input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.25); }
+
+/* border control */
+.border-control { display: flex; gap: 8px; align-items: center; }
+.border-control input[type="color"] { width: 36px; height: 36px; padding: 2px; border-radius: 8px; border: 1px solid #2a2e35; background: #1a1d21; flex-shrink: 0; }
+.border-control input[type="number"] {
+  width: 60px; flex-shrink: 0; padding: 6px 8px; border: 1px solid #2a2e35; border-radius: 8px;
+  font-size: 12px; font-family: inherit; background: #1a1d21; color: #e2e8f0; box-sizing: border-box;
+}
+.border-control input[type="number"]:hover { border-color: #3b82f6; }
+.border-control input[type="number"]:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.25); }
+.border-control span { font-size: 12px; color: #475569; flex-shrink: 0; }
+
+/* line-height row */
+.line-height-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.line-height-row label { font-size: 11px; color: #94a3b8; margin: 0; white-space: nowrap; }
+.line-height-row input { width: 72px; padding: 6px 8px; border: 1px solid #2a2e35; border-radius: 8px; font-size: 12px; font-family: inherit; background: #1a1d21; color: #e2e8f0; box-sizing: border-box; }
+.line-height-row input:hover { border-color: #3b82f6; }
+.line-height-row input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.25); }
+.qa-badge { font-size: 10px; color: #f59e0b; background: rgba(245,158,11,0.1); padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
+
+/* action buttons */
+.action-buttons { padding: 16px 18px; display: flex; gap: 10px; }
+.btn { flex: 1; padding: 9px 14px; border-radius: 8px; font-weight: 600; font-size: 13px; font-family: inherit; cursor: pointer; text-align: center; border: none; transition: all 0.15s; }
+.btn-primary { background: #3b82f6; color: white; }
+.btn-primary:hover { background: #2563eb; }
+.btn-secondary { background: #1a1d21; color: #e2e8f0; border: 1px solid #2a2e35; }
+.btn-secondary:hover { background: #2a2e35; }
+
+/* ── PREVIEW PANEL ── */
+.preview-panel { background: #111315; border-radius: 16px; border: 1px solid #2a2e35; overflow: hidden; display: flex; flex-direction: column; }
+.preview-header { padding: 14px 20px; border-bottom: 1px solid #2a2e35; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+.preview-header h2 { font-size: 15px; font-weight: 600; color: #f1f5f9; }
+.preview-badge { background: #1e293b; color: #60a5fa; font-size: 11px; padding: 3px 10px; border-radius: 20px; }
+.menu-preview { padding: 24px; background: #0a0c10; min-height: 500px; overflow-y: auto; flex: 1; }
+
+/* ── MENU LAYOUT ── */
+.menu-layout { display: flex; gap: 24px; }
+.menu-layout.tabs-top { flex-direction: column; }
+.menu-layout.tabs-bottom { flex-direction: column-reverse; }
+.menu-layout.tabs-left { flex-direction: row; align-items: flex-start; }
+.menu-layout.tabs-right { flex-direction: row-reverse; align-items: flex-start; }
+
+.categories-column { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.tabs-left .categories-column, .tabs-right .categories-column { min-width: 180px; max-width: 220px; flex-shrink: 0; }
+
+.category-toolbar { display: flex; flex-direction: column; gap: 8px; }
+.tabs-top .category-toolbar, .tabs-bottom .category-toolbar { flex-direction: row; flex-wrap: wrap; }
+
+.categories-container { display: flex; flex-wrap: wrap; gap: 8px; }
+.tabs-left .categories-container, .tabs-right .categories-container { flex-direction: column; }
+
+.category-link {
+  padding: 9px 18px; background: #1a1d21; border: 1px solid #2a2e35; border-radius: 40px;
+  text-decoration: none; color: #cbd5e1; font-size: 14px; font-weight: 500;
+  transition: all 0.2s; white-space: nowrap; cursor: pointer; display: inline-block;
+}
+.tabs-left .category-link, .tabs-right .category-link { white-space: normal; word-break: break-word; width: 100%; box-sizing: border-box; text-align: center; }
+.category-link.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+.menu-root { flex: 1; min-width: 0; }
+
+/* ── SEARCH ── */
+.search-wrapper { position: relative; }
+.tabs-top .search-wrapper, .tabs-bottom .search-wrapper { min-width: 200px; }
+.category-search {
+  width: 100%; padding: 9px 14px; border: 1px solid #2a2e35; border-radius: 40px;
+  font-size: 13px; background: #1a1d21; color: #e2e8f0; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.category-search:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
+.category-select { padding: 9px 14px; border: 1px solid #2a2e35; border-radius: 40px; font-size: 13px; background: #1a1d21; color: #e2e8f0; width: 100%; cursor: pointer; }
+.tabs-top .category-select, .tabs-bottom .category-select { width: auto; min-width: 180px; }
+
+.search-suggestions { display: none; position: absolute; top: calc(100% + 5px); left: 0; right: 0; background: #1a1d21; border: 1px solid #3b82f6; border-radius: 12px; overflow: hidden; z-index: 100; max-height: 220px; overflow-y: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+.search-suggestions.open { display: block; }
+.suggestion-item { padding: 9px 14px; font-size: 13px; color: #cbd5e1; cursor: pointer; transition: background 0.15s; }
+.suggestion-item:hover, .suggestion-item.highlighted { background: #2a2e35; color: #f1f5f9; }
+.suggestion-item mark { background: transparent; color: #60a5fa; font-weight: 600; }
+.suggestion-empty { padding: 10px 14px; font-size: 12px; color: #475569; font-style: italic; }
+
+/* ── GRID LAYOUTS ── */
+.layout-classic-grid { display: grid; grid-template-columns: repeat(var(--menu-cols, auto-fill), minmax(min(280px, 100%), 1fr)); gap: 24px; }
+.layout-hero-grid { display: grid; grid-template-columns: repeat(var(--menu-cols, auto-fill), minmax(min(300px, 100%), 1fr)); gap: 28px; }
+.layout-compact-cards { display: grid; grid-template-columns: repeat(var(--menu-cols, auto-fill), minmax(min(240px, 100%), 1fr)); gap: 16px; }
+.layout-split-view { display: grid; grid-template-columns: repeat(2, minmax(min(200px, 100%), 1fr)); gap: 24px; }
+.layout-scroll-list { display: flex; flex-direction: column; }
+.scroll-list-category { margin-bottom: 32px; }
+.scroll-list-category:last-child { margin-bottom: 0; }
+.scroll-list-items { display: grid; grid-template-columns: repeat(var(--menu-cols, auto-fill), minmax(min(280px, 100%), 1fr)); gap: 24px; }
+
+/* ── LIST LAYOUTS ── */
+.layout-list-image-left, .layout-list-image-right { display: flex; flex-direction: column; gap: 20px; }
+.layout-list-image-left .list-item, .layout-list-image-right .list-item { display: flex; gap: 0; align-items: stretch; position: relative; }
+.layout-list-image-left .list-item { padding-left: 140px; }
+.layout-list-image-right .list-item { padding-right: 140px; }
+.layout-list-image-left .item-thumbnail-wrapper, .layout-list-image-right .item-thumbnail-wrapper { position: absolute; top: 0; bottom: 0; width: 140px; overflow: hidden; }
+.layout-list-image-left .item-thumbnail-wrapper { left: 0; }
+.layout-list-image-right .item-thumbnail-wrapper { right: 0; }
+.layout-list-image-left .list-item-image, .layout-list-image-right .list-item-image { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+.layout-list-image-left .item-content, .layout-list-image-right .item-content { flex: 1; min-width: 0; }
+.layout-list-image-right .list-item { flex-direction: row; }
+.layout-list-image-left .list-item-description, .layout-list-image-right .list-item-description { -webkit-line-clamp: 2; }
+
+/* ── CARDS ── */
+.list-item { background: #111315; border-radius: 16px; overflow: hidden; border: 1px solid #2a2e35; display: flex; flex-direction: column; height: 100%; }
+.list-item.has-modifiers { cursor: pointer; transition: transform 0.18s, box-shadow 0.18s; }
+.list-item.has-modifiers:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,0.35); }
+.item-thumbnail-wrapper { background: #111315; overflow: hidden; flex-shrink: 0; }
+.list-item-image { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+.item-content { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+.list-item-name { font-size: 18px; font-weight: 600; margin-bottom: 6px; color: #f1f5f9; line-height: 1.3; }
+.list-item-description { font-size: 16px; color: #94a3b8; margin-bottom: 10px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.list-item-price { font-size: 16px; font-weight: 700; color: #3b82f6; margin-top: auto; padding-top: 8px; }
+.modifier-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #60a5fa; margin-top: 8px; }
+.modifier-badge svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+/* ── CATEGORY HEADERS ── */
+.category-header { padding: 20px 0 10px; margin-bottom: 16px; border-bottom: 2px solid #2a2e35; }
+.category-header:first-child { padding-top: 0; }
+.category-header-name { font-size: 22px; font-weight: 700; color: #f1f5f9; margin-bottom: 4px; }
+.category-header-desc { font-size: 13px; color: #64748b; line-height: 1.5; }
+
+/* ── EXCLUDE WIDGET ── */
+.exclude-widget { border: 1px solid #2a2e35; border-radius: 10px; background: #1a1d21; }
+.exclude-trigger { padding: 8px 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; color: #cbd5e1; font-size: 13px; }
+.exclude-trigger:hover { background: #2a2e35; border-radius: 10px; }
+.exclude-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px 12px; border-top: 1px solid #2a2e35; }
+.exclude-chip { background: #2a2e35; padding: 3px 8px 3px 10px; border-radius: 20px; font-size: 11px; display: inline-flex; align-items: center; gap: 5px; color: #e2e8f0; }
+.exclude-chip-remove { cursor: pointer; font-size: 13px; line-height: 1; color: #64748b; }
+.exclude-chip-remove:hover { color: #ef4444; }
+.exclude-dropdown { display: none; border-top: 1px solid #2a2e35; max-height: 200px; overflow-y: auto; background: #1a1d21; border-radius: 0 0 10px 10px; }
+.exclude-dropdown.show { display: block; }
+.exclude-option { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; cursor: pointer; color: #cbd5e1; font-size: 13px; gap: 10px; }
+.exclude-option span { flex: 1; }
+.exclude-option input[type="checkbox"] { margin: 0; flex-shrink: 0; width: 14px; height: 14px; cursor: pointer; accent-color: #3b82f6; }
+.exclude-option:hover { background: #2a2e35; }
+
+/* ── STATUS ── */
+.status { padding: 10px 14px; border-radius: 10px; margin-bottom: 16px; font-size: 13px; }
+.status.success { background: #14532d; color: #86efac; border-left: 4px solid #22c55e; }
+.status.error { background: #7f1a1a; color: #fecaca; border-left: 4px solid #ef4444; }
+.status.info { background: #0c4a6e; color: #bae6fd; border-left: 4px solid #0ea5e9; }
+
+/* ── MODALS (shared) ── */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.active { display: flex; }
+.modal-content { background: #111315; border: 1px solid #2a2e35; border-radius: 20px; width: 100%; max-width: 850px; max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 24px 48px rgba(0,0,0,0.5); overflow: hidden; }
+.modal-content.modal-narrow { max-width: 540px; }
+.modal-header { padding: 18px 22px; border-bottom: 1px solid #2a2e35; display: flex; justify-content: space-between; align-items: center; }
+.modal-header h3 { font-size: 16px; font-weight: 600; color: #f1f5f9; margin: 0; }
+.modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b; line-height: 1; transition: color 0.15s; }
+.modal-close:hover { color: #f1f5f9; }
+.modal-body { padding: 18px 22px; overflow-y: auto; flex: 1; }
+.modal-footer { padding: 14px 22px; border-top: 1px solid #2a2e35; display: flex; justify-content: flex-end; gap: 10px; }
+
+/* code embed modal */
+.code-container { background: #0a0c10; border-radius: 12px; padding: 14px; position: relative; border: 1px solid #2a2e35; }
+.code-container pre { color: #e2e8f0; font-family: monospace; font-size: 11px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; max-height: 480px; overflow-y: auto; }
+.copy-code-btn { position: absolute; top: 10px; right: 10px; background: #3b82f6; color: white; border: none; padding: 5px 11px; border-radius: 20px; cursor: pointer; font-size: 11px; }
+
+/* modifier modal */
+.modifier-group { margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid #2a2e35; }
+.modifier-group:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.modifier-group-name { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #64748b; margin-bottom: 4px; }
+.modifier-group-limits { font-size: 11px; color: #3b82f6; margin-bottom: 10px; font-weight: 500; }
+.modifier-option { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #1e2330; gap: 10px; }
+.modifier-option:last-child { border-bottom: none; }
+.modifier-option-name { font-size: 14px; color: #cbd5e1; flex: 1; }
+.modifier-option-price { font-size: 13px; font-weight: 600; color: #64748b; flex-shrink: 0; }
+.modifier-option-price.has-price { color: #3b82f6; }
+.modifier-no-options { font-size: 13px; color: #475569; font-style: italic; }
+
+/* import modal */
+.import-error { display: none; color: #fecaca; background: #7f1a1a; border: 1px solid #ef4444; border-radius: 8px; padding: 8px 12px; font-size: 12px; margin-top: 8px; }
+
+/* ── MOBILE ── */
+@media (max-width: 900px) {
+  .studio-container { grid-template-columns: 1fr; padding: 16px; gap: 20px; }
+  .controls-panel { position: static; max-height: none; }
+  .menu-layout.tabs-left, .menu-layout.tabs-right { flex-direction: column; }
+  .tabs-left .categories-column, .tabs-right .categories-column { min-width: unset; max-width: unset; width: 100%; }
+  .categories-container { flex-wrap: nowrap !important; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .categories-container::-webkit-scrollbar { display: none; }
+  .tabs-left .categories-container, .tabs-right .categories-container { flex-direction: row !important; }
+  .layout-list-image-left .list-item, .layout-list-image-right .list-item { flex-direction: column !important; position: static !important; padding-left: 0 !important; padding-right: 0 !important; width: 100%; }
+  .layout-list-image-left .item-thumbnail-wrapper, .layout-list-image-right .item-thumbnail-wrapper { position: static !important; width: 100% !important; height: 200px !important; }
+  .layout-list-image-left .item-thumbnail-wrapper:empty, .layout-list-image-right .item-thumbnail-wrapper:empty { display: none !important; }
+  .layout-compact-cards { grid-template-columns: 1fr !important; }
+  .layout-split-view { grid-template-columns: 1fr; }
+  .search-wrapper { width: 100% !important; }
+  .category-select { width: 100% !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="studio-header">
+  <div class="header-content">
+    <div class="logo-area">
+      <img src="https://help.spoton.com/images/6686c186-6fa4-480f-b228-b4a34eacf6d2" alt="SpotOn" class="logo">
+      <div class="header-text"><h1>Menu Studio</h1></div>
+    </div>
+    <div class="badge" style="background:transparent;color:#fca5a5;border:1px solid #ef4444;display:flex;align-items:center;gap:6px;"><span style="width:7px;height:7px;border-radius:50%;background:#ef4444;display:inline-block;flex-shrink:0;"></span>Modifiers not shown</div>
+  </div>
+</div>
+
+<div class="studio-container">
+<div class="controls-panel">
+
+  <!-- ① MENU SOURCE -->
+  <details class="panel-section" open>
+    <summary><span class="section-title">📂 Menu Source</span></summary>
+    <div>
+      <div class="control-group">
+        <label>Merchant ID</label>
+        <div style="display:flex;gap:6px;">
+          <input type="text" id="merchantId" placeholder="Enter Merchant ID" style="flex:1;min-width:0;">
+          <button id="refreshBtn" class="btn btn-secondary" style="flex-shrink:0;padding:7px 12px;font-size:12px;">↻</button>
+        </div>
+        <div class="helper-text">Auto-loads on input. ↻ forces reload.</div>
+      </div>
+      <div class="control-group">
+        <button id="importConfigBtn" class="btn btn-secondary" style="width:100%;">📥 Import from Embed Code</button>
+        <div class="helper-text">Paste a previously generated embed code to restore all settings.</div>
+      </div>
+      <div class="control-group">
+        <label>Excluded Categories</label>
+        <div id="excludeWidget" class="exclude-widget">
+          <div class="exclude-trigger">Select categories to exclude <span>▼</span></div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ② LAYOUT -->
+  <details class="panel-section" open>
+    <summary><span class="section-title">📐 Layout</span></summary>
+    <div>
+      <div class="control-group">
+        <label>Layout Style</label>
+        <select id="layoutType">
+          <option value="classic-grid">Classic Grid</option>
+          <option value="hero-grid">Hero Grid (Large Images)</option>
+          <option value="list-image-left">List — Image Left</option>
+          <option value="list-image-right">List — Image Right</option>
+          <option value="compact-cards">Compact Cards</option>
+          <option value="split-view">Split View (2 columns)</option>
+          <option value="scroll-list">Scrolling List (all categories)</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label>Tabs Position</label>
+        <div class="radio-group">
+          <label><input type="radio" name="tabsPosition" value="top" checked> Top</label>
+          <label><input type="radio" name="tabsPosition" value="bottom"> Bottom</label>
+          <label><input type="radio" name="tabsPosition" value="left"> Left</label>
+          <label><input type="radio" name="tabsPosition" value="right"> Right</label>
+        </div>
+      </div>
+      <div class="control-group">
+        <label>Tab Alignment <span class="helper-text" style="display:inline;">(top/bottom)</span></label>
+        <div class="radio-group">
+          <label><input type="radio" name="tabAlign" value="left" checked> Left</label>
+          <label><input type="radio" name="tabAlign" value="center"> Center</label>
+          <label><input type="radio" name="tabAlign" value="right"> Right</label>
+        </div>
+      </div>
+      <div class="subgroup-label">Image Height</div>
+      <div class="subgroup">
+        <div class="control-group" style="margin-bottom:0;">
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="number" id="imageHeight" value="180" min="80" max="500" step="10" style="width:90px;">
+            <span style="font-size:12px;color:#475569;">px — grid layouts only</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ③ NAVIGATION -->
+  <details class="panel-section" open>
+    <summary><span class="section-title">🧭 Navigation</span></summary>
+    <div>
+      <div class="control-group">
+        <label>Content</label>
+        <div class="toggle-group">
+          <label>Show Images <input type="checkbox" id="showImages" checked></label>
+          <label>Show Prices <input type="checkbox" id="showPrices" checked></label>
+          <label>Show Modifiers (clickable) <input type="checkbox" id="showModifiers" checked></label>
+        </div>
+      </div>
+      <div class="control-group">
+        <label>Category Order</label>
+        <div class="radio-group">
+          <label><input type="radio" name="categorySort" value="default" checked> Default</label>
+          <label><input type="radio" name="categorySort" value="az"> A → Z</label>
+          <label><input type="radio" name="categorySort" value="za"> Z → A</label>
+        </div>
+      </div>
+      <div class="control-group">
+        <label>Navigation Elements</label>
+        <div class="toggle-group">
+          <label>Tabs <input type="checkbox" id="showTabs" checked></label>
+          <label>Category Search <input type="checkbox" id="showCategorySearch"></label>
+          <label>Category Dropdown <input type="checkbox" id="showCategoryDropdown"></label>
+          <label>Category Headers <input type="checkbox" id="showCategoryHeaders" checked></label>
+        </div>
+        <div class="helper-text" style="margin-top:6px;">Headers appear above items in all layouts.</div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ④ TABS -->
+  <details class="panel-section" open>
+    <summary><span class="section-title">🏷️ Tabs</span></summary>
+    <div>
+      <div class="subgroup-label">Colors</div>
+      <div class="subgroup">
+        <div class="color-row">
+          <div class="color-row-item"><span>Default BG</span><div class="color-input"><input type="color" id="defaultTabColor" value="#1a1d21"><span id="defaultTabColorValue">#1a1d21</span></div></div>
+          <div class="color-row-item"><span>Default Text</span><div class="color-input"><input type="color" id="defaultTabTextColor" value="#cbd5e1"><span id="defaultTabTextColorValue">#cbd5e1</span></div></div>
+          <div class="color-row-item"><span>Active BG</span><div class="color-input"><input type="color" id="activeTabColor" value="#3b82f6"><span id="activeTabColorValue">#3b82f6</span></div></div>
+          <div class="color-row-item"><span>Active Text</span><div class="color-input"><input type="color" id="activeTabTextColor" value="#ffffff"><span id="activeTabTextColorValue">#ffffff</span></div></div>
+        </div>
+      </div>
+      <div class="subgroup-label">Border & Shape</div>
+      <div class="subgroup">
+        <div class="border-control">
+          <input type="color" id="tabBorderColor" value="#2a2e35">
+          <input type="number" id="tabBorderWidth" value="1" min="0" max="5" step="0.5">
+          <span>px</span>
+        </div>
+        <div class="control-group" style="margin-bottom:0;margin-top:10px;">
+          <label>Radius (px)</label>
+          <div class="radius-grid">
+            <div><span>Top-left</span><input type="number" id="tabRadiusTL" value="40"></div>
+            <div><span>Top-right</span><input type="number" id="tabRadiusTR" value="40"></div>
+            <div><span>Bottom-right</span><input type="number" id="tabRadiusBR" value="40"></div>
+            <div><span>Bottom-left</span><input type="number" id="tabRadiusBL" value="40"></div>
+          </div>
+        </div>
+      </div>
+      <div class="subgroup-label">Typography</div>
+      <div class="subgroup">
+        <div class="font-note">Copy exact name from <a href="https://fonts.google.com" target="_blank">fonts.google.com</a></div>
+        <div class="typography-grid">
+          <input type="text" id="tabFontFamily" list="fontList" placeholder="Inter" value="Inter">
+          <input type="number" id="tabFontSize" value="14" min="10">
+          <select id="tabFontWeight">
+            <option value="400">400</option><option value="500">500</option>
+            <option value="600" selected>600</option><option value="700">700</option>
+          </select>
+        </div>
+        <div class="typo-col-labels"><span>Family</span><span>Size</span><span>Weight</span></div>
+        <div class="helper-text" style="margin-top:8px;">Search & Dropdown inherit tab styling.</div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ⑤ CARDS -->
+  <details class="panel-section" open>
+    <summary><span class="section-title">🃏 Cards</span></summary>
+    <div>
+      <div class="subgroup-label">Background</div>
+      <div class="subgroup">
+        <div class="color-row">
+          <div class="color-row-item"><span>Card BG</span><div class="color-input"><input type="color" id="cardBgColor" value="#111315"><span id="cardBgColorValue">#111315</span></div></div>
+        </div>
+      </div>
+      <div class="subgroup-label">Border & Shape</div>
+      <div class="subgroup">
+        <div class="border-control">
+          <input type="color" id="cardBorderColor" value="#2a2e35">
+          <input type="number" id="cardBorderWidth" value="1" min="0" step="0.5">
+          <span>px</span>
+        </div>
+        <div class="control-group" style="margin-bottom:0;margin-top:10px;">
+          <label>Radius (px)</label>
+          <div class="radius-grid">
+            <div><span>Top-left</span><input type="number" id="cardRadiusTL" value="16"></div>
+            <div><span>Top-right</span><input type="number" id="cardRadiusTR" value="16"></div>
+            <div><span>Bottom-right</span><input type="number" id="cardRadiusBR" value="16"></div>
+            <div><span>Bottom-left</span><input type="number" id="cardRadiusBL" value="16"></div>
+          </div>
+        </div>
+      </div>
+      <div class="subgroup-label">Content Padding (px)</div>
+      <div class="subgroup">
+        <div class="padding-grid">
+          <div><span>Top</span><input type="number" id="cardPaddingTop" value="16"></div>
+          <div><span>Right</span><input type="number" id="cardPaddingRight" value="16"></div>
+          <div><span>Bottom</span><input type="number" id="cardPaddingBottom" value="16"></div>
+          <div><span>Left</span><input type="number" id="cardPaddingLeft" value="16"></div>
+        </div>
+        <div class="helper-text" style="margin-top:6px;">Images always fill edge-to-edge.</div>
+      </div>
+      <div class="subgroup-label">Title</div>
+      <div class="subgroup">
+        <div class="color-size-row">
+          <div class="color-swatch-col"><span>Color</span><div class="color-input"><input type="color" id="cardTitleColor" value="#f1f5f9"><span id="cardTitleColorValue">#f1f5f9</span></div></div>
+          <div class="size-col"><span>Size (px)</span><input type="number" id="titleFontSize" value="18"></div>
+        </div>
+        <div class="font-note">Copy exact name from <a href="https://fonts.google.com" target="_blank">fonts.google.com</a></div>
+        <div class="typography-grid-2">
+          <input type="text" id="titleFontFamily" list="fontList" placeholder="Inter" value="Inter">
+          <select id="titleFontWeight">
+            <option value="400">400</option><option value="500">500</option>
+            <option value="600" selected>600</option><option value="700">700</option>
+          </select>
+        </div>
+        <div class="typo-col-labels-2"><span>Family</span><span>Weight</span></div>
+      </div>
+      <div class="subgroup-label">Description</div>
+      <div class="subgroup">
+        <div class="color-size-row">
+          <div class="color-swatch-col"><span>Color</span><div class="color-input"><input type="color" id="descTextColor" value="#94a3b8"><span id="descTextColorValue">#94a3b8</span></div></div>
+          <div class="size-col"><span>Size (px)</span><input type="number" id="descFontSize" value="16"></div>
+        </div>
+        <div class="typography-grid-2">
+          <input type="text" id="descFontFamily" list="fontList" placeholder="Inter" value="Inter">
+          <select id="descFontWeight"><option value="400" selected>400</option><option value="500">500</option></select>
+        </div>
+        <div class="typo-col-labels-2"><span>Family</span><span>Weight</span></div>
+        <div class="line-height-row">
+          <label>Line Height</label>
+          <input type="number" id="descLineHeight" value="1.5" min="1.5" max="3" step="0.05">
+          <span class="qa-badge">min 1.5 QA</span>
+        </div>
+      </div>
+      <div class="subgroup-label">Price</div>
+      <div class="subgroup">
+        <div class="color-size-row">
+          <div class="color-swatch-col"><span>Color</span><div class="color-input"><input type="color" id="priceTextColor" value="#3b82f6"><span id="priceTextColorValue">#3b82f6</span></div></div>
+          <div class="size-col"><span>Size (px)</span><input type="number" id="priceFontSize" value="16"></div>
+        </div>
+        <div class="typography-grid-2">
+          <input type="text" id="priceFontFamily" list="fontList" placeholder="Inter" value="Inter">
+          <select id="priceFontWeight">
+            <option value="400">400</option><option value="500">500</option>
+            <option value="600">600</option><option value="700" selected>700</option>
+          </select>
+        </div>
+        <div class="typo-col-labels-2"><span>Family</span><span>Weight</span></div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ⑥ CATEGORY HEADERS -->
+  <details class="panel-section">
+    <summary><span class="section-title">🗂️ Category Headers</span></summary>
+    <div>
+      <div id="headerOffNote" class="helper-text" style="margin-bottom:8px;">Enable "Category Headers" in Navigation to unlock these settings.</div>
+      <div id="headerControlsWrapper">
+        <div class="subgroup-label">Alignment</div>
+        <div class="subgroup">
+          <div class="radio-group" style="flex-wrap:nowrap;">
+            <label><input type="radio" name="headerAlign" value="left" checked> Left</label>
+            <label><input type="radio" name="headerAlign" value="center"> Center</label>
+            <label><input type="radio" name="headerAlign" value="right"> Right</label>
+          </div>
+        </div>
+        <div class="subgroup-label">Divider</div>
+        <div class="subgroup">
+          <div class="color-size-row">
+            <div class="color-swatch-col"><span>Color</span><div class="color-input"><input type="color" id="headerDividerColor" value="#2a2e35"><span id="headerDividerColorValue">#2a2e35</span></div></div>
+            <div class="size-col"><span>Thickness (px)</span><input type="number" id="headerDividerThickness" value="2" min="0" max="10"></div>
+          </div>
+        </div>
+        <div class="subgroup-label">Color & Typography</div>
+        <div class="subgroup">
+          <div class="color-row" style="margin-bottom:10px;">
+            <div class="color-row-item"><span>Text Color</span><div class="color-input"><input type="color" id="headerNameColor" value="#f1f5f9"><span id="headerNameColorValue">#f1f5f9</span></div></div>
+          </div>
+          <div class="font-note">Copy exact name from <a href="https://fonts.google.com" target="_blank">fonts.google.com</a></div>
+          <div class="typography-grid">
+            <input type="text" id="headerFontFamily" list="fontList" placeholder="Inter" value="Inter">
+            <input type="number" id="headerFontSize" value="22" min="12">
+            <select id="headerFontWeight">
+              <option value="400">400</option><option value="500">500</option>
+              <option value="600">600</option><option value="700" selected>700</option><option value="800">800</option>
+            </select>
+          </div>
+          <div class="typo-col-labels"><span>Family</span><span>Size</span><span>Weight</span></div>
+          <div class="line-height-row" style="margin-top:10px;">
+            <label>Line Height</label>
+            <input type="number" id="headerLineHeight" value="1.2" min="1" max="3" step="0.05">
+          </div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <datalist id="fontList">
+    <option>Inter</option><option>Roboto</option><option>Open Sans</option><option>Lato</option>
+    <option>Poppins</option><option>Montserrat</option><option>Nunito</option><option>Playfair Display</option>
+    <option>Merriweather</option><option>Raleway</option><option>Oswald</option><option>Source Sans Pro</option>
+    <option>Ubuntu</option><option>Roboto Condensed</option><option>Cabin</option><option>Dosis</option>
+    <option>Quicksand</option><option>Work Sans</option><option>Barlow</option><option>Fira Sans</option>
+    <option>Josefin Sans</option><option>Mulish</option><option>Manrope</option><option>Karla</option>
+    <option>Heebo</option><option>Comfortaa</option><option>DM Sans</option><option>Figtree</option>
+    <option>Plus Jakarta Sans</option><option>Space Grotesk</option><option>Sora</option>
+    <option>Lexend</option><option>Instrument Sans</option><option>Bricolage Grotesque</option>
+  </datalist>
+
+  <div class="action-buttons">
+    <button class="btn btn-primary" id="showCodeBtn">📋 Generate Embed Code</button>
+  </div>
+
+</div><!-- /controls-panel -->
+
+<div class="preview-panel">
+  <div class="preview-header">
+    <h2>Menu Preview</h2>
+  </div>
+  <div class="menu-preview" id="menuPreview">
+    <div class="status info">Enter a Merchant ID above to load your menu.</div>
+  </div>
+</div>
+</div><!-- /studio-container -->
+
+<!-- EMBED CODE MODAL -->
+<div id="codeModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Embed Code – Copy into Webflow</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" style="padding:16px;">
+      <div class="code-container">
+        <button class="copy-code-btn" id="modalCopyBtn">Copy</button>
+        <pre id="embedCodeDisplay"></pre>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+      <button class="btn btn-primary" id="modalFooterCopyBtn">Copy to Clipboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT EMBED CODE MODAL -->
+<div id="importModal" class="modal-overlay">
+  <div class="modal-content modal-narrow">
+    <div class="modal-header">
+      <h3>📥 Import from Embed Code</h3>
+      <button class="modal-close" onclick="closeImportModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:#94a3b8;margin-bottom:12px;">Paste a previously generated embed code below. All styling settings will be restored.</p>
+      <textarea id="importCodeTextarea" rows="12" style="width:100%;padding:10px;background:#0a0c10;border:1px solid #2a2e35;border-radius:8px;color:#e2e8f0;font-family:monospace;font-size:11px;resize:vertical;box-sizing:border-box;" placeholder="Paste embed code here…"></textarea>
+      <div id="importError" class="import-error"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeImportModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="applyImportedConfig()">Apply Settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODIFIER MODAL -->
+<div id="modifierOverlay" class="modal-overlay" onclick="if(event.target===this)closeModifierModal()">
+  <div class="modal-content modal-narrow" id="modifierModal">
+    <div class="modal-header">
+      <h3 id="modifierModalTitle">Item</h3>
+      <button class="modal-close" onclick="closeModifierModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modifierModalBody"></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   MENU STUDIO — Main Class
+═══════════════════════════════════════════ */
+const googleFontsList = [
+  "Inter","Roboto","Open Sans","Lato","Poppins","Montserrat","Nunito","Playfair Display",
+  "Merriweather","Raleway","Oswald","Source Sans Pro","Ubuntu","Roboto Condensed","Cabin",
+  "Dosis","Quicksand","Work Sans","Barlow","Fira Sans","Josefin Sans","Mulish","Manrope",
+  "Karla","Heebo","Comfortaa","DM Sans","Figtree","Plus Jakarta Sans","Space Grotesk",
+  "Sora","Lexend","Instrument Sans","Bricolage Grotesque"
+].sort();
+
+class MenuStudio {
+  constructor() {
+    this.categoryNames = {};
+    this.categoryDescriptions = {};
+    this.itemsByCategory = {};
+    this.excludedCategories = [];
+    this.isLoading = false;
+    this.fontLinks = {};
+    this._activeCid = null;
+    this.init();
+  }
+
+  /* ── INIT ── */
+  init() {
+    // Color hex display
+    const colorIds = [
+      'defaultTabColor','defaultTabTextColor','activeTabColor','activeTabTextColor',
+      'cardBgColor','cardTitleColor','descTextColor','priceTextColor',
+      'cardBorderColor','tabBorderColor','headerDividerColor','headerNameColor'
+    ];
+    colorIds.forEach(id => {
+      const el = document.getElementById(id);
+      const span = document.getElementById(`${id}Value`);
+      if (el && span) el.addEventListener('input', () => { span.textContent = el.value; });
+    });
+
+    // Buttons
+    document.getElementById('refreshBtn').addEventListener('click', () => this.loadMenu(true));
+    document.getElementById('showCodeBtn').addEventListener('click', () => this.showEmbedCode());
+    document.getElementById('importConfigBtn').addEventListener('click', () => openImportModal());
+
+    // Merchant ID auto-load
+    const midEl = document.getElementById('merchantId');
+    if (midEl) {
+      midEl.addEventListener('input', () => {
+        clearTimeout(this._midTimeout);
+        this._midTimeout = setTimeout(() => this.loadMenu(false), 800);
+      });
+    }
+
+    // descLineHeight clamp
+    const lhEl = document.getElementById('descLineHeight');
+    if (lhEl) lhEl.addEventListener('change', () => { if (parseFloat(lhEl.value) < 1.5) lhEl.value = 1.5; });
+
+    // showCategoryHeaders → toggle header controls
+    const headersToggle = document.getElementById('showCategoryHeaders');
+    const headerWrapper = document.getElementById('headerControlsWrapper');
+    const headerOffNote = document.getElementById('headerOffNote');
+    const syncHeaderUI = () => {
+      const on = headersToggle?.checked;
+      if (headerWrapper) headerWrapper.style.display = on ? '' : 'none';
+      if (headerOffNote) headerOffNote.style.display = on ? 'none' : '';
+    };
+    syncHeaderUI();
+    headersToggle?.addEventListener('change', () => { syncHeaderUI(); this.autoUpdate(); });
+
+    // Auto-update fields
+    const autoFields = [
+      'layoutType',
+      'defaultTabColor','defaultTabTextColor','activeTabColor','activeTabTextColor',
+      'cardBgColor','cardTitleColor','descTextColor','priceTextColor',
+      'cardBorderColor','cardBorderWidth','tabBorderColor','tabBorderWidth',
+      'showPrices','showCategorySearch','showCategoryDropdown','showImages','showTabs','showModifiers',
+      'cardPaddingTop','cardPaddingRight','cardPaddingBottom','cardPaddingLeft',
+      'cardRadiusTL','cardRadiusTR','cardRadiusBR','cardRadiusBL',
+      'tabRadiusTL','tabRadiusTR','tabRadiusBR','tabRadiusBL',
+      'tabFontFamily','tabFontSize','tabFontWeight',
+      'titleFontFamily','titleFontSize','titleFontWeight',
+      'descFontFamily','descFontSize','descFontWeight','descLineHeight',
+      'priceFontFamily','priceFontSize','priceFontWeight',
+      'headerFontFamily','headerFontSize','headerFontWeight','headerLineHeight',
+      'headerDividerColor','headerDividerThickness','headerNameColor',
+      'imageHeight',
+    ];
+    autoFields.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', () => this.autoUpdate());
+      if (el.tagName === 'SELECT' || el.type === 'checkbox') el.addEventListener('change', () => this.autoUpdate());
+    });
+    document.querySelectorAll('input[name="tabsPosition"],input[name="tabAlign"],input[name="headerAlign"],input[name="categorySort"]').forEach(r => {
+      r.addEventListener('change', () => this.autoUpdate());
+    });
+  }
+
+  val(id) { return document.getElementById(id)?.value || ''; }
+  num(id) { return parseFloat(this.val(id)) || 0; }
+  checked(id) { return document.getElementById(id)?.checked || false; }
+  radio(name) { return document.querySelector(`input[name="${name}"]:checked`)?.value || ''; }
+
+  /* ── LOAD MENU ── */
+  async loadMenu(forceRefresh = false) {
+    if (this.isLoading && !forceRefresh) return;
+    this.isLoading = true;
+    const mid = this.val('merchantId').trim();
+    if (!mid) { this.isLoading = false; return; }
+
+    this.showStatus('Loading menu…', 'info');
+    const btn = document.getElementById('refreshBtn');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
+
+    try {
+      await this.fetchMenu(mid);
+      if (Object.keys(this.itemsByCategory).length) {
+        this.renderMenu();
+        this.buildExcludeWidget();
+        this.showStatus('Menu loaded!', 'success');
+        this._showDebugPanel();
+      } else {
+        this.showStatus('No menu items found for this Merchant ID.', 'error');
+      }
+    } catch(e) {
+      console.error('[MenuStudio] loadMenu error:', e);
+      const msg = e.message?.includes('403') || e.message?.includes('All proxies')
+        ? 'The SpotOn API blocked this request (CORS). The embed code will work on the live merchant site.'
+        : `Load failed: ${e.message}`;
+      this.showStatus(msg, 'error');
+    } finally {
+      this.isLoading = false;
+      if (btn) { btn.disabled = false; btn.textContent = '↻'; }
+    }
+  }
+
+  async fetchMenu(mid) {
+    const date = new Date().toISOString().slice(0,10);
+    const directUrl = `https://qa-ecommerce-api.spoton.com/v1/restaurants/${mid}/menu-groups?orderDateTime=${date}T10:22:25-05:00&orderTypeId=3uxw5e1y0vgz3dwi1we2ioj1lq`;
+
+    const fetchWithTimeout = (url, opts = {}, ms = 8000) => {
+      const ctrl = new AbortController();
+      const id = setTimeout(() => ctrl.abort(), ms);
+      return fetch(url, { ...opts, signal: ctrl.signal }).finally(() => clearTimeout(id));
+    };
+
+    const parseAndStore = async (res) => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const cats = await res.json();
+      const names = {}, items = {}, descs = {};
+      cats.forEach(c => {
+        if (c.menuItems?.length) {
+          names[c.id] = c.name.trim();
+          items[c.id] = c.menuItems;
+          if (c.description) descs[c.id] = c.description.trim();
+        }
+      });
+      if (!Object.keys(names).length) throw new Error('Empty response');
+      this.categoryNames = names;
+      this.itemsByCategory = items;
+      this.categoryDescriptions = descs;
+
+      // Debug: surface item structure
+      const firstItems = Object.values(items)[0];
+      if (firstItems?.length) {
+        const sample = firstItems[0];
+        console.log('[MenuStudio] Item keys:', Object.keys(sample));
+        window._spotOnFirstItem = sample;
+        window._spotOnRawCats = cats;
+      }
+    };
+
+    // Try direct first
+    try { const res = await fetchWithTimeout(directUrl, {}, 5000); await parseAndStore(res); return; }
+    catch(e) { console.info('[MenuStudio] Direct fetch blocked, trying proxies…'); }
+
+    // Race proxies simultaneously — first to succeed wins
+    const proxyUrls = [
+      `https://corsproxy.io/?${encodeURIComponent(directUrl)}`,
+      `https://api.allorigins.win/raw?url=${encodeURIComponent(directUrl)}`,
+      `https://thingproxy.freeboard.io/fetch/${directUrl}`,
+    ];
+    const tryProxy = async (url) => {
+      const label = url.split('?')[0].replace('https://','').slice(0,30);
+      console.info('[MenuStudio] Trying proxy:', label);
+      const res = await fetchWithTimeout(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } }, 10000);
+      console.info('[MenuStudio] Proxy responded:', label, res.status);
+      await parseAndStore(res);
+      return true;
+    };
+    await new Promise((resolve, reject) => {
+      let failed = 0; let settled = false;
+      proxyUrls.forEach(url => {
+        tryProxy(url).then(() => { if (!settled) { settled = true; resolve(); } })
+          .catch(e => { console.warn('[MenuStudio] Proxy failed:', e.message); failed++; if (failed === proxyUrls.length && !settled) { settled = true; reject(new Error('All proxies failed.')); } });
+      });
+    });
+  }
+
+  /* ── EXCLUDE WIDGET ── */
+  buildExcludeWidget() {
+    const container = document.getElementById('excludeWidget');
+    if (!container) return;
+    const categories = Object.values(this.categoryNames);
+    const selectedSet = new Set(this.excludedCategories);
+    container.innerHTML = `
+      <div class="exclude-trigger" id="excludeTrigger"><span>Exclude categories</span><span>▼</span></div>
+      <div class="exclude-chips" id="excludeChips"></div>
+      <div class="exclude-dropdown" id="excludeDropdown">
+        ${categories.map(name => `
+          <label class="exclude-option">
+            <span>${this.escapeHtml(name)}</span>
+            <input type="checkbox" value="${this.escapeHtml(name)}" ${selectedSet.has(name) ? 'checked' : ''}>
+          </label>`).join('')}
+      </div>`;
+
+    const trigger = document.getElementById('excludeTrigger');
+    const dropdown = document.getElementById('excludeDropdown');
+    trigger.addEventListener('click', e => { e.stopPropagation(); dropdown.classList.toggle('show'); });
+    document.addEventListener('click', e => { if (!container.contains(e.target)) dropdown.classList.remove('show'); });
+
+    const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
+    const updateChips = () => {
+      this.excludedCategories = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+      const chips = document.getElementById('excludeChips');
+      chips.innerHTML = this.excludedCategories.map(name => `
+        <div class="exclude-chip"><span>${this.escapeHtml(name)}</span>
+          <span class="exclude-chip-remove" data-name="${this.escapeHtml(name)}">✕</span>
+        </div>`).join('');
+      chips.querySelectorAll('.exclude-chip-remove').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const cb = Array.from(checkboxes).find(cb => cb.value === btn.dataset.name);
+          if (cb) cb.checked = false;
+          updateChips(); this.autoUpdate();
+        });
+      });
+      this.autoUpdate();
+    };
+    checkboxes.forEach(cb => cb.addEventListener('change', updateChips));
+    updateChips();
+  }
+
+  /* ── AUTO UPDATE ── */
+  autoUpdate() {
+    clearTimeout(this._timeout);
+    this._timeout = setTimeout(() => {
+      if (Object.keys(this.itemsByCategory).length) this.renderMenu();
+    }, 120);
+  }
+
+  /* ── RENDER MENU ── */
+  renderMenu() {
+    const container = document.getElementById('menuPreview');
+    const layout = this.val('layoutType');
+    const tabsPos = this.radio('tabsPosition') || 'top';
+    const tabAlign = this.radio('tabAlign') || 'left';
+    const categorySort = this.radio('categorySort') || 'default';
+    const showSearch = this.checked('showCategorySearch');
+    const showDropdown = this.checked('showCategoryDropdown');
+    const showImages = this.checked('showImages');
+    const showTabs = this.checked('showTabs');
+    const showHeaders = this.checked('showCategoryHeaders');
+    const isScrollList = layout === 'scroll-list';
+    const isLR = tabsPos === 'left' || tabsPos === 'right';
+    const alignStyle = tabAlign === 'center' ? 'center' : tabAlign === 'right' ? 'flex-end' : 'flex-start';
+
+    let activeCategories = Object.keys(this.itemsByCategory)
+      .filter(cid => !this.excludedCategories.includes(this.categoryNames[cid]));
+    if (categorySort === 'az') activeCategories.sort((a,b) => this.categoryNames[a].localeCompare(this.categoryNames[b]));
+    else if (categorySort === 'za') activeCategories.sort((a,b) => this.categoryNames[b].localeCompare(this.categoryNames[a]));
+
+    // Remove previous status
+    container.querySelector('.status')?.remove();
+
+    // ── SCROLL LIST ──
+    if (isScrollList) {
+      container.innerHTML = `<div class="menu-root layout-scroll-list" id="menuRoot"></div>`;
+      const root = document.getElementById('menuRoot');
+      activeCategories.forEach(cid => {
+        const section = document.createElement('div');
+        section.className = 'scroll-list-category';
+        if (showHeaders) {
+          const desc = this.categoryDescriptions?.[cid] || '';
+          section.innerHTML = `
+            <div class="category-header">
+              <div class="category-header-name">${this.escapeHtml(this.categoryNames[cid])}</div>
+              ${desc ? `<div class="category-header-desc">${this.escapeHtml(desc)}</div>` : ''}
+            </div>
+            <div class="scroll-list-items" data-cid="${cid}"></div>`;
+          root.appendChild(section);
+          this._renderCards(section.querySelector('.scroll-list-items'), cid, showImages, 'classic-grid');
+        } else {
+          const grid = document.createElement('div');
+          grid.className = 'scroll-list-items';
+          section.appendChild(grid); root.appendChild(section);
+          this._renderCards(grid, cid, showImages, 'classic-grid');
+        }
+      });
+      this.applyStyles();
+      requestAnimationFrame(() => this._syncMenuCols());
+      return;
+    }
+
+    // ── TABBED MODE ──
+    let html = `<div class="menu-layout tabs-${tabsPos}">`;
+    if (showTabs || showSearch || showDropdown) {
+      html += `<div class="categories-column">`;
+      if (showSearch || showDropdown) {
+        html += `<div class="category-toolbar" id="catToolbar">`;
+        if (showSearch) html += `<div class="search-wrapper"><input type="text" class="category-search" id="catSearch" placeholder="Search categories…" autocomplete="off"><div class="search-suggestions" id="searchSuggestions"></div></div>`;
+        if (showDropdown) html += `<select class="category-select" id="catSelect">${activeCategories.map(cid => `<option value="${cid}">${this.escapeHtml(this.categoryNames[cid])}</option>`).join('')}</select>`;
+        html += `</div>`;
+      }
+      if (showTabs) html += `<div class="categories-container" id="categoriesContainer" style="${!isLR ? `justify-content:${alignStyle};` : ''}"></div>`;
+      html += `</div>`;
+    }
+    html += `<div class="menu-root layout-${layout}" id="menuRoot"></div></div>`;
+    container.innerHTML = html;
+
+    if (showTabs) {
+      const cc = document.getElementById('categoriesContainer');
+      activeCategories.forEach((cid, idx) => {
+        const a = document.createElement('a');
+        a.href = '#'; a.className = 'category-link' + (idx === 0 ? ' active' : '');
+        a.textContent = this.categoryNames[cid]; a.dataset.categoryId = cid;
+        a.addEventListener('click', e => {
+          e.preventDefault(); this._activeCid = cid;
+          this.setActiveCategory(cid);
+          this._displayTabCategory(cid, showImages, layout, showHeaders);
+          const sel = document.getElementById('catSelect'); if (sel) sel.value = cid;
+          const srch = document.getElementById('catSearch'); if (srch) srch.value = '';
+          this._closeSuggestions();
+        });
+        cc.appendChild(a);
+      });
+    }
+
+    const selEl = document.getElementById('catSelect');
+    if (selEl) selEl.addEventListener('change', e => {
+      const cid = e.target.value; this._activeCid = cid;
+      this.setActiveCategory(cid); this._displayTabCategory(cid, showImages, layout, showHeaders);
+    });
+
+    const searchEl = document.getElementById('catSearch');
+    const suggestionsEl = document.getElementById('searchSuggestions');
+    if (searchEl && suggestionsEl) {
+      const showSuggestions = term => {
+        const matches = term.length === 0 ? activeCategories : activeCategories.filter(cid => this.categoryNames[cid].toLowerCase().includes(term.toLowerCase()));
+        if (!matches.length) { suggestionsEl.innerHTML = '<div class="suggestion-empty">No categories found</div>'; suggestionsEl.classList.add('open'); return; }
+        suggestionsEl.innerHTML = matches.map(cid => {
+          const name = this.categoryNames[cid];
+          const hl = term.length ? name.replace(new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<mark>$1</mark>') : name;
+          return `<div class="suggestion-item" data-cid="${cid}">${hl}</div>`;
+        }).join('');
+        suggestionsEl.classList.add('open');
+        suggestionsEl.querySelectorAll('.suggestion-item').forEach(item => {
+          item.addEventListener('mousedown', e => {
+            e.preventDefault(); const cid = item.dataset.cid;
+            this._activeCid = cid; this.setActiveCategory(cid);
+            this._displayTabCategory(cid, showImages, layout, showHeaders);
+            searchEl.value = this.categoryNames[cid];
+            const sel = document.getElementById('catSelect'); if (sel) sel.value = cid;
+            this._closeSuggestions();
+          });
+        });
+      };
+      searchEl.addEventListener('focus', () => showSuggestions(searchEl.value));
+      searchEl.addEventListener('input', () => showSuggestions(searchEl.value));
+      searchEl.addEventListener('blur', () => setTimeout(() => this._closeSuggestions(), 150));
+      searchEl.addEventListener('keydown', e => {
+        const items = suggestionsEl.querySelectorAll('.suggestion-item');
+        const current = suggestionsEl.querySelector('.suggestion-item.highlighted');
+        if (e.key === 'ArrowDown') { e.preventDefault(); const next = current ? current.nextElementSibling : items[0]; if (next) { current?.classList.remove('highlighted'); next.classList.add('highlighted'); next.scrollIntoView({block:'nearest'}); } }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); const prev = current?.previousElementSibling; if (prev) { current.classList.remove('highlighted'); prev.classList.add('highlighted'); prev.scrollIntoView({block:'nearest'}); } }
+        else if (e.key === 'Enter') { e.preventDefault(); const target = current || items[0]; if (target) { const cid = target.dataset.cid; this._activeCid = cid; this.setActiveCategory(cid); this._displayTabCategory(cid, showImages, layout, showHeaders); searchEl.value = this.categoryNames[cid]; const sel = document.getElementById('catSelect'); if (sel) sel.value = cid; this._closeSuggestions(); } }
+        else if (e.key === 'Escape') this._closeSuggestions();
+      });
+    }
+
+    const firstCid = activeCategories[0];
+    if (firstCid) {
+      this._activeCid = firstCid;
+      this._displayTabCategory(firstCid, showImages, layout, showHeaders);
+      if (showTabs) this.setActiveCategory(firstCid);
+      if (selEl) selEl.value = firstCid;
+    }
+    // Note: applyStyles() + _syncMenuCols() are called inside _displayTabCategory
+  }
+
+  _closeSuggestions() { document.getElementById('searchSuggestions')?.classList.remove('open'); }
+
+  setActiveCategory(cid) {
+    document.querySelectorAll('.category-link').forEach(l => l.classList.toggle('active', l.dataset.categoryId === cid));
+  }
+
+  _displayTabCategory(cid, showImages, layout, showHeaders) {
+    const root = document.getElementById('menuRoot');
+    if (!root) return;
+    root.className = `layout-${layout}`;
+    root.innerHTML = '';
+    if (showHeaders) {
+      const desc = this.categoryDescriptions?.[cid] || '';
+      const header = document.createElement('div');
+      header.className = 'category-header';
+      header.innerHTML = `<div class="category-header-name">${this.escapeHtml(this.categoryNames[cid] || '')}</div>${desc ? `<div class="category-header-desc">${this.escapeHtml(desc)}</div>` : ''}`;
+      root.appendChild(header);
+      root.style.display = 'block';
+      const grid = document.createElement('div');
+      grid.className = `layout-${layout}`;
+      root.appendChild(grid);
+      this._renderCards(grid, cid, showImages, layout);
+    } else {
+      root.style.display = '';
+      this._renderCards(root, cid, showImages, layout);
+    }
+    this.applyStyles();
+    // Re-sync columns after DOM is updated (offsetWidth now reflects real size)
+    requestAnimationFrame(() => this._syncMenuCols());
+  }
+
+  _renderCards(container, categoryId, showImages, layout) {
+    const items = this.itemsByCategory[categoryId] || [];
+    const showPrices = this.checked('showPrices');
+    const showModifiers = this.checked('showModifiers');
+    const isListLayout = layout === 'list-image-left' || layout === 'list-image-right';
+    const imgH = this.num('imageHeight') || 180;
+
+    items.forEach(item => {
+      const card = document.createElement('div');
+      const rawMods = item.modifierGroups || item.modifier_groups || (Array.isArray(item.modifiers) ? item.modifiers : []);
+      const hasMods = showModifiers && rawMods.length > 0;
+      if (rawMods.length && !item.modifierGroups) item.modifierGroups = rawMods;
+      card.className = 'list-item' + (hasMods ? ' has-modifiers' : '');
+      if (hasMods) card.addEventListener('click', () => this.openModifierModal(item));
+
+      const hasImage = item.imageUrl && item.imageUrl !== '';
+      let thumbHtml = '';
+      if (showImages) {
+        if (isListLayout) {
+          thumbHtml = hasImage
+            ? `<div class="item-thumbnail-wrapper"><img class="list-item-image" src="${item.imageUrl}" alt="${this.escapeHtml(item.name)}" loading="lazy"></div>`
+            : `<div class="item-thumbnail-wrapper"></div>`;
+        } else {
+          thumbHtml = `<div class="item-thumbnail-wrapper" style="height:${imgH}px;">`;
+          if (hasImage) thumbHtml += `<img class="list-item-image" src="${item.imageUrl}" alt="${this.escapeHtml(item.name)}" loading="lazy">`;
+          thumbHtml += `</div>`;
+        }
+      }
+
+      const priceNum = parseFloat(item.price);
+      const priceDisplay = (!showPrices || isNaN(priceNum)) ? ''
+        : (priceNum === 0 ? '<div class="list-item-price">Market Price</div>'
+          : `<div class="list-item-price">$${priceNum.toFixed(2)}</div>`);
+
+      const modsBadge = hasMods ? `<div class="modifier-badge"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm.75 10.5h-1.5v-5h1.5v5zm0-6.5h-1.5V3.5h1.5V5z"/></svg>Customizable</div>` : '';
+
+      card.innerHTML = `${thumbHtml}<div class="item-content"><div class="list-item-name">${this.escapeHtml(item.name)}</div>${item.description ? `<div class="list-item-description">${this.escapeHtml(item.description)}</div>` : ''}${priceDisplay}${modsBadge}</div>`;
+      container.appendChild(card);
+    });
+  }
+
+  /* ── MODIFIER MODAL ── */
+  openModifierModal(item) {
+    const overlay = document.getElementById('modifierOverlay');
+    const title = document.getElementById('modifierModalTitle');
+    const body = document.getElementById('modifierModalBody');
+    if (!overlay) return;
+    title.textContent = item.name;
+    const groups = item.modifierGroups || [];
+    if (!groups.length) { body.innerHTML = '<p class="modifier-no-options">No customization options.</p>'; }
+    else {
+      body.innerHTML = groups.map(group => {
+        const limits = this._modLimits(group);
+        const opts = (group.modifiers || group.items || group.options || []).map(opt => {
+          const p = parseFloat(opt.price || opt.additionalCost || 0);
+          const priceStr = p > 0 ? `+$${p.toFixed(2)}` : p < 0 ? `-$${Math.abs(p).toFixed(2)}` : 'Included';
+          return `<div class="modifier-option"><span class="modifier-option-name">${this.escapeHtml(opt.name || opt.label || '')}</span><span class="modifier-option-price${p !== 0 ? ' has-price' : ''}">${priceStr}</span></div>`;
+        }).join('');
+        return `<div class="modifier-group"><div class="modifier-group-name">${this.escapeHtml(group.name || 'Options')}</div>${limits ? `<div class="modifier-group-limits">${limits}</div>` : ''}<div>${opts || '<div class="modifier-no-options">No options listed</div>'}</div></div>`;
+      }).join('');
+    }
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  _modLimits(g) {
+    const min = g.minPermitted ?? g.minRequired ?? g.min ?? null;
+    const max = g.maxPermitted ?? g.maxAllowed ?? g.max ?? null;
+    if (min === null && max === null) return '';
+    if (min !== null && max !== null && min === max) return `Choose exactly ${min}`;
+    if (min !== null && max !== null) return `Choose ${min}–${max}`;
+    if (min !== null && min > 0) return `Choose at least ${min}`;
+    if (max !== null) return `Choose up to ${max}`;
+    return '';
+  }
+
+  /* ── LOAD FONT ── */
+  loadFont(family) {
+    if (!family || this.fontLinks[family]) return;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:wght@400;500;600;700&display=swap`;
+    document.head.appendChild(link);
+    this.fontLinks[family] = true;
+  }
+
+  /* ── APPLY STYLES ── */
+  applyStyles() {
+    const get = id => document.getElementById(id)?.value || '';
+    const n = id => parseFloat(get(id)) || 0;
+
+    const tabFont = get('tabFontFamily') || 'Inter';
+    const titleFont = get('titleFontFamily') || 'Inter';
+    const descFont = get('descFontFamily') || 'Inter';
+    const priceFont = get('priceFontFamily') || 'Inter';
+    const headerFont = get('headerFontFamily') || 'Inter';
+    [tabFont, titleFont, descFont, priceFont, headerFont].forEach(f => this.loadFont(f));
+
+    const descLH = Math.max(1.5, parseFloat(get('descLineHeight')) || 1.5);
+    const headerAlign = this.radio('headerAlign') || 'left';
+    const headerLH = parseFloat(get('headerLineHeight')) || 1.2;
+    const imgH = n('imageHeight') || 180;
+
+    const css = `
+      .category-link {
+        background: ${get('defaultTabColor')};
+        color: ${get('defaultTabTextColor')};
+        border: ${n('tabBorderWidth')}px solid ${get('tabBorderColor')};
+        border-radius: ${n('tabRadiusTL')}px ${n('tabRadiusTR')}px ${n('tabRadiusBR')}px ${n('tabRadiusBL')}px;
+        font-family: '${tabFont}', sans-serif;
+        font-size: ${n('tabFontSize')}px;
+        font-weight: ${get('tabFontWeight')};
+      }
+      .category-link.active { background: ${get('activeTabColor')}; color: ${get('activeTabTextColor')}; border-color: ${get('activeTabColor')}; }
+      .list-item { background: ${get('cardBgColor')}; border: ${n('cardBorderWidth')}px solid ${get('cardBorderColor')}; border-radius: ${n('cardRadiusTL')}px ${n('cardRadiusTR')}px ${n('cardRadiusBR')}px ${n('cardRadiusBL')}px; }
+      .item-thumbnail-wrapper { background: ${get('cardBgColor')}; }
+      .item-content { padding: ${n('cardPaddingTop')}px ${n('cardPaddingRight')}px ${n('cardPaddingBottom')}px ${n('cardPaddingLeft')}px; }
+      .layout-list-image-left .list-item { padding-left: calc(140px + ${n('cardPaddingLeft')}px) !important; padding-right: ${n('cardPaddingRight')}px !important; }
+      .layout-list-image-right .list-item { padding-right: calc(140px + ${n('cardPaddingRight')}px) !important; padding-left: ${n('cardPaddingLeft')}px !important; }
+      .layout-hero-grid .item-thumbnail-wrapper { height: ${imgH}px; }
+      .layout-classic-grid .item-thumbnail-wrapper { height: ${imgH}px; }
+      .layout-compact-cards .item-thumbnail-wrapper { height: ${Math.round(imgH * 0.75)}px; }
+      .layout-split-view .item-thumbnail-wrapper { height: ${imgH}px; }
+      .list-item-name { color: ${get('cardTitleColor')}; font-family: '${titleFont}', sans-serif; font-size: ${n('titleFontSize')}px; font-weight: ${get('titleFontWeight')}; line-height: 1.3; }
+      .list-item-description { color: ${get('descTextColor')}; font-family: '${descFont}', sans-serif; font-size: ${n('descFontSize')}px; font-weight: ${get('descFontWeight')}; line-height: ${descLH}; }
+      .list-item-price { color: ${get('priceTextColor')}; font-size: ${n('priceFontSize')}px; font-family: '${priceFont}', sans-serif; font-weight: ${get('priceFontWeight') || '700'}; }
+      .modifier-badge { color: ${get('activeTabColor')}; }
+      .category-header { border-bottom: ${n('headerDividerThickness')}px solid ${get('headerDividerColor')}; text-align: ${headerAlign}; }
+      .category-header-name { color: ${get('headerNameColor')}; font-family: '${headerFont}', sans-serif; font-size: ${n('headerFontSize') || 22}px; font-weight: ${get('headerFontWeight') || '700'}; line-height: ${headerLH}; }
+      .category-header-desc { color: ${get('descTextColor')}; font-family: '${descFont}', sans-serif; font-size: ${n('descFontSize')}px; }
+      .category-search, .category-select { background: ${get('defaultTabColor')}; color: ${get('defaultTabTextColor')}; border: ${n('tabBorderWidth')}px solid ${get('tabBorderColor')}; border-radius: ${n('tabRadiusTL')}px ${n('tabRadiusTR')}px ${n('tabRadiusBR')}px ${n('tabRadiusBL')}px; font-family: '${tabFont}', sans-serif; font-size: ${n('tabFontSize')}px; }
+      .category-search:focus { border-color: ${get('activeTabColor')}; box-shadow: 0 0 0 2px ${get('activeTabColor')}33; outline: none; }
+      .search-suggestions { border-color: ${get('activeTabColor')}; background: ${get('defaultTabColor')}; }
+      .suggestion-item { color: ${get('defaultTabTextColor')}; }
+      .suggestion-item:hover, .suggestion-item.highlighted { background: ${get('activeTabColor')}22; color: ${get('activeTabTextColor')}; }
+      .suggestion-item mark { color: ${get('activeTabColor')}; }
+    `;
+    let styleEl = document.getElementById('dynamic-menu-styles');
+    if (!styleEl) { styleEl = document.createElement('style'); styleEl.id = 'dynamic-menu-styles'; document.head.appendChild(styleEl); }
+    styleEl.textContent = css;
+
+  }
+
+  _syncMenuCols() {
+    const layout = this.val('layoutType');
+    const isGrid = layout !== 'list-image-left' && layout !== 'list-image-right' && layout !== 'scroll-list';
+    if (!isGrid) return;
+
+    const minWidths = { 'classic-grid': 280, 'hero-grid': 300, 'compact-cards': 240, 'split-view': 200 };
+    const minW = minWidths[layout] || 280;
+    const gap = layout === 'compact-cards' ? 16 : layout === 'hero-grid' ? 28 : 24;
+
+    // Strategy: measure the preview panel and subtract nav column width manually.
+    // Do NOT measure the grid itself — on LR layouts the grid is a flex child
+    // whose offsetWidth hasn't resolved yet even after one rAF.
+    const preview = document.getElementById('menuPreview');
+    const previewW = preview?.offsetWidth || 0;
+    if (!previewW) { requestAnimationFrame(() => this._syncMenuCols()); return; }
+
+    // Subtract nav column width if tabs/search/dropdown are on left or right
+    const tabsPos = this.radio('tabsPosition') || 'top';
+    const isLR = tabsPos === 'left' || tabsPos === 'right';
+    let navW = 0;
+    if (isLR) {
+      const navCol = preview.querySelector('.categories-column');
+      navW = navCol ? navCol.offsetWidth : 200;
+    }
+
+    // Available width = preview - nav - preview padding (48px = 24px each side)
+    const availableW = previewW - navW - 48;
+    const cols = Math.max(1, Math.floor((availableW + gap) / (minW + gap)));
+
+    const grids = preview.querySelectorAll('.layout-classic-grid, .layout-hero-grid, .layout-compact-cards, .scroll-list-items');
+    grids.forEach(el => el.style.setProperty('--menu-cols', cols));
+    this._lastCols = cols;
+  }
+
+  /* ── STATUS ── */
+  showStatus(msg, type) {
+    const container = document.getElementById('menuPreview');
+    container.querySelector('.status')?.remove();
+    const div = document.createElement('div');
+    div.className = `status ${type}`; div.textContent = msg;
+    container.insertAdjacentElement('afterbegin', div);
+    if (type === 'success') setTimeout(() => div.remove(), 3000);
+  }
+
+  /* ── DEBUG PANEL ── */
+  _showDebugPanel() {
+    document.getElementById('sp-debug-panel')?.remove();
+    const firstItems = Object.values(this.itemsByCategory)[0] || [];
+    if (!firstItems.length) return;
+    const sample = firstItems[0];
+    const allKeys = Object.keys(sample);
+    const modKeys = allKeys.filter(k => /mod|group|option|variant|choice|custom/i.test(k));
+    const panel = document.createElement('div');
+    panel.id = 'sp-debug-panel';
+    panel.style.cssText = 'background:#0c1929;border:1px solid #1e3a5f;border-radius:10px;padding:10px 14px;margin-top:16px;font-family:monospace;font-size:11px;';
+    panel.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="color:#60a5fa;font-weight:700;">🔍 API Item Structure</span>
+        <button onclick="document.getElementById('sp-debug-panel').remove()" style="background:none;border:none;color:#64748b;cursor:pointer;font-size:16px;">×</button>
+      </div>
+      <div style="color:#94a3b8;">Keys: <span style="color:#86efac">${allKeys.join(', ')}</span></div>
+      <div style="color:#94a3b8;margin-top:4px;">Modifier keys: <span style="${modKeys.length ? 'color:#fbbf24' : 'color:#ef4444'}">${modKeys.length ? modKeys.join(', ') : 'NONE'}</span></div>
+      <details style="margin-top:6px;"><summary style="color:#475569;cursor:pointer;">Full JSON</summary>
+        <pre style="color:#94a3b8;margin-top:4px;overflow:auto;max-height:180px;">${this.escapeHtml(JSON.stringify(sample, null, 2))}</pre>
+      </details>`;
+    document.getElementById('menuPreview').appendChild(panel);
+  }
+
+  escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ── GENERATE EMBED CODE ── */
+  showEmbedCode() {
+    const get = id => document.getElementById(id)?.value || '';
+    const n = id => parseFloat(get(id)) || 0;
+    const chk = id => document.getElementById(id)?.checked || false;
+
+    const tabFont = get('tabFontFamily') || 'Inter';
+    const titleFont = get('titleFontFamily') || 'Inter';
+    const descFont = get('descFontFamily') || 'Inter';
+    const priceFont = get('priceFontFamily') || 'Inter';
+
+    const tabsPos = this.radio('tabsPosition') || 'top';
+    const tabAlign = this.radio('tabAlign') || 'left';
+    const categorySort = this.radio('categorySort') || 'default';
+    const headerAlign = this.radio('headerAlign') || 'left';
+    const layout = get('layoutType');
+    const descLH = Math.max(1.5, parseFloat(get('descLineHeight')) || 1.5);
+    const headerLH = parseFloat(get('headerLineHeight')) || 1.2;
+    const imgH = n('imageHeight') || 180;
+
+    const fontFamilies = [...new Set([tabFont, titleFont, descFont, priceFont].filter(Boolean))];
+    const fontLinks = fontFamilies.map(f => `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=${encodeURIComponent(f)}:wght@400;500;600;700&display=swap">`).join('\n');
+
+    // Serialise all settings into a config object for import
+    const config = {
+      merchantId: get('merchantId'),
+      layoutType: layout,
+      tabsPosition: tabsPos,
+      tabAlign,
+      categorySort,
+      excludedCategories: this.excludedCategories,
+      showImages: chk('showImages'),
+      showPrices: chk('showPrices'),
+      showModifiers: chk('showModifiers'),
+      showTabs: chk('showTabs'),
+      showCategorySearch: chk('showCategorySearch'),
+      showCategoryDropdown: chk('showCategoryDropdown'),
+      showCategoryHeaders: chk('showCategoryHeaders'),
+      styles: {
+        defaultTabColor: get('defaultTabColor'), defaultTabTextColor: get('defaultTabTextColor'),
+        activeTabColor: get('activeTabColor'), activeTabTextColor: get('activeTabTextColor'),
+        tabBorderColor: get('tabBorderColor'), tabBorderWidth: n('tabBorderWidth'),
+        tabRadiusTL: n('tabRadiusTL'), tabRadiusTR: n('tabRadiusTR'), tabRadiusBR: n('tabRadiusBR'), tabRadiusBL: n('tabRadiusBL'),
+        tabFontFamily: tabFont, tabFontSize: n('tabFontSize'), tabFontWeight: get('tabFontWeight'),
+        cardBgColor: get('cardBgColor'),
+        cardBorderColor: get('cardBorderColor'), cardBorderWidth: n('cardBorderWidth'),
+        cardRadiusTL: n('cardRadiusTL'), cardRadiusTR: n('cardRadiusTR'), cardRadiusBR: n('cardRadiusBR'), cardRadiusBL: n('cardRadiusBL'),
+        cardPaddingTop: n('cardPaddingTop'), cardPaddingRight: n('cardPaddingRight'), cardPaddingBottom: n('cardPaddingBottom'), cardPaddingLeft: n('cardPaddingLeft'),
+        imageHeight: imgH,
+        cardTitleColor: get('cardTitleColor'), titleFontFamily: titleFont, titleFontSize: n('titleFontSize'), titleFontWeight: get('titleFontWeight'),
+        descTextColor: get('descTextColor'), descFontFamily: descFont, descFontSize: n('descFontSize'), descFontWeight: get('descFontWeight'), descLineHeight: descLH,
+        priceTextColor: get('priceTextColor'), priceFontFamily: priceFont, priceFontSize: n('priceFontSize'), priceFontWeight: get('priceFontWeight'),
+        headerNameColor: get('headerNameColor'), headerDividerColor: get('headerDividerColor'), headerDividerThickness: n('headerDividerThickness'),
+        headerFontFamily: get('headerFontFamily'), headerFontSize: n('headerFontSize'), headerFontWeight: get('headerFontWeight'), headerLineHeight: headerLH,
+        headerAlign,
+      }
+    };
+
+    const s = config.styles;
+    const alignStyle = tabAlign === 'center' ? 'center' : tabAlign === 'right' ? 'flex-end' : 'flex-start';
+
+    const embedCode = `<!-- SpotOn Menu Embed -->
+${fontLinks}
+<script id="sp-menu-config" type="application/json">${JSON.stringify(config)}<\/script>
+<style>
+  .menu-layout{display:flex;gap:24px;}
+  .menu-layout.tabs-top{flex-direction:column;}
+  .menu-layout.tabs-bottom{flex-direction:column-reverse;}
+  .menu-layout.tabs-left{flex-direction:row;align-items:flex-start;}
+  .menu-layout.tabs-right{flex-direction:row-reverse;align-items:flex-start;}
+  .categories-container{display:flex;flex-wrap:wrap;gap:8px;}
+  .tabs-left .categories-container,.tabs-right .categories-container{flex-direction:column;min-width:180px;}
+  .category-link{
+    padding:9px 18px;text-decoration:none;transition:all 0.2s;cursor:pointer;display:inline-block;
+    background:${s.defaultTabColor};color:${s.defaultTabTextColor};
+    border:${s.tabBorderWidth}px solid ${s.tabBorderColor};
+    border-radius:${s.tabRadiusTL}px ${s.tabRadiusTR}px ${s.tabRadiusBR}px ${s.tabRadiusBL}px;
+    font-family:'${s.tabFontFamily}',sans-serif;font-size:${s.tabFontSize}px;font-weight:${s.tabFontWeight};
+    white-space:nowrap;
+  }
+  .tabs-left .category-link,.tabs-right .category-link{white-space:normal;word-break:break-word;width:100%;box-sizing:border-box;text-align:center;}
+  .category-link.active{background:${s.activeTabColor};color:${s.activeTabTextColor};border-color:${s.activeTabColor};}
+  .menu-root{flex:1;min-width:0;}
+  .layout-classic-grid{display:grid;grid-template-columns:repeat(var(--menu-cols,auto-fill),minmax(min(280px,100%),1fr));gap:24px;}
+  .layout-hero-grid{display:grid;grid-template-columns:repeat(var(--menu-cols,auto-fill),minmax(min(300px,100%),1fr));gap:28px;}
+  .layout-compact-cards{display:grid;grid-template-columns:repeat(var(--menu-cols,auto-fill),minmax(min(240px,100%),1fr));gap:16px;}
+  .layout-split-view{display:grid;grid-template-columns:repeat(2,minmax(min(200px,100%),1fr));gap:24px;}
+  .layout-list-image-left,.layout-list-image-right{display:flex;flex-direction:column;gap:20px;}
+  .layout-list-image-left .list-item,.layout-list-image-right .list-item{display:flex;gap:0;align-items:stretch;position:relative;}
+  .layout-list-image-left .list-item{padding-left:140px;}
+  .layout-list-image-right .list-item{padding-right:140px;}
+  .layout-list-image-left .item-thumbnail-wrapper,.layout-list-image-right .item-thumbnail-wrapper{position:absolute;top:0;bottom:0;width:140px;overflow:hidden;}
+  .layout-list-image-left .item-thumbnail-wrapper{left:0;}
+  .layout-list-image-right .item-thumbnail-wrapper{right:0;}
+  .layout-list-image-left .list-item-image,.layout-list-image-right .list-item-image{width:100%;height:100%;object-fit:cover;object-position:center;display:block;}
+  .layout-scroll-list{display:flex;flex-direction:column;}
+  .scroll-list-category{margin-bottom:32px;}
+  .scroll-list-items{display:grid;grid-template-columns:repeat(var(--menu-cols,auto-fill),minmax(min(280px,100%),1fr));gap:24px;}
+  .list-item{overflow:hidden;background:${s.cardBgColor};border:${s.cardBorderWidth}px solid ${s.cardBorderColor};border-radius:${s.cardRadiusTL}px ${s.cardRadiusTR}px ${s.cardRadiusBR}px ${s.cardRadiusBL}px;display:flex;flex-direction:column;height:100%;}
+  .item-thumbnail-wrapper{background:${s.cardBgColor};overflow:hidden;flex-shrink:0;}
+  .layout-classic-grid .item-thumbnail-wrapper,.layout-hero-grid .item-thumbnail-wrapper,.layout-split-view .item-thumbnail-wrapper{height:${imgH}px;}
+  .layout-compact-cards .item-thumbnail-wrapper{height:${Math.round(imgH*0.75)}px;}
+  .list-item-image{width:100%;height:100%;object-fit:cover;object-position:center;display:block;}
+  .item-content{padding:${s.cardPaddingTop}px ${s.cardPaddingRight}px ${s.cardPaddingBottom}px ${s.cardPaddingLeft}px;flex:1;display:flex;flex-direction:column;}
+  .layout-list-image-left .list-item{padding-left:calc(140px + ${s.cardPaddingLeft}px)!important;padding-right:${s.cardPaddingRight}px!important;}
+  .layout-list-image-right .list-item{padding-right:calc(140px + ${s.cardPaddingRight}px)!important;padding-left:${s.cardPaddingLeft}px!important;}
+  .list-item-name{font-family:'${s.titleFontFamily}',sans-serif;font-size:${s.titleFontSize}px;font-weight:${s.titleFontWeight};color:${s.cardTitleColor};margin-bottom:6px;line-height:1.3;}
+  .list-item-description{font-family:'${s.descFontFamily}',sans-serif;font-size:${s.descFontSize}px;font-weight:${s.descFontWeight};color:${s.descTextColor};margin-bottom:10px;line-height:${descLH};display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+  .list-item-price{font-size:${s.priceFontSize}px;font-weight:${s.priceFontWeight};font-family:'${s.priceFontFamily}',sans-serif;color:${s.priceTextColor};margin-top:auto;padding-top:8px;}
+  .category-header{padding:20px 0 10px;margin-bottom:16px;border-bottom:${s.headerDividerThickness}px solid ${s.headerDividerColor};text-align:${s.headerAlign};}
+  .category-header:first-child{padding-top:0;}
+  .category-header-name{font-family:'${s.headerFontFamily}',sans-serif;font-size:${s.headerFontSize}px;font-weight:${s.headerFontWeight};color:${s.headerNameColor};line-height:${headerLH};}
+  .category-header-desc{font-size:${s.descFontSize}px;color:${s.descTextColor};line-height:${descLH};}
+  @media(max-width:768px){
+    .menu-layout.tabs-left,.menu-layout.tabs-right{flex-direction:column;}
+    .categories-container{flex-wrap:nowrap!important;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+    .categories-container::-webkit-scrollbar{display:none;}
+    .layout-list-image-left .list-item,.layout-list-image-right .list-item{flex-direction:column!important;position:static!important;padding-left:0!important;padding-right:0!important;width:100%;}
+    .layout-list-image-left .item-thumbnail-wrapper,.layout-list-image-right .item-thumbnail-wrapper{position:static!important;width:100%!important;height:200px!important;}
+    .layout-list-image-left .item-thumbnail-wrapper:empty,.layout-list-image-right .item-thumbnail-wrapper:empty{display:none!important;}
+    .layout-compact-cards{grid-template-columns:1fr!important;}
+    .layout-split-view{grid-template-columns:1fr;}
+  }
+</style>
+
+<div class="menu-layout tabs-${tabsPos}" id="sp-menu-root">
+  ${config.showTabs || config.showCategorySearch || config.showCategoryDropdown ? '<div id="sp-nav"></div>' : ''}
+  <div class="menu-root layout-${layout}" id="sp-menu-items"></div>
+</div>
+
+<script>
+(function(){
+  const config = ${JSON.stringify(config, null, 2)};
+
+  const MID = config.merchantId;
+  const EXCLUDED = config.excludedCategories || [];
+  const SHOW_IMAGES = config.showImages;
+  const SHOW_PRICES = config.showPrices;
+  const SHOW_TABS = config.showTabs;
+  const SHOW_HEADERS = config.showCategoryHeaders;
+  const LAYOUT = config.layoutType;
+  const TABS_POS = config.tabsPosition;
+  const TAB_ALIGN = config.tabAlign;
+  const CAT_SORT = config.categorySort || 'default';
+  const IS_LIST = LAYOUT === 'list-image-left' || LAYOUT === 'list-image-right';
+  const IS_SCROLL = LAYOUT === 'scroll-list';
+  const s = config.styles;
+
+  let categoryNames = {}, categoryDescs = {}, itemsByCategory = {};
+
+  function esc(str){ return str ? str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''; }
+
+  function sortCats(ids){
+    if(CAT_SORT==='az') return [...ids].sort((a,b)=>categoryNames[a].localeCompare(categoryNames[b]));
+    if(CAT_SORT==='za') return [...ids].sort((a,b)=>categoryNames[b].localeCompare(categoryNames[a]));
+    return ids;
+  }
+
+  const SHOW_SEARCH = config.showCategorySearch;
+  const SHOW_DROPDOWN = config.showCategoryDropdown;
+
+  function setActive(cid){
+    document.querySelectorAll('.category-link').forEach(l=>l.classList.toggle('active',l.dataset.cid===cid));
+    const sel=document.getElementById('sp-cat-select'); if(sel) sel.value=cid;
+    renderItems(cid);
+  }
+
+  function renderNav(ids){
+    const navEl = document.getElementById('sp-nav');
+    if(!navEl) return;
+    navEl.innerHTML='';
+    const isLR = TABS_POS==='left'||TABS_POS==='right';
+    const alignStyle = TAB_ALIGN==='center'?'center':TAB_ALIGN==='right'?'flex-end':'flex-start';
+
+    // Search
+    if(SHOW_SEARCH){
+      const srch=document.createElement('input');
+      srch.type='text'; srch.placeholder='Search categories…'; srch.className='sp-cat-search';
+      srch.style.cssText=\`width:100%;padding:9px 14px;border:1px solid ${s.tabBorderColor};border-radius:${s.tabRadiusTL}px ${s.tabRadiusTR}px ${s.tabRadiusBR}px ${s.tabRadiusBL}px;font-family:'${s.tabFontFamily}',sans-serif;font-size:${s.tabFontSize}px;background:${s.defaultTabColor};color:${s.defaultTabTextColor};outline:none;box-sizing:border-box;margin-bottom:8px;display:block;\`;
+      srch.addEventListener('input',()=>{
+        const term=srch.value.toLowerCase();
+        document.querySelectorAll('.sp-tab-link').forEach(el=>{
+          el.style.display=el.textContent.toLowerCase().includes(term)?'':'none';
+        });
+      });
+      navEl.appendChild(srch);
+    }
+
+    // Dropdown
+    if(SHOW_DROPDOWN){
+      const sel=document.createElement('select');
+      sel.id='sp-cat-select'; sel.className='sp-cat-dropdown';
+      sel.style.cssText=\`width:100%;padding:9px 14px;border:1px solid ${s.tabBorderColor};border-radius:${s.tabRadiusTL}px ${s.tabRadiusTR}px ${s.tabRadiusBR}px ${s.tabRadiusBL}px;font-family:'${s.tabFontFamily}',sans-serif;font-size:${s.tabFontSize}px;background:${s.defaultTabColor};color:${s.defaultTabTextColor};outline:none;box-sizing:border-box;margin-bottom:8px;display:block;appearance:auto;cursor:pointer;\`;
+      ids.forEach(id=>{ const opt=document.createElement('option'); opt.value=id; opt.textContent=categoryNames[id]; sel.appendChild(opt); });
+      sel.addEventListener('change',()=>setActive(sel.value));
+      navEl.appendChild(sel);
+    }
+
+    // Tabs
+    if(SHOW_TABS){
+      const container = document.createElement('div');
+      container.className='categories-container';
+      if(!isLR) container.style.justifyContent=alignStyle;
+      ids.forEach((id,i)=>{
+        const a=document.createElement('a');
+        a.href='#';a.className='category-link sp-tab-link'+(i===0?' active':'');
+        a.textContent=categoryNames[id];a.dataset.cid=id;
+        a.addEventListener('click',e=>{ e.preventDefault(); setActive(id); });
+        container.appendChild(a);
+      });
+      navEl.appendChild(container);
+    }
+  }
+
+  function renderHeader(cid){
+    const desc = categoryDescs[cid]||'';
+    return SHOW_HEADERS ? \`<div class="category-header"><div class="category-header-name">\${esc(categoryNames[cid]||'')}</div>\${desc?\`<div class="category-header-desc">\${esc(desc)}</div>\`:''}</div>\` : '';
+  }
+
+  function renderCard(item){
+    const hasImg = item.imageUrl && item.imageUrl!=='';
+    let thumb='';
+    if(SHOW_IMAGES){
+      if(IS_LIST){ thumb=hasImg?\`<div class="item-thumbnail-wrapper"><img class="list-item-image" src="\${esc(item.imageUrl)}" alt="\${esc(item.name)}" loading="lazy"></div>\`:\`<div class="item-thumbnail-wrapper"></div>\`; }
+      else{ thumb=\`<div class="item-thumbnail-wrapper">\${hasImg?\`<img class="list-item-image" src="\${esc(item.imageUrl)}" alt="\${esc(item.name)}" loading="lazy">\`:''}</div>\`; }
+    }
+    const priceNum=parseFloat(item.price);
+    const price=SHOW_PRICES&&!isNaN(priceNum)?(priceNum===0?'Market Price':'$'+priceNum.toFixed(2)):'';
+    return \`<div class="list-item">\${thumb}<div class="item-content"><div class="list-item-name">\${esc(item.name)}</div>\${item.description?\`<div class="list-item-description">\${esc(item.description)}</div>\`:''}\${price?\`<div class="list-item-price">\${price}</div>\`:''}</div></div>\`;
+  }
+
+  function renderItems(id){
+    const root=document.getElementById('sp-menu-items');
+    if(!root) return;
+    const items=itemsByCategory[id]||[];
+    const header=renderHeader(id);
+    if(header){
+      // Header must sit outside the grid — switch root to block wrapper
+      root.style.display='block';
+      const grid=document.createElement('div');
+      grid.className=root.className; // copy the layout-* class onto inner grid
+      grid.innerHTML=items.map(renderCard).join('');
+      root.innerHTML=header;
+      root.appendChild(grid);
+    } else {
+      root.style.display='';
+      root.innerHTML=items.map(renderCard).join('');
+    }
+  }
+
+  function renderScrollList(ids){
+    const root=document.getElementById('sp-menu-items');
+    if(!root) return;
+    root.className='menu-root layout-scroll-list';
+    root.innerHTML=ids.map(cid=>{
+      const items=itemsByCategory[cid]||[];
+      return \`<div class="scroll-list-category">\${renderHeader(cid)}<div class="scroll-list-items">\${items.map(renderCard).join('')}</div></div>\`;
+    }).join('');
+  }
+
+  function syncCols(){
+    const minWidths={'classic-grid':280,'hero-grid':300,'compact-cards':240,'split-view':200,'scroll-list':280};
+    const gaps={'classic-grid':24,'hero-grid':28,'compact-cards':16,'split-view':24,'scroll-list':24};
+    const minW=minWidths[LAYOUT]||280;
+    const gap=gaps[LAYOUT]||24;
+    const grids=document.querySelectorAll('.layout-classic-grid,.layout-hero-grid,.layout-compact-cards,.scroll-list-items');
+    if(!grids.length) return;
+    // Measure the grid element itself — avoids including the nav column width on LR layouts
+    const containerW=grids[0].offsetWidth||800;
+    const cols=Math.max(1,Math.floor((containerW+gap)/(minW+gap)));
+    grids.forEach(g=>g.style.setProperty('--menu-cols',cols));
+  }
+
+  async function loadMenu(){
+    if(!MID) return;
+    try{
+      const date=new Date().toISOString().slice(0,10);
+      const r=await fetch(\`https://qa-ecommerce-api.spoton.com/v1/restaurants/\${MID}/menu-groups?orderDateTime=\${date}T10:22:25-05:00&orderTypeId=3uxw5e1y0vgz3dwi1we2ioj1lq\`);
+      if(!r.ok) throw new Error();
+      const cats=await r.json();
+      cats.forEach(c=>{ if(c.menuItems?.length){ categoryNames[c.id]=c.name.trim(); itemsByCategory[c.id]=c.menuItems; if(c.description) categoryDescs[c.id]=c.description.trim(); } });
+    } catch(e){ return; }
+    let ids=Object.keys(itemsByCategory).filter(id=>!EXCLUDED.includes(categoryNames[id]));
+    ids=sortCats(ids);
+    if(!IS_SCROLL){ renderNav(ids); if(ids[0]) renderItems(ids[0]); }
+    else renderScrollList(ids);
+    requestAnimationFrame(syncCols);
+    if(window.ResizeObserver){
+      const root=document.getElementById('sp-menu-items');
+      if(root) new ResizeObserver(()=>requestAnimationFrame(syncCols)).observe(root);
+    }
+  }
+
+  loadMenu();
+})();
+<\/script>`;
+
+    document.getElementById('embedCodeDisplay').textContent = embedCode;
+    document.getElementById('codeModal').classList.add('active');
+
+    const copyFn = () => {
+      navigator.clipboard.writeText(embedCode).then(() => {
+        ['modalCopyBtn','modalFooterCopyBtn'].forEach(id => {
+          const btn = document.getElementById(id); if (!btn) return;
+          const orig = btn.textContent; btn.textContent = '✓ Copied!';
+          setTimeout(() => btn.textContent = orig, 2000);
+        });
+      });
+    };
+    document.getElementById('modalCopyBtn').onclick = copyFn;
+    document.getElementById('modalFooterCopyBtn').onclick = copyFn;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   MODALS
+═══════════════════════════════════════════ */
+function closeModal() { document.getElementById('codeModal').classList.remove('active'); }
+function closeModifierModal() { document.getElementById('modifierOverlay')?.classList.remove('active'); document.body.style.overflow = ''; }
+function openImportModal() { document.getElementById('importCodeTextarea').value = ''; document.getElementById('importError').style.display = 'none'; document.getElementById('importModal').classList.add('active'); }
+function closeImportModal() { document.getElementById('importModal').classList.remove('active'); }
+
+function applyImportedConfig() {
+  const raw = document.getElementById('importCodeTextarea').value.trim();
+  const errEl = document.getElementById('importError');
+  errEl.style.display = 'none';
+
+  // Extract config: try <script type="application/json"> first,
+  // then HTML comment, then legacy CSS comment
+  const match =
+    raw.match(/<script[^>]*id="sp-menu-config"[^>]*type="application\/json"[^>]*>([\s\S]*?)<\/script>/i) ||
+    raw.match(/<!--menu-studio-config:(\{[\s\S]*?)-->/) ||
+    raw.match(/\/\*\s*config=(\{[\s\S]*?\})\s*\*\//);
+  if (!match) {
+    errEl.textContent = 'Could not find a config object in the pasted code. Make sure you paste the full embed code generated by this tool.';
+    errEl.style.display = 'block'; return;
+  }
+
+  let cfg;
+  try { cfg = JSON.parse(match[1]); }
+  catch(e) { errEl.textContent = 'Failed to parse config: ' + e.message; errEl.style.display = 'block'; return; }
+
+  const setVal = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined && val !== null) { el.value = val; } };
+  const setCheck = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.checked = !!val; };
+  const setRadio = (name, val) => { const el = document.querySelector(`input[name="${name}"][value="${val}"]`); if (el) el.checked = true; };
+  const setColor = (id, val) => { if (!val) return; setVal(id, val); const span = document.getElementById(id + 'Value'); if (span) span.textContent = val; };
+
+  // Top-level
+  if (cfg.merchantId) setVal('merchantId', cfg.merchantId);
+  if (cfg.layoutType) setVal('layoutType', cfg.layoutType);
+  if (cfg.tabsPosition) setRadio('tabsPosition', cfg.tabsPosition);
+  if (cfg.tabAlign) setRadio('tabAlign', cfg.tabAlign);
+  if (cfg.categorySort) setRadio('categorySort', cfg.categorySort);
+
+  setCheck('showImages', cfg.showImages);
+  setCheck('showPrices', cfg.showPrices);
+  setCheck('showModifiers', cfg.showModifiers);
+  setCheck('showTabs', cfg.showTabs !== false);
+  setCheck('showCategorySearch', cfg.showCategorySearch);
+  setCheck('showCategoryDropdown', cfg.showCategoryDropdown);
+  setCheck('showCategoryHeaders', cfg.showCategoryHeaders !== false);
+
+  if (cfg.excludedCategories) window._studio.excludedCategories = cfg.excludedCategories;
+
+  const s = cfg.styles || {};
+  setColor('defaultTabColor', s.defaultTabColor); setColor('defaultTabTextColor', s.defaultTabTextColor);
+  setColor('activeTabColor', s.activeTabColor); setColor('activeTabTextColor', s.activeTabTextColor);
+  setColor('tabBorderColor', s.tabBorderColor);
+  setColor('cardBgColor', s.cardBgColor); setColor('cardBorderColor', s.cardBorderColor);
+  setColor('cardTitleColor', s.cardTitleColor); setColor('descTextColor', s.descTextColor);
+  setColor('priceTextColor', s.priceTextColor);
+  setColor('headerNameColor', s.headerNameColor); setColor('headerDividerColor', s.headerDividerColor);
+
+  const valMap = {
+    tabBorderWidth: s.tabBorderWidth, tabRadiusTL: s.tabRadiusTL, tabRadiusTR: s.tabRadiusTR, tabRadiusBR: s.tabRadiusBR, tabRadiusBL: s.tabRadiusBL,
+    tabFontFamily: s.tabFontFamily, tabFontSize: s.tabFontSize, tabFontWeight: s.tabFontWeight,
+    cardBorderWidth: s.cardBorderWidth, cardRadiusTL: s.cardRadiusTL, cardRadiusTR: s.cardRadiusTR, cardRadiusBR: s.cardRadiusBR, cardRadiusBL: s.cardRadiusBL,
+    cardPaddingTop: s.cardPaddingTop, cardPaddingRight: s.cardPaddingRight, cardPaddingBottom: s.cardPaddingBottom, cardPaddingLeft: s.cardPaddingLeft,
+    imageHeight: s.imageHeight,
+    titleFontFamily: s.titleFontFamily, titleFontSize: s.titleFontSize, titleFontWeight: s.titleFontWeight,
+    descFontFamily: s.descFontFamily, descFontSize: s.descFontSize, descFontWeight: s.descFontWeight, descLineHeight: s.descLineHeight,
+    priceFontFamily: s.priceFontFamily, priceFontSize: s.priceFontSize, priceFontWeight: s.priceFontWeight,
+    headerFontFamily: s.headerFontFamily, headerFontSize: s.headerFontSize, headerFontWeight: s.headerFontWeight, headerLineHeight: s.headerLineHeight,
+    headerDividerThickness: s.headerDividerThickness,
+  };
+  Object.entries(valMap).forEach(([id, val]) => { if (val !== undefined && val !== null) setVal(id, val); });
+  if (s.headerAlign) setRadio('headerAlign', s.headerAlign);
+
+  // Sync header controls visibility
+  const headersToggle = document.getElementById('showCategoryHeaders');
+  const wrapper = document.getElementById('headerControlsWrapper');
+  const note = document.getElementById('headerOffNote');
+  if (wrapper) wrapper.style.display = headersToggle?.checked ? '' : 'none';
+  if (note) note.style.display = headersToggle?.checked ? 'none' : '';
+
+  closeImportModal();
+
+  // Re-render with imported settings
+  if (window._studio) {
+    if (Object.keys(window._studio.itemsByCategory).length) window._studio.renderMenu();
+    else window._studio.loadMenu(false);
+  }
+}
+
+/* ── CLOSE ON ESCAPE ── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal(); closeImportModal(); closeModifierModal(); }
+});
+
+/* ── CLOSE MODALS ON BACKDROP CLICK ── */
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) { closeModal(); closeImportModal(); closeModifierModal(); } });
+});
+
+/* ── BOOT ── */
+document.addEventListener('DOMContentLoaded', () => {
+  window._studio = new MenuStudio();
+
+  // Re-sync column count when the preview panel resizes
+  const preview = document.getElementById('menuPreview');
+  if (preview && window.ResizeObserver) {
+    new ResizeObserver(() => {
+      if (window._studio) requestAnimationFrame(() => window._studio._syncMenuCols());
+    }).observe(preview);
+  }
+
+  // Auto-load if merchantId field already has a value on page load
+  const mid = document.getElementById('merchantId')?.value?.trim();
+  if (mid) window._studio.loadMenu(false);
+});
+</script>
+</body>
+</html>

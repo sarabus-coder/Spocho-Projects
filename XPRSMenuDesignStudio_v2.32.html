@@ -1,0 +1,3115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--SpotOn Menu Editor Author: Sara Bustamante - GitHub: https://github.com/sarabus-coder Signature: SpotOn Menu Studio by Sara Bustamante Version: 3.0.0-->
+<meta name="author" content="Sara Bustamante">
+<meta name="creator" content="SpotOn Menu Studio by Sara Bustamante">
+<meta name="source" content="https://github.com/sarabus-coder/Spocho-Projects">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SpotOn Menu Editor</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        img.list-item-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0a0c10;
+            color: #e2e8f0;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
+
+        /* Header */
+        .studio-header {
+            background: #111315;
+            border-bottom: 1px solid #2a2e35;
+            padding: 20px 32px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            background: rgba(17,19,21,0.95);
+        }
+        .header-content {
+            max-width: 1800px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .logo-area { display: flex; align-items: center; gap: 16px; }
+        .logo { height: 40px; object-fit: contain; filter: brightness(0) invert(1); }
+        .header-text h1 { font-size: 20px; font-weight: 600; color: white; }
+        .header-text p { font-size: 13px; color: #94a3b8; }
+        .badge { background: #1e293b; color: #60a5fa; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+
+        /* Layout */
+        .studio-container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 24px 40px;
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 32px;
+        }
+        .controls-panel {
+            background: #111315;
+            border-radius: 24px;
+            border: 1px solid #2a2e35;
+            overflow-y: auto;
+            position: sticky;
+            top: 88px;
+            max-height: calc(100vh - 120px);
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            min-width: 0;
+        }
+        .panel-section { width: 100%; padding: 12px 20px; border-bottom: 1px solid #2a2e35; }
+        .panel-section:last-child { border-bottom: none; }
+        details.panel-section summary {
+            cursor: pointer; list-style: none;
+            display: flex; align-items: center; gap: 10px;
+            user-select: none;
+        }
+        details.panel-section summary::-webkit-details-marker { display: none; }
+        /* Arrow — inline, light blue */
+        details.panel-section summary::before {
+            content: "▶";
+            color: #60a5fa;
+            font-size: 10px;
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
+            display: inline-block;
+        }
+        details.panel-section[open] summary::before { transform: rotate(90deg); }
+        details.panel-section[open] > summary + * { margin-top: 14px; }
+        .section-title {
+            font-size: 13px; font-weight: 500; color: #cbd5e1;
+            display: flex; align-items: center; gap: 7px;
+            margin: 0; line-height: 1.4;
+        }
+        .section-title span, .section-title { font-size: 13px; }
+        /* Constrain emoji within section titles */
+        details.panel-section summary span.section-title {
+            font-size: 13px; font-weight: 500; color: #cbd5e1;
+        }
+
+        .control-group { margin-bottom: 10px; }
+        .control-group label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: #cbd5e1; }
+        .helper-text { font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.5; }
+        .control-group input[type="text"],
+        .control-group input[type="number"],
+        .control-group input[type="url"],
+        .control-group select,
+        .control-group textarea {
+            width: 100%; padding: 8px 10px; border: 1px solid #2a2e35; border-radius: 8px;
+            font-size: 13px; font-family: inherit; background: #1a1d21; color: #e2e8f0;
+            box-sizing: border-box; transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .control-group input:hover,
+        .control-group select:hover,
+        .control-group textarea:hover { border-color: #3b82f6; }
+        .control-group input:focus,
+        .control-group select:focus,
+        .control-group textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.35); }
+
+        /* Radio groups — compact pills, wrap safely */
+        .radio-group { display: flex; gap: 6px; flex-wrap: wrap; }
+        .radio-group label {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 13px; font-weight: 400; color: #cbd5e1;
+            background: #1a1d21; padding: 5px 11px; border-radius: 6px;
+            border: 1px solid #2a2e35; cursor: pointer; white-space: nowrap;
+        }
+        .radio-group label:has(input:checked) { background: #1e3a5f; border-color: #3b82f6; color: #93c5fd; }
+        .radio-group input[type="radio"] { width: 13px; height: 13px; accent-color: #3b82f6; flex-shrink: 0; margin: 0; }
+
+        /* Toggle groups — vertical list, clean alignment */
+        .toggle-group { display: flex; flex-direction: column; gap: 0; }
+        .toggle-group label {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 13px; font-weight: 400; color: #cbd5e1;
+            padding: 7px 8px; border-radius: 6px; cursor: pointer; user-select: none;
+        }
+        .toggle-group label:hover { background: #1a1d21; }
+        .toggle-group input[type="checkbox"] {
+            width: 15px; height: 15px; accent-color: #3b82f6; flex-shrink: 0; cursor: pointer; margin: 0;
+        }
+
+        /* Subgroup system */
+        .subgroup-label {
+            font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+            color: #64748b; margin: 12px 0 5px; padding-bottom: 4px; border-bottom: 1px solid #1e2330;
+        }
+        .subgroup-label:first-child { margin-top: 2px; }
+        .subgroup { background: #0d0f12; border-radius: 10px; padding: 10px; margin-bottom: 4px; }
+
+        /* Color row — equal-width swatches */
+        .color-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 10px; }
+        .color-row-item { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+        .color-row-item > span { font-size: 11px; color: #64748b; font-weight: 500; }
+        .color-row-item .color-input { flex-direction: column; gap: 3px; align-items: flex-start; }
+        .color-row-item .color-input input[type="color"] { width: 36px; height: 36px; }
+        .color-row-item .color-input span { font-size: 10px; color: #64748b; font-family: monospace; }
+
+        /* Color input inline */
+        .color-input { display: flex; gap: 10px; align-items: center; }
+        .color-input input[type="color"] { width: 40px; height: 40px; padding: 3px; border-radius: 8px; cursor: pointer; border: 1px solid #2a2e35; background: #1a1d21; }
+
+        /* Typography grid — always 3 col: family / size / weight */
+        .typography-grid {
+            display: grid; grid-template-columns: 1fr 64px 80px; gap: 6px; min-width: 0;
+        }
+        .typography-grid input,
+        .typography-grid select {
+            padding: 7px 8px; border: 1px solid #2a2e35; border-radius: 8px;
+            font-size: 13px; font-family: inherit; background: #1a1d21; color: #e2e8f0;
+            width: 100%; min-width: 0; box-sizing: border-box;
+        }
+        .typography-grid input:focus, .typography-grid select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.35); }
+        .typography-grid input:hover, .typography-grid select:hover { border-color: #3b82f6; }
+        .typography-grid-2 input:focus, .typography-grid-2 select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.35); }
+        .typography-grid-2 input:hover, .typography-grid-2 select:hover { border-color: #3b82f6; }
+        .padding-grid input:hover, .radius-grid input:hover, .line-height-row input:hover { border-color: #3b82f6; }
+        .padding-grid input:focus, .radius-grid input:focus, .line-height-row input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.35); }
+        .border-control input[type="number"]:hover { border-color: #3b82f6; }
+        .border-control input[type="number"]:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.35); }
+        .typo-col-labels { display: grid; grid-template-columns: 1fr 64px 80px; gap: 6px; margin-top: 3px; }
+        .typo-col-labels span { font-size: 10px; color: #475569; padding-left: 2px; }
+
+        /* 2-col typography (family + weight, size elsewhere) */
+        .typography-grid-2 { display: grid; grid-template-columns: 1fr 80px; gap: 6px; min-width: 0; }
+        .typography-grid-2 input, .typography-grid-2 select {
+            padding: 7px 8px; border: 1px solid #2a2e35; border-radius: 8px;
+            font-size: 13px; font-family: inherit; background: #1a1d21; color: #e2e8f0;
+            width: 100%; min-width: 0; box-sizing: border-box;
+        }
+        .typo-col-labels-2 { display: grid; grid-template-columns: 1fr 80px; gap: 6px; margin-top: 3px; }
+        .typo-col-labels-2 span { font-size: 10px; color: #475569; padding-left: 2px; }
+
+        /* Inline row: color swatch + size input side by side */
+        .color-size-row { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start; }
+        .color-size-row .color-swatch-col { display: flex; flex-direction: column; gap: 4px; }
+        .color-size-row .color-swatch-col span { font-size: 11px; color: #64748b; }
+        .color-size-row .size-col { display: flex; flex-direction: column; gap: 4px; }
+        .color-size-row .size-col span { font-size: 11px; color: #64748b; }
+        .color-size-row input[type="color"] { width: 40px; height: 40px; padding: 3px; border-radius: 8px; cursor: pointer; border: 1px solid #2a2e35; background: #1a1d21; }
+        .color-size-row input[type="number"] {
+            width: 100%; padding: 8px 10px; border: 1px solid #2a2e35; border-radius: 8px;
+            font-size: 13px; font-family: inherit; background: #1a1d21; color: #e2e8f0; box-sizing: border-box;
+        }
+
+        /* Border control row */
+        .border-control { display: flex; gap: 8px; align-items: center; }
+        .border-control input[type="color"] { width: 38px; height: 38px; padding: 2px; border-radius: 8px; border: 1px solid #2a2e35; background: #1a1d21; flex-shrink: 0; }
+        .border-control input[type="number"] { width: 64px; flex-shrink: 0; padding: 7px 8px; border: 1px solid #2a2e35; border-radius: 8px; font-size: 13px; font-family: inherit; background: #1a1d21; color: #e2e8f0; box-sizing: border-box; }
+        .border-control span { font-size: 13px; color: #64748b; flex-shrink: 0; }
+
+        /* Padding/radius grid */
+        .padding-grid, .radius-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+        .padding-grid > div, .radius-grid > div { display: flex; flex-direction: column; gap: 4px; }
+        .padding-grid span, .radius-grid span { font-size: 11px; color: #64748b; }
+        .padding-grid input, .radius-grid input {
+            width: 100%; padding: 7px 8px; border: 1px solid #2a2e35; border-radius: 8px;
+            font-size: 13px; font-family: inherit; background: #1a1d21; color: #e2e8f0; box-sizing: border-box;
+        }
+
+        /* Line height row */
+        .line-height-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+        .line-height-row label { font-size: 12px; color: #94a3b8; margin: 0; white-space: nowrap; }
+        .line-height-row input { width: 80px; padding: 6px 8px; border: 1px solid #2a2e35; border-radius: 8px; font-size: 13px; font-family: inherit; background: #1a1d21; color: #e2e8f0; box-sizing: border-box; }
+        .line-height-row .qa-badge { font-size: 10px; color: #f59e0b; background: rgba(245,158,11,0.1); padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
+
+        .font-note { font-size: 11px; color: #475569; margin-bottom: 8px; }
+        .font-note a { color: #3b82f6; text-decoration: none; }
+        .font-note a:hover { text-decoration: underline; }
+        .subsection-title { font-size: 13px; font-weight: 600; margin: 14px 0 10px 0; color: #cbd5e1; border-left: 3px solid #3b82f6; padding-left: 10px; }
+
+        .action-buttons { padding: 20px 24px 24px; display: flex; gap: 12px; }
+        .btn { flex: 1; padding: 10px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; font-family: inherit; cursor: pointer; text-align: center; border: none; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-secondary { background: #1a1d21; color: #e2e8f0; border: 1px solid #2a2e35; }
+        .btn-secondary:hover { background: #2a2e35; }
+
+
+        .preview-panel {
+            background: #111315;
+            border-radius: 24px;
+            border: 1px solid #2a2e35;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .preview-header { padding: 16px 24px; border-bottom: 1px solid #2a2e35; display: flex; justify-content: space-between; align-items: center; }
+        .menu-preview { padding: 24px; background: #0a0c10; min-height: 500px; overflow-y: auto; flex: 1; }
+
+        /* Preview styles */
+        .menu-layout {
+            display: flex;
+            gap: 24px;
+            min-height: 0;
+        }
+        /* TOP: tabs above, items below */
+        .menu-layout.tabs-top {
+            flex-direction: column;
+        }
+        .menu-layout.tabs-top .menu-tabs-area {
+            width: 100%;
+            flex-shrink: 0;
+        }
+        /* BOTTOM: items above, tabs below */
+        .menu-layout.tabs-bottom {
+            flex-direction: column-reverse;
+        }
+        .menu-layout.tabs-bottom .menu-tabs-area {
+            width: 100%;
+            flex-shrink: 0;
+        }
+        /* LEFT: tabs column on left, items on right */
+        .menu-layout.tabs-left {
+            flex-direction: row;
+            align-items: flex-start;
+        }
+        .menu-layout.tabs-left .menu-tabs-area {
+            width: clamp(140px, 18vw, 260px);
+            flex-shrink: 0;
+            flex-grow: 0;
+        }
+        /* RIGHT: items on left, tabs column on right */
+        .menu-layout.tabs-right {
+            flex-direction: row-reverse;
+            align-items: flex-start;
+        }
+        .menu-layout.tabs-right .menu-tabs-area {
+            width: clamp(140px, 18vw, 260px);
+            flex-shrink: 0;
+            flex-grow: 0;
+        }
+        /* Tabs-area: stack toolbar + categories vertically */
+        .menu-tabs-area {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 0;
+        }
+        /* Top/bottom: toolbar and tabs row in a row */
+        .menu-layout.tabs-top .menu-tabs-area,
+        .menu-layout.tabs-bottom .menu-tabs-area {
+            flex-direction: column;
+        }
+        .menu-root { flex: 1; min-width: 0; }
+        .categories-container { display: flex; flex-wrap: wrap; gap: 8px; }
+        /* Left/right: tabs stack vertically, wrap long names */
+        .menu-layout.tabs-left .categories-container,
+        .menu-layout.tabs-right .categories-container {
+            flex-direction: column;
+            flex-wrap: nowrap;
+        }
+        .menu-layout.tabs-left .category-link,
+        .menu-layout.tabs-right .category-link {
+            white-space: normal;
+            word-break: break-word;
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: left;
+        }
+        .category-link {
+            padding: 8px 14px; background: #1a1d21; border: 1px solid #2a2e35; border-radius: 40px;
+            text-decoration: none; color: #cbd5e1; font-size: 13px; font-weight: 500; cursor: pointer;
+            transition: all 0.2s; white-space: nowrap; display: inline-block;
+        }
+        .category-link.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+        .menu-root { flex: 1; min-width: 0; }
+        .layout-classic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(270px, 100%), 1fr)); gap: 24px; }
+        .layout-hero-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(290px, 100%), 1fr)); gap: 28px; }
+        .layout-compact-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr)); gap: 16px; }
+        .layout-split-view { display: grid; grid-template-columns: repeat(2, minmax(min(200px, 100%), 1fr)); gap: 24px; }
+        .layout-list-image-left, .layout-list-image-right {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        /* List layouts: card height driven by content, image absolutely fills the side column */
+        .layout-list-image-left .list-item,
+        .layout-list-image-right .list-item {
+            display: flex;
+            gap: 0;
+            align-items: stretch;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        .layout-list-image-left .list-item { padding-left: 160px; }
+        .layout-list-image-right .list-item { padding-right: 160px; }
+        .layout-list-image-left .item-thumbnail-wrapper,
+        .layout-list-image-right .item-thumbnail-wrapper {
+            position: absolute;
+            top: 0; bottom: 0;
+            width: 160px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .layout-list-image-left .item-thumbnail-wrapper { left: 0; }
+        .layout-list-image-right .item-thumbnail-wrapper { right: 0; }
+        .layout-list-image-left .item-thumbnail-wrapper:empty,
+        .layout-list-image-right .item-thumbnail-wrapper:empty { display: none; }
+        .layout-list-image-left .list-item-image,
+        .layout-list-image-right .list-item-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+        .layout-list-image-left .item-content,
+        .layout-list-image-right .item-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .list-item {
+            background: #111315; border-radius: 16px; overflow: hidden; border: 1px solid #2a2e35;
+            display: flex; flex-direction: column;
+            height: 100%; /* fills grid cell so all cards in a row are equal height */
+            transition: transform 0.2s, box-shadow 0.2s; padding: 0;
+        }
+        .list-item.has-modifiers { cursor: pointer; }
+        .list-item.has-modifiers:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .list-item.no-modifiers { cursor: default; }
+        /* Grid layouts: image wrapper fills full card width, no padding, height set via JS/dynamic */
+        .item-thumbnail-wrapper {
+            margin: 0; padding: 0; overflow: hidden; flex-shrink: 0;
+            width: 100%; position: relative;
+        }
+        .list-item-image {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: center;
+            display: block;
+        }
+        /* item-content gets the card padding — image stays edge-to-edge */
+        .item-content { flex: 1; display: flex; flex-direction: column; }
+        .list-item-name { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+        .list-item-description { font-size: 12px; margin-bottom: 10px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .list-item-price { font-size: 15px; font-weight: 700; margin-top: auto; }
+        .price-hidden { display: none; }
+
+        /* ── CATEGORY HEADERS ── */
+        .category-header {
+            padding: 20px 0 10px;
+            margin-bottom: 16px;
+            border-bottom-style: solid;
+        }
+        .category-header:first-child { padding-top: 0; }
+        .category-header-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 4px;
+        }
+        .category-header-desc {
+            font-size: 13px;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        /* ── SCROLL-LIST LAYOUT ── */
+        .layout-scroll-list {
+            display: flex;
+            flex-direction: column;
+        }
+        .scroll-list-category {
+            margin-bottom: 40px;
+        }
+        .scroll-list-category:last-child { margin-bottom: 0; }
+        .scroll-list-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 24px;
+        }
+        .category-toolbar { margin-bottom: 12px; display: flex; gap: 12px; flex-wrap: wrap; }
+        .tabs-left .category-toolbar, .tabs-right .category-toolbar { flex-direction: column; margin-bottom: 8px; }
+        .category-search, .category-select {
+            padding: 8px 14px; border: 1px solid #2a2e35; border-radius: 40px; font-size: 13px;
+            background: #1a1d21; color: #cbd5e1; width: 100%; cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modifier-modal-content {
+            max-width: 550px;
+            width: 90%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.2s ease;
+
+            background: #111315;
+            border: 1px solid #2a2e35;
+            border-radius: 24px;
+            color: #e2e8f0;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+        .modifier-modal-header { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .modifier-modal-header h3 { margin: 0; }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            transition: color 0.2s;
+            color: #cbd5e1;
+        }
+        .modal-close:hover {
+            color: #ffffff;
+        }
+        .modifier-modal-body { padding: 20px 24px; overflow-y: auto; flex: 1; }
+        .modifier-group { margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid #2a2e35; }
+        .modifier-group:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+        .modifier-group-name { font-weight: 600; margin-bottom: 10px; }
+        .modifier-limits { font-size: 11px; margin-bottom: 10px; }
+        .modifier-option { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; font-size: 14px; color: #cbd5e1; border-bottom: 1px solid #2a2e35; }
+        .modifier-option:last-child { border-bottom: none; }
+        .modifier-price { font-weight: 500; }
+        .modifier-price.extra { font-weight: 600; }
+        .modifier-modal-body .no-modifiers { text-align: center; padding: 30px; font-style: italic; }
+
+        .code-container { background: #0a0c10; border-radius: 16px; padding: 16px; position: relative; border: 1px solid #2a2e35; }
+        .code-container pre { color: #e2e8f0; font-family: monospace; font-size: 12px; overflow-x: auto; white-space: pre-wrap; }
+        .copy-code-btn { position: absolute; top: 12px; right: 12px; background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 30px; cursor: pointer; font-size: 12px; }
+
+        .exclude-widget { border: 1px solid #2a2e35; border-radius: 12px; background: #1a1d21; }
+        .exclude-trigger { padding: 10px 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; color: #cbd5e1; font-size: 13px; }
+        .exclude-trigger:hover { background: #2a2e35; }
+        .exclude-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 14px; border-top: 1px solid #2a2e35; }
+        .exclude-chip { background: #2a2e35; padding: 4px 8px 4px 12px; border-radius: 20px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; color: #e2e8f0; }
+        .exclude-chip-remove { cursor: pointer; font-size: 14px; color: #94a3b8; }
+        .exclude-chip-remove:hover { color: #ef4444; }
+        .exclude-dropdown { display: none; padding: 12px; border-top: 1px solid #2a2e35; max-height: 200px; overflow-y: auto; background: #1a1d21; }
+        .exclude-dropdown.show { display: block; }
+        .exclude-option { display: flex; align-items: center; gap: 8px; padding: 8px 0; cursor: pointer; color: #cbd5e1; font-size: 13px; min-height: 36px; }
+        .exclude-option input { margin: 0; width: 16px; height: 16px; flex-shrink: 0; }
+        .exclude-option:hover { background: #2a2e35; }
+        .status { padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; font-size: 13px; }
+        .status.success { background: #14532d; color: #86efac; border-left: 4px solid #22c55e; }
+        .status.error { background: #7f1a1a; color: #fecaca; border-left: 4px solid #ef4444; }
+        .status.info { background: #0c4a6e; color: #bae6fd; border-left: 4px solid #0ea5e9; }
+
+        /* ---------- CODE MODAL BUTTONS (MATCH COPY STYLE) ---------- */
+        #codeModal .btn-primary {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        #codeModal .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        #codeModal .btn-secondary {
+            background: #2a2e35;
+            color: #e2e8f0;
+            border: 1px solid #3a3f47;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        #codeModal .btn-secondary:hover {
+            background: #1f2329;
+        }
+
+        /* keep footer layout clean */
+        #codeModal .modifier-modal-header + div + div {
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .studio-container { grid-template-columns: 1fr; padding: 20px; }
+            .controls-panel { position: static; max-height: none; }
+            /* All tab positions collapse to column on mobile */
+            .menu-layout.tabs-left,
+            .menu-layout.tabs-right { flex-direction: column !important; }
+            .menu-layout.tabs-left .menu-tabs-area,
+            .menu-layout.tabs-right .menu-tabs-area {
+                width: 100% !important;
+            }
+            .menu-layout.tabs-left .categories-container,
+            .menu-layout.tabs-right .categories-container {
+                flex-direction: row !important;
+                flex-wrap: nowrap !important;
+                overflow-x: auto;
+            }
+            .layout-split-view { grid-template-columns: 1fr; }
+            /* List layouts: revert absolute to normal flow on mobile, image on top */
+            .layout-list-image-left .list-item, .layout-list-image-right .list-item {
+                flex-direction: column !important;
+                position: static !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                width: 100%;
+            }
+            .layout-list-image-left .item-thumbnail-wrapper, .layout-list-image-right .item-thumbnail-wrapper {
+                position: static !important;
+                width: 100% !important;
+                height: 200px !important;
+            }
+            .layout-list-image-left .item-thumbnail-wrapper:empty,
+            .layout-list-image-right .item-thumbnail-wrapper:empty { display: none !important; }
+            .layout-compact-cards { grid-template-columns: 1fr !important; }
+            /* Tabs: horizontal scroll row on mobile */
+            .categories-container { flex-wrap: nowrap !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 4px; }
+            .categories-container::-webkit-scrollbar { display: none; }
+            .categories-container .category-link { flex-shrink: 0; }
+        }
+    </style>
+</head>
+<body>
+<div class="studio-header">
+    <div class="header-content">
+        <div class="logo-area">
+            <img src="https://posphilly.com/wp-content/uploads/2022/12/cropped-SpotOn_Logo-removebg-preview11.png" alt="SpotOn" class="logo">
+            <div class="header-text"><h1>Menu Studio</h1></div>
+        </div>
+        <div class="badge" style="background:#0d1f17; color:#CCEEDC; border:1px solid #2a5c3f;">● Modifiers shown</div>
+    </div>
+</div>
+
+<div class="studio-container">
+    <div class="controls-panel">
+
+        <!-- ① SOURCE -->
+        <details class="panel-section" open>
+            <summary><span class="section-title">📂 Menu Source</span></summary>
+            <div class="control-group">
+                <label>Menu JSON URL</label>
+                <div style="display:flex; gap:6px;">
+                    <input type="url" id="jsonUrl" placeholder="https://example.com/menu.json" style="flex:1; min-width:0;">
+                    <button id="loadUrlBtn" class="btn btn-secondary" style="flex-shrink:0; padding:8px 14px;">Load</button>
+                </div>
+                <div class="helper-text" id="urlStatusText">Paste a URL — loads automatically after typing stops.</div>
+            </div>
+            <div class="control-group">
+                <button id="importConfigBtn" class="btn btn-secondary" style="width:100%;">📥 Import from Embed Code</button>
+                <div class="helper-text">Paste a previously generated embed code to restore all settings.</div>
+            </div>
+            <div class="control-group">
+                <label>Excluded Categories</label>
+                <div id="excludeWidget" class="exclude-widget"></div>
+            </div>
+
+            <div class="subgroup-label">jsDelivr URL Generator</div>
+            <div class="subgroup">
+                <div class="helper-text" style="margin-bottom:10px; font-family:monospace; font-size:10px; color:#475569; word-break:break-all;">cdn.jsdelivr.net/gh/sarabus-coder/JSON-Menu-Files@main/</div>
+                <div class="control-group" style="margin-bottom:0;">
+                    <div style="display:flex; gap:6px;">
+                        <input type="text" id="githubFile" placeholder="BL-33F2-668A-345D-Default-Menu.json" style="flex:1; min-width:0;">
+                        <button id="generateJsDelivrBtn" class="btn btn-primary" style="flex-shrink:0; padding:8px 14px;">Go</button>
+                    </div>
+                    <div class="helper-text" style="margin-top:5px;">Enter the filename and click Go to load the menu.</div>
+                </div>
+                <div id="jsdelivrResult" style="display:none; margin-top:10px;">
+                    <div class="control-group" style="margin-bottom:0;">
+                        <div style="display:flex; gap:6px; align-items:center;">
+                            <input type="text" id="jsdelivrUrl" readonly style="flex:1; min-width:0; font-family:monospace; font-size:11px; cursor:text; color:#64748b;">
+                            <button id="copyJsdelivrBtn" class="btn btn-secondary" style="flex-shrink:0; padding:8px 12px; font-size:12px;">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <!-- ② LAYOUT -->
+        <details class="panel-section" open>
+            <summary><span class="section-title">📐 Layout</span></summary>
+            <div class="control-group">
+                <label>Layout Style</label>
+                <select id="layoutType">
+                    <option value="classic-grid">Classic Grid</option>
+                    <option value="hero-grid">Hero Grid (Large Images)</option>
+                    <option value="list-image-left">List — Image Left</option>
+                    <option value="list-image-right">List — Image Right</option>
+                    <option value="compact-cards">Compact Cards</option>
+                    <option value="split-view">Split View (2 columns)</option>
+                    <option value="scroll-list">Scrolling List (all categories)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Tabs Position</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="tabsPosition" value="top" checked> Top</label>
+                    <label><input type="radio" name="tabsPosition" value="bottom"> Bottom</label>
+                    <label><input type="radio" name="tabsPosition" value="left"> Left</label>
+                    <label><input type="radio" name="tabsPosition" value="right"> Right</label>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Tab Alignment</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="tabAlign" value="left" checked> Left</label>
+                    <label><input type="radio" name="tabAlign" value="center"> Center</label>
+                    <label><input type="radio" name="tabAlign" value="right"> Right</label>
+                </div>
+            </div>
+            <div class="subgroup-label">Image</div>
+            <div class="subgroup">
+                <div class="control-group" style="margin-bottom:0;">
+                    <label>Image Height (px) — grid layouts</label>
+                    <input type="number" id="imageHeight" value="180" min="80" max="500" step="10">
+                    <div class="helper-text">Applies to grid layouts. List layouts grow with content.</div>
+                </div>
+            </div>
+        </details>
+
+        <!-- ③ NAVIGATION -->
+        <details class="panel-section" open>
+            <summary><span class="section-title">🧭 Navigation</span></summary>
+            <div class="control-group">
+                <label>Content</label>
+                <div class="toggle-group">
+                    <label><input type="checkbox" id="showImages" checked> Show Images</label>
+                    <label><input type="checkbox" id="showPrices" checked> Show Prices</label>
+                    <label><input type="checkbox" id="showModifiers" checked> Show Modifiers</label>
+                </div>
+                <div class="helper-text">When Modifiers is off, items won't open the modifier modal.</div>
+            </div>
+            <div class="control-group">
+                <label>Category Order</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="categorySort" value="default" checked> Default</label>
+                    <label><input type="radio" name="categorySort" value="az"> A → Z</label>
+                    <label><input type="radio" name="categorySort" value="za"> Z → A</label>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Navigation Elements</label>
+                <div class="toggle-group">
+                    <label><input type="checkbox" id="showTabs" checked> Tabs</label>
+                    <label><input type="checkbox" id="showCategorySearch"> Category Search</label>
+                    <label><input type="checkbox" id="showCategoryDropdown"> Category Dropdown</label>
+                    <label><input type="checkbox" id="showCategoryHeaders"> Category Headers</label>
+                </div>
+                <div class="helper-text">Each element is independent. Headers appear above items in all layouts.</div>
+            </div>
+        </details>
+
+        <!-- ④ TABS -->
+        <details class="panel-section" open>
+            <summary><span class="section-title">🎨 Tabs</span></summary>
+            <div class="subgroup-label">Colors</div>
+            <div class="subgroup">
+                <div class="color-row">
+                    <div class="color-row-item"><span>Default BG</span><div class="color-input"><input type="color" id="defaultTabColor" value="#1a1d21"><span id="defaultTabColorValue">#1a1d21</span></div></div>
+                    <div class="color-row-item"><span>Default Text</span><div class="color-input"><input type="color" id="defaultTabTextColor" value="#cbd5e1"><span id="defaultTabTextColorValue">#cbd5e1</span></div></div>
+                    <div class="color-row-item"><span>Active BG</span><div class="color-input"><input type="color" id="activeTabColor" value="#3b82f6"><span id="activeTabColorValue">#3b82f6</span></div></div>
+                    <div class="color-row-item"><span>Active Text</span><div class="color-input"><input type="color" id="activeTabTextColor" value="#ffffff"><span id="activeTabTextColorValue">#ffffff</span></div></div>
+                </div>
+            </div>
+            <div class="subgroup-label">Border & Shape</div>
+            <div class="subgroup">
+                <div class="border-control">
+                    <input type="color" id="tabBorderColor" value="#2a2e35">
+                    <input type="number" id="tabBorderWidth" value="1" min="0" max="5" step="0.5">
+                    <span>px</span>
+                </div>
+                <div class="control-group" style="margin-bottom:0; margin-top:12px;">
+                    <label>Radius (px)</label>
+                    <div class="radius-grid">
+                        <div><span>Top-left</span><input type="number" id="tabRadiusTL" value="40"></div>
+                        <div><span>Top-right</span><input type="number" id="tabRadiusTR" value="40"></div>
+                        <div><span>Bottom-right</span><input type="number" id="tabRadiusBR" value="40"></div>
+                        <div><span>Bottom-left</span><input type="number" id="tabRadiusBL" value="40"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="subgroup-label">Typography</div>
+            <div class="subgroup">
+                <div class="font-note">Copy exact name from <a href="https://fonts.google.com" target="_blank">fonts.google.com</a></div>
+                <div class="typography-grid">
+                    <input type="text" id="tabFontFamily" list="fontList" value="Inter">
+                    <input type="number" id="tabFontSize" value="13">
+                    <select id="tabFontWeight"><option value="400">400</option><option value="500" selected>500</option><option value="600">600</option><option value="700">700</option></select>
+                </div>
+                <div class="typo-col-labels"><span>Family</span><span>Size</span><span>Weight</span></div>
+                <div class="helper-text" style="margin-top:8px;">Search and Dropdown inherit tab styling.</div>
+            </div>
+        </details>
+
+        <!-- ⑤ CARDS -->
+        <details class="panel-section" open>
+            <summary><span class="section-title">🃏 Cards</span></summary>
+            <div class="subgroup-label">Colors</div>
+            <div class="subgroup">
+                <div class="color-row">
+                    <div class="color-row-item"><span>Background</span><div class="color-input"><input type="color" id="cardBgColor" value="#111315"><span id="cardBgColorValue">#111315</span></div></div>
+                </div>
+            </div>
+            <div class="subgroup-label">Border & Shape</div>
+            <div class="subgroup">
+                <div class="border-control">
+                    <input type="color" id="cardBorderColor" value="#2a2e35">
+                    <input type="number" id="cardBorderWidth" value="1" min="0" step="0.5">
+                    <span>px</span>
+                </div>
+                <div class="control-group" style="margin-bottom:0; margin-top:12px;">
+                    <label>Radius (px)</label>
+                    <div class="radius-grid">
+                        <div><span>Top-left</span><input type="number" id="cardRadiusTL" value="16"></div>
+                        <div><span>Top-right</span><input type="number" id="cardRadiusTR" value="16"></div>
+                        <div><span>Bottom-right</span><input type="number" id="cardRadiusBR" value="16"></div>
+                        <div><span>Bottom-left</span><input type="number" id="cardRadiusBL" value="16"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="subgroup-label">Content Padding (px)</div>
+            <div class="subgroup">
+                <div class="padding-grid">
+                    <div><span>Top</span><input type="number" id="cardPaddingTop" value="16"></div>
+                    <div><span>Right</span><input type="number" id="cardPaddingRight" value="16"></div>
+                    <div><span>Bottom</span><input type="number" id="cardPaddingBottom" value="16"></div>
+                    <div><span>Left</span><input type="number" id="cardPaddingLeft" value="16"></div>
+                </div>
+                <div class="helper-text" style="margin-top:8px;">Text area only — images always fill edge-to-edge.</div>
+            </div>
+            <div class="subgroup-label">Title</div>
+            <div class="subgroup">
+                <div class="color-size-row" style="margin-bottom:10px;">
+                    <div class="color-swatch-col">
+                        <span>Color</span>
+                        <div class="color-input"><input type="color" id="cardTitleColor" value="#f1f5f9"><span id="cardTitleColorValue">#f1f5f9</span></div>
+                    </div>
+                    <div class="size-col">
+                        <span>Size (px)</span>
+                        <input type="number" id="titleFontSize" value="17">
+                    </div>
+                </div>
+                <div class="font-note">Copy exact name from <a href="https://fonts.google.com" target="_blank">fonts.google.com</a></div>
+                <div class="typography-grid-2">
+                    <input type="text" id="titleFontFamily" list="fontList" value="Inter">
+                    <select id="titleFontWeight"><option value="400">400</option><option value="500">500</option><option value="600" selected>600</option><option value="700">700</option></select>
+                </div>
+                <div class="typo-col-labels-2"><span>Family</span><span>Weight</span></div>
+            </div>
+            <div class="subgroup-label">Description</div>
+            <div class="subgroup">
+                <div class="color-size-row" style="margin-bottom:10px;">
+                    <div class="color-swatch-col">
+                        <span>Color</span>
+                        <div class="color-input"><input type="color" id="descTextColor" value="#94a3b8"><span id="descTextColorValue">#94a3b8</span></div>
+                    </div>
+                    <div class="size-col">
+                        <span>Size (px)</span>
+                        <input type="number" id="descFontSize" value="16">
+                    </div>
+                </div>
+                <div class="typography-grid-2">
+                    <input type="text" id="descFontFamily" list="fontList" value="Inter">
+                    <select id="descFontWeight"><option value="400" selected>400</option><option value="500">500</option></select>
+                </div>
+                <div class="typo-col-labels-2"><span>Family</span><span>Weight</span></div>
+                <div class="line-height-row">
+                    <label>Line Height</label>
+                    <input type="number" id="descLineHeight" value="1.6" min="1.5" max="3" step="0.05">
+                    <span class="qa-badge">min 1.5 QA</span>
+                </div>
+            </div>
+            <div class="subgroup-label">Price</div>
+            <div class="subgroup">
+                <div class="color-size-row" style="margin-bottom:10px;">
+                    <div class="color-swatch-col">
+                        <span>Color</span>
+                        <div class="color-input"><input type="color" id="priceTextColor" value="#38bdf8"><span id="priceTextColorValue">#38bdf8</span></div>
+                    </div>
+                    <div class="size-col">
+                        <span>Size (px)</span>
+                        <input type="number" id="priceFontSize" value="15">
+                    </div>
+                </div>
+                <div class="typography-grid-2">
+                    <input type="text" id="priceFontFamily" list="fontList" value="Inter">
+                    <select id="priceFontWeight"><option value="400">400</option><option value="500">500</option><option value="600">600</option><option value="700" selected>700</option></select>
+                </div>
+                <div class="typo-col-labels-2"><span>Family</span><span>Weight</span></div>
+            </div>
+        </details>
+
+        <!-- ⑥ MODAL -->
+        <details class="panel-section">
+            <summary><span class="section-title">🔧 Modifiers Modal</span></summary>
+            <div class="control-group">
+                <label><input type="checkbox" id="inheritCardStyle" checked> Inherit card styling</label>
+                <div class="helper-text">Uncheck to customize modal colors, shape and typography separately.</div>
+            </div>
+            <div id="customModalStyles" style="display: none;">
+                <div class="subgroup-label">Colors</div>
+                <div class="subgroup">
+                    <div class="color-row">
+                        <div class="color-row-item"><span>Background</span><div class="color-input"><input type="color" id="modalBgColor" value="#1a1d21"><span id="modalBgColorValue">#1a1d21</span></div></div>
+                        <div class="color-row-item"><span>Text</span><div class="color-input"><input type="color" id="modalTextColor" value="#f1f5f9"><span id="modalTextColorValue">#f1f5f9</span></div></div>
+                        <div class="color-row-item"><span>Accent</span><div class="color-input"><input type="color" id="modalAccentColor" value="#3b82f6"><span id="modalAccentColorValue">#3b82f6</span></div></div>
+                        <div class="color-row-item"><span>Separator</span><div class="color-input"><input type="color" id="modalSeparatorColor" value="#2a2e35"><span id="modalSeparatorColorValue">#2a2e35</span></div></div>
+                    </div>
+                </div>
+                <div class="subgroup-label">Shape</div>
+                <div class="subgroup">
+                    <div class="control-group" style="margin-bottom:0;">
+                        <label>Radius (px)</label>
+                        <div class="radius-grid">
+                            <div><span>Top-left</span><input type="number" id="modalRadiusTL" value="24"></div>
+                            <div><span>Top-right</span><input type="number" id="modalRadiusTR" value="24"></div>
+                            <div><span>Bottom-right</span><input type="number" id="modalRadiusBR" value="24"></div>
+                            <div><span>Bottom-left</span><input type="number" id="modalRadiusBL" value="24"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="subgroup-label">Typography — Title</div>
+                <div class="subgroup">
+                    <div class="typography-grid">
+                        <input type="text" id="modalTitleFont" list="fontList" value="Inter">
+                        <input type="number" id="modalTitleSize" value="18">
+                        <select id="modalTitleWeight"><option value="400">400</option><option value="500">500</option><option value="600" selected>600</option><option value="700">700</option></select>
+                    </div>
+                    <div class="typo-col-labels"><span>Family</span><span>Size</span><span>Weight</span></div>
+                </div>
+                <div class="subgroup-label">Typography — Options</div>
+                <div class="subgroup">
+                    <div class="typography-grid">
+                        <input type="text" id="modalModifierFont" list="fontList" value="Inter">
+                        <input type="number" id="modalModifierSize" value="13">
+                        <select id="modalModifierWeight"><option value="400" selected>400</option><option value="500">500</option></select>
+                    </div>
+                    <div class="typo-col-labels"><span>Family</span><span>Size</span><span>Weight</span></div>
+                </div>
+            </div>
+        </details>
+
+        <!-- ⑩ CATEGORY HEADERS -->
+        <details class="panel-section">
+            <summary><span class="section-title">🗂️ Category Headers</span></summary>
+            <div id="headerControlsWrapper" style="display:none;">
+                <div class="subgroup-label">Alignment</div>
+                <div class="subgroup">
+                    <div class="radio-group">
+                        <label><input type="radio" name="headerAlign" value="left" checked> Left</label>
+                        <label><input type="radio" name="headerAlign" value="center"> Center</label>
+                        <label><input type="radio" name="headerAlign" value="right"> Right</label>
+                    </div>
+                </div>
+                <div class="subgroup-label">Divider</div>
+                <div class="subgroup">
+                    <div class="color-size-row">
+                        <div class="color-swatch-col">
+                            <span>Color</span>
+                            <div class="color-input"><input type="color" id="headerDividerColor" value="#2a2e35"><span id="headerDividerColorValue">#2a2e35</span></div>
+                        </div>
+                        <div class="size-col">
+                            <span>Thickness (px)</span>
+                            <input type="number" id="headerDividerThickness" value="2" min="0" max="10">
+                        </div>
+                    </div>
+                </div>
+                <div class="subgroup-label">Color & Typography</div>
+                <div class="subgroup">
+                    <div class="color-row" style="margin-bottom:10px;">
+                        <div class="color-row-item"><span>Text Color</span><div class="color-input"><input type="color" id="headerNameColor" value="#f1f5f9"><span id="headerNameColorValue">#f1f5f9</span></div></div>
+                    </div>
+                    <div class="font-note">Copy exact name from <a href="https://fonts.google.com" target="_blank">fonts.google.com</a></div>
+                    <div class="typography-grid">
+                        <input type="text" id="headerFontFamily" list="fontList" value="Inter">
+                        <input type="number" id="headerFontSize" value="22" min="12">
+                        <select id="headerFontWeight">
+                            <option value="400">400</option><option value="500">500</option>
+                            <option value="600">600</option><option value="700" selected>700</option><option value="800">800</option>
+                        </select>
+                    </div>
+                    <div class="typo-col-labels"><span>Family</span><span>Size</span><span>Weight</span></div>
+                    <div class="line-height-row" style="margin-top:10px;">
+                        <label>Line Height</label>
+                        <input type="number" id="headerLineHeight" value="1.2" min="1" max="3" step="0.05">
+                    </div>
+                </div>
+            </div>
+            <div id="headerOffNote" class="helper-text" style="margin-top:4px;">Enable "Category Headers" in Navigation to unlock these settings.</div>
+        </details>
+
+        <datalist id="fontList">
+            <option>Inter</option><option>Roboto</option><option>Open Sans</option><option>Lato</option><option>Poppins</option><option>Montserrat</option><option>Nunito</option><option>Playfair Display</option>
+            <option>Merriweather</option><option>Raleway</option><option>Oswald</option><option>Source Sans Pro</option><option>Ubuntu</option><option>Roboto Condensed</option><option>Cabin</option>
+            <option>Dosis</option><option>Quicksand</option><option>Work Sans</option><option>Barlow</option><option>Fira Sans</option><option>Josefin Sans</option><option>Mulish</option><option>Manrope</option>
+            <option>Karla</option><option>Heebo</option><option>Comfortaa</option><option>Overpass</option><option>DM Sans</option><option>Figtree</option><option>Plus Jakarta Sans</option>
+        </datalist>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary" id="showCodeBtn">📋 Generate Embed Code</button>
+        </div>
+    </div>
+    <div class="preview-panel">
+        <div class="preview-header"><h2>Menu Preview</h2></div>
+        <div class="menu-preview" id="menuPreview"><div class="status info">Enter a JSON URL and click Load to start</div></div>
+    </div>
+</div>
+
+<div id="modifierModal" class="modal-overlay">
+    <div class="modifier-modal-content" id="modifierModalContent">
+        <div class="modifier-modal-header"><h3 id="modalItemName">Item Name</h3><button class="modal-close" onclick="closeModifierModal()">&times;</button></div>
+        <div class="modifier-modal-body" id="modifierModalBody"><div class="no-modifiers">Loading...</div></div>
+    </div>
+</div>
+
+<div id="codeModal" class="modal-overlay" style="z-index:2000;">
+    <div class="modifier-modal-content" style="max-width:850px;">
+        <div class="modifier-modal-header"><h3>Embed Code – Copy into Webflow</h3><button class="modal-close" onclick="closeCodeModal()">&times;</button></div>
+        <div class="modifier-modal-body" style="padding:0;">
+            <div class="code-container">
+                <pre id="embedCodeDisplay" style="white-space:pre-wrap; max-height:500px; overflow:auto;"></pre>
+                <div id="copySuccessMsg" style="display:none; position:absolute; top:12px; right:12px; background:#14532d; color:#86efac; padding:6px 10px; border-radius:20px; font-size:12px; border:1px solid #22c55e;">
+                    Copied to clipboard
+                </div>
+            </div>
+        </div>
+        <div style="padding:16px 24px; border-top:1px solid #2a2e35; display:flex; justify-content:flex-end;"><button class="btn-secondary" onclick="closeCodeModal()">Close</button><button class="btn-primary" id="modalFooterCopyBtn" style="margin-left:12px;">Copy to Clipboard</button></div>
+    </div>
+</div>
+
+<script>
+let currentMenuData = null;
+let excludedCategories = [];
+let excludeDropdownOpen = false;
+let currentItemsMap = new Map();
+let activeCategoryId = null;
+let currentModalItemId = null;
+let categorySearchQuery = "";
+
+/* ------------------ GOOGLE FONT LOADER ------------------ */
+function loadFont(font) {
+    if (!font) return;
+    const id = "font-" + font.replace(/\s+/g, "-");
+
+    if (document.getElementById(id)) return;
+
+    const link = document.createElement("link");
+    link.id = id;
+    link.rel = "stylesheet";
+    link.href = `https://fonts.googleapis.com/css2?family=${font.replace(/ /g, "+")}:wght@300;400;500;600;700&display=swap`;
+
+    document.head.appendChild(link);
+}
+
+/* ------------------ PARSER ------------------ */
+function parseSpotOnJSON(jsonObj) {
+    const catsRaw = jsonObj.menu?.categories || jsonObj.categories || [];
+    const itemsRaw = jsonObj.items || [];
+
+    const catMap = new Map(), itemsByCat = new Map(), itemsFull = new Map();
+
+    // Build catMap from declared categories
+    catsRaw.forEach(c => {
+        if (c.active !== false && c.id) {
+            catMap.set(c.id, (c.name || "").trim());
+            itemsByCat.set(c.id, []);
+        }
+    });
+
+    // First pass: discover ANY category_id referenced by items, even if undeclared
+    itemsRaw.forEach(item => {
+        if (item.active === false) return;
+        (item.category_ids || (item.category_id ? [item.category_id] : [])).forEach(cid => {
+            if (!catMap.has(cid)) {
+                // Undeclared category — add with fallback name
+                catMap.set(cid, "Category " + cid);
+                itemsByCat.set(cid, []);
+            }
+        });
+    });
+
+    // Second pass: assign items to categories
+    itemsRaw.forEach(item => {
+        if (item.active === false) return;
+
+        itemsFull.set(item.id, item);
+
+        (item.category_ids || (item.category_id ? [item.category_id] : [])).forEach(cid => {
+            if (!catMap.has(cid)) return;
+
+            let priceAmt = item.price?.amount;
+            if (priceAmt == null) {
+                const p = Number(item.price);
+                priceAmt = isNaN(p) ? 0 : p;
+            }
+
+            itemsByCat.get(cid).push({
+                id: item.id,
+                name: item.name,
+                description: item.description || "",
+                price: (priceAmt / 100).toFixed(2),
+                imageUrl: item.image_url || item.thumbnail_url || "",
+                modifier_groups: item.modifier_groups || item.modifiers || []
+            });
+        });
+    });
+
+    let finalCats = [], finalItems = {};
+    for (let [cid, name] of catMap.entries()) {
+        let items = itemsByCat.get(cid);
+        if (items?.length) {
+            finalCats.push({ id: cid, name });
+            finalItems[cid] = items;
+        }
+    }
+
+    return { categories: finalCats, itemsByCategory: finalItems, itemsFull };
+}
+
+/* ------------------ EXCLUDE CATEGORIES UI ------------------ */
+function renderExcludeWidget() {
+    // --- Preserve scroll position before re-render ---
+    const oldDropdown = document.getElementById("excludeDropdown");
+    const prevScrollTop = oldDropdown ? oldDropdown.scrollTop : 0;
+
+    const widget = document.getElementById("excludeWidget");
+    if (!widget || !currentMenuData) return;
+
+    const categories = currentMenuData.categories || [];
+
+    widget.innerHTML = `
+        <div class="exclude-trigger" onclick="toggleExcludeDropdown()">
+            <span>Exclude categories</span>
+            <span>▼</span>
+        </div>
+
+        <div class="exclude-chips">
+            ${excludedCategories.map(id => {
+                const cat = (currentMenuData?.categories || []).find(c => c.id === id);
+                const name = cat ? cat.name : id;
+                return `
+                    <div class="exclude-chip">
+                        ${name}
+                        <span class="exclude-chip-remove" onclick="removeExcludedCategory('${id}')">×</span>
+                    </div>
+                `;
+            }).join("")}
+        </div>
+
+        <div id="excludeDropdown" class="exclude-dropdown">
+            ${categories.map(c => `
+                <label class="exclude-option">
+                    <input type="checkbox"
+                        ${excludedCategories.includes(c.id) ? "checked" : ""}
+                        onchange="toggleCategoryExclude('${c.id}')">
+                    ${c.name}
+                </label>
+            `).join("")}
+        </div>
+    `;
+
+    // Preserve the dropdown open state after re-render
+    const dd = document.getElementById("excludeDropdown");
+    if (dd && excludeDropdownOpen) {
+        dd.classList.add("show");
+    }
+    // --- Restore scroll position after re-render ---
+    setTimeout(() => {
+        const ddRestore = document.getElementById("excludeDropdown");
+        if (ddRestore) {
+            ddRestore.scrollTop = prevScrollTop;
+        }
+    }, 0);
+}
+
+function toggleExcludeDropdown() {
+    const dd = document.getElementById("excludeDropdown");
+    if (!dd) return;
+
+    excludeDropdownOpen = !excludeDropdownOpen;
+
+    if (excludeDropdownOpen) {
+        dd.classList.add("show");
+    } else {
+        dd.classList.remove("show");
+    }
+}
+
+function toggleCategoryExclude(id) {
+    if (excludedCategories.includes(id)) {
+        excludedCategories = excludedCategories.filter(n => n !== id);
+    } else {
+        excludedCategories.push(id);
+    }
+    renderMenu();
+    renderExcludeWidget();
+}
+
+function removeExcludedCategory(id) {
+    excludedCategories = excludedCategories.filter(n => n !== id);
+    renderMenu();
+    renderExcludeWidget();
+}
+
+/* ------------------ LOAD ------------------ */
+window.__menuData = null;
+
+function setUrlStatus(msg, type) {
+    const el = document.getElementById("urlStatusText");
+    if (!el) return;
+    el.textContent = msg;
+    el.style.color = type === "ok" ? "#22c55e" : type === "err" ? "#ef4444" : "#64748b";
+}
+
+async function loadFromUrl(url) {
+    const loadBtn = document.getElementById("loadUrlBtn");
+
+    setUrlStatus("Loading…", "");
+    if (loadBtn) { loadBtn.textContent = "…"; loadBtn.disabled = true; }
+
+    try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+
+        currentMenuData = json;
+        window.__menuData = json;
+        setMenuState(json);
+        renderExcludeWidget();
+
+        setUrlStatus("✓ Menu loaded", "ok");
+        if (loadBtn) { loadBtn.textContent = "↻"; loadBtn.disabled = false; }
+
+    } catch (error) {
+        console.error("Failed to load menu:", error);
+        setUrlStatus(`✗ ${error.message} — check URL and CORS`, "err");
+        if (loadBtn) { loadBtn.textContent = "Load"; loadBtn.disabled = false; }
+    }
+}
+
+// fallback renderer for editor
+function renderMenuPreview() {
+    // Use the original logic to parse and render menu preview for the editor
+    const parsed = parseSpotOnJSON(currentMenuData);
+    currentMenuData = parsed;
+    currentItemsMap = parsed.itemsFull;
+    activeCategoryId = parsed.categories[0]?.id;
+    renderMenu();
+}
+
+/* ------------------ RENDER ------------------ */
+function renderMenu(json) {
+    const data = json?.menu || json || currentMenuData;
+    const previewEl = document.getElementById("menuPreview");
+    const prevScroll = previewEl ? previewEl.scrollTop : 0;
+    const controlsEl = document.querySelector(".controls-panel");
+    const prevControlsScroll = controlsEl ? controlsEl.scrollTop : 0;
+
+    if (!data) return;
+
+    let { categories, itemsByCategory } = data;
+
+    let layout = document.getElementById("layoutType").value;
+    const isScrollList = layout === "scroll-list";
+    let tabsPos = document.querySelector("input[name=tabsPosition]:checked").value;
+    let align = document.querySelector("input[name=tabAlign]:checked").value;
+
+    let activeCats = categories
+        .filter(c => !excludedCategories.includes(c.id))
+        .filter(c => c.name.toLowerCase().includes(categorySearchQuery.toLowerCase()));
+
+    // Apply sort order
+    const sortOrder = document.querySelector("input[name='categorySort']:checked")?.value || "default";
+    if (sortOrder === "az") activeCats = [...activeCats].sort((a, b) => a.name.localeCompare(b.name));
+    else if (sortOrder === "za") activeCats = [...activeCats].sort((a, b) => b.name.localeCompare(a.name));
+
+    if (!activeCategoryId) activeCategoryId = activeCats[0]?.id;
+
+    let allCats = categories.filter(c => !excludedCategories.includes(c.id));
+
+    let showSearch = document.getElementById("showCategorySearch")?.checked;
+    let showDropdown = document.getElementById("showCategoryDropdown")?.checked;
+    let showTabs = document.getElementById("showTabs")?.checked !== false;
+    let showHeaders = document.getElementById("showCategoryHeaders")?.checked;
+
+    const preview = document.getElementById("menuPreview");
+    if (!preview) return;
+
+    // ── SCROLL-LIST: render all categories sequentially, no tabs ──
+    if (isScrollList) {
+        // Full reset so switching back to tabbed always starts clean
+        preview.innerHTML = `<div id="menuLayoutRoot"><div class="menu-root layout-scroll-list" id="menuRoot"></div></div>`;
+        const root = document.getElementById("menuRoot");
+
+        activeCats.forEach(cat => {
+            const section = document.createElement("div");
+            section.className = "scroll-list-category";
+
+            if (showHeaders) {
+                section.innerHTML = `
+                    <div class="category-header">
+                        <div class="category-header-name">${cat.name}</div>
+                    </div>`;
+            }
+
+            const grid = document.createElement("div");
+            grid.className = "scroll-list-items";
+            section.appendChild(grid);
+            root.appendChild(section);
+
+            renderItemsInto(grid, cat.id, itemsByCategory, "classic-grid");
+        });
+
+        applyStyles();
+        setTimeout(() => {
+            if (previewEl) previewEl.scrollTop = prevScroll;
+            if (controlsEl) controlsEl.scrollTop = prevControlsScroll;
+        }, 0);
+        return;
+    }
+
+    // ── TABBED MODE ──
+    // Determine if the nav area has anything to show
+    const hasNavContent = showSearch || showDropdown || showTabs;
+
+    let html = `<div class="menu-layout tabs-${tabsPos}">`;
+
+    // Only render tabs-area when there's something in it
+    if (hasNavContent) {
+        let toolbar = `<div class="category-toolbar">`;
+
+        if (showSearch) {
+            toolbar += `<input type="text" id="categorySearchInput" class="category-search"
+                placeholder="Search categories..."
+                value="${categorySearchQuery.replace(/"/g, '&quot;')}"
+                oninput="window.__spotOnCategorySearch(this.value)" />`;
+        }
+
+        if (showDropdown) {
+            toolbar += `<select class="category-select" onchange="selectCategory(this.value)">
+                ${allCats.map(c => `<option value="${c.id}" ${c.id === activeCategoryId ? "selected" : ""}>${c.name}</option>`).join("")}
+            </select>`;
+        }
+
+        toolbar += `</div>`;
+        html += `<div class="menu-tabs-area">`;
+        html += toolbar;
+
+        if (showTabs) {
+            html += `<div class="categories-container align-${align}">`;
+            activeCats.forEach(c => {
+                html += `<div class="category-link ${c.id === activeCategoryId ? 'active' : ''}" onclick="selectCategory('${c.id}')">${c.name}</div>`;
+            });
+            html += `</div>`;
+        }
+
+        html += `</div>`;
+    }
+
+    html += `<div class="menu-root layout-${layout}" id="menuRoot"></div>`;
+    html += `</div>`;
+
+    // Force fresh root — needed when switching back from scroll-list
+    // (scroll-list writes a different DOM structure that can confuse the stable render)
+    let layoutRoot = document.getElementById("menuLayoutRoot");
+    if (!layoutRoot || layoutRoot.querySelector(".layout-scroll-list")) {
+        preview.innerHTML = `<div id="menuLayoutRoot"></div>`;
+        layoutRoot = document.getElementById("menuLayoutRoot");
+    }
+
+    const temp = document.createElement("div");
+    temp.innerHTML = html;
+    const newLayout = temp.querySelector(".menu-layout");
+    if (!newLayout) return;
+
+    const existingLayout = layoutRoot.querySelector(".menu-layout");
+    if (!existingLayout) {
+        layoutRoot.appendChild(newLayout);
+    } else {
+        existingLayout.replaceWith(newLayout);
+    }
+
+    requestAnimationFrame(() => displayItems(activeCategoryId));
+
+    applyStyles();
+    setTimeout(() => {
+        if (previewEl) previewEl.scrollTop = prevScroll;
+        if (controlsEl) controlsEl.scrollTop = prevControlsScroll;
+    }, 0);
+}
+
+/* ------------------ CATEGORY ------------------ */
+function selectCategory(cid){
+    if (activeCategoryId === cid) return;
+    activeCategoryId = cid;
+
+    requestAnimationFrame(() => {
+        renderMenu();
+    });
+}
+
+function handleCategorySearch(value) {
+    categorySearchQuery = value;
+
+    if (!currentMenuData) return;
+
+    let visibleCats = currentMenuData.categories
+        .filter(c => !excludedCategories.includes(c.id))
+        .filter(c => c.name.toLowerCase().includes(categorySearchQuery.toLowerCase()));
+
+    // If current active category disappears, reset it
+    if (!visibleCats.find(c => c.id === activeCategoryId)) {
+        activeCategoryId = visibleCats[0]?.id || null;
+    }
+
+    const categorySelect = document.getElementById("category-select");
+    if (categorySelect) categorySelect.value = activeCategoryId;
+
+    renderMenu();
+
+    // Restore focus to search input after rendering
+    setTimeout(() => {
+        const searchInput = document.getElementById("categorySearchInput");
+        if (searchInput) {
+            searchInput.focus();
+            // Set cursor to end of input
+            searchInput.setSelectionRange(value.length, value.length);
+        }
+    }, 0);
+}
+
+/* ------------------ ITEMS ------------------ */
+// Core card renderer — writes cards into any container element
+function renderItemsInto(container, cid, itemsByCategory, layout) {
+    const showImages = document.getElementById("showImages").checked;
+    const showPrices = document.getElementById("showPrices").checked;
+    const showModifiers = document.getElementById("showModifiers")?.checked;
+    const isListLayout = layout === "list-image-left" || layout === "list-image-right";
+
+    (itemsByCategory[cid] || []).forEach(item => {
+        const hasModifiers = showModifiers && item.modifier_groups?.length > 0;
+        const modifierClick = hasModifiers ? `onclick="openModifierModal('${item.id}')"` : "";
+        const modifierClass = hasModifiers ? "has-modifiers" : "no-modifiers";
+
+        let thumbHtml = "";
+        if (showImages) {
+            if (isListLayout) {
+                // List: only render wrapper when there's an image (absolute positioning)
+                if (item.imageUrl) {
+                    thumbHtml = `<div class="item-thumbnail-wrapper"><img class="list-item-image" src="${item.imageUrl}" loading="lazy"></div>`;
+                }
+            } else {
+                // Grid: ALWAYS render wrapper so all cards have equal height.
+                // The wrapper height is set by dynamic CSS (imageHeight control).
+                // Empty wrapper shows card background color.
+                thumbHtml = `<div class="item-thumbnail-wrapper">${
+                    item.imageUrl ? `<img class="list-item-image" src="${item.imageUrl}" loading="lazy">` : ""
+                }</div>`;
+            }
+        }
+
+        container.innerHTML += `
+        <div class="list-item ${modifierClass}" ${modifierClick}>
+            ${thumbHtml}
+            <div class="item-content">
+                <div class="list-item-name">${item.name}</div>
+                ${item.description ? `<div class="list-item-description">${item.description}</div>` : ""}
+                ${showPrices ? `<div class="list-item-price">$${item.price}</div>` : ""}
+            </div>
+        </div>`;
+    });
+}
+
+// Tabbed mode — renders one active category, with optional header
+function displayItems(cid) {
+    const root = document.getElementById("menuRoot");
+    if (!root || !currentMenuData) return;
+
+    const { itemsByCategory } = currentMenuData;
+    const layout = document.getElementById("layoutType").value;
+    const showHeaders = document.getElementById("showCategoryHeaders")?.checked;
+    const catName = currentMenuData.categories?.find(c => c.id === cid)?.name || "";
+
+    root.innerHTML = "";
+
+    if (showHeaders && catName) {
+        // Make menuRoot a flex column so header + grid share the same width context
+        root.style.cssText = "display:flex; flex-direction:column; min-width:0; width:100%;";
+
+        const header = document.createElement("div");
+        header.className = "category-header";
+        header.innerHTML = `<div class="category-header-name">${catName}</div>`;
+        root.appendChild(header);
+
+        const grid = document.createElement("div");
+        grid.className = `layout-${layout}`;
+        grid.style.cssText = "min-width:0; width:100%;";
+        root.appendChild(grid);
+
+        renderItemsInto(grid, cid, itemsByCategory, layout);
+    } else {
+        root.style.cssText = "";
+        renderItemsInto(root, cid, itemsByCategory, layout);
+    }
+}
+
+/* ------------------ STYLES ------------------ */
+function applyStyles() {
+
+    const priceColor = document.getElementById("priceTextColor")?.value || "#38bdf8";
+    const bodyTextColor = document.getElementById("bodyTextColor")?.value || "#cbd5e1";
+    const descLineHeight = Math.max(1.5, parseFloat(document.getElementById("descLineHeight")?.value) || 1.6);
+    const imageHeight = parseInt(document.getElementById("imageHeight")?.value) || 180;
+    const headerFont = document.getElementById("headerFontFamily")?.value || "Inter";
+    const headerAlign = document.querySelector("input[name=headerAlign]:checked")?.value || "left";
+    loadFont(headerFont);
+
+    const tabFont = document.getElementById("tabFontFamily")?.value;
+    const titleFont = document.getElementById("titleFontFamily")?.value;
+    const descFont = document.getElementById("descFontFamily")?.value;
+    const priceFont = document.getElementById("priceFontFamily")?.value;
+
+    loadFont(tabFont);
+    loadFont(titleFont);
+    loadFont(descFont);
+    loadFont(priceFont);
+
+    const align = document.querySelector("input[name=tabAlign]:checked").value;
+
+    // --- Modal style variables ---
+    const inheritModal = document.getElementById("inheritCardStyle")?.checked;
+
+    const modalBg = inheritModal
+        ? (document.getElementById("cardBgColor")?.value || "#111315")
+        : (document.getElementById("modalBgColor")?.value || "#1a1d21");
+
+    const modalText = inheritModal
+        ? (document.getElementById("cardTitleColor")?.value || "#f1f5f9")
+        : (document.getElementById("modalTextColor")?.value || "#f1f5f9");
+
+    const modalBorder = inheritModal
+        ? (document.getElementById("cardBorderWidth")?.value || 1) + "px solid " + (document.getElementById("cardBorderColor")?.value || "#2a2e35")
+        : "1px solid " + (document.getElementById("cardBorderColor")?.value || "#2a2e35");
+
+    const modalRadius = inheritModal
+        ? `
+        ${(document.getElementById("cardRadiusTL")?.value || 16)}px
+        ${(document.getElementById("cardRadiusTR")?.value || 16)}px
+        ${(document.getElementById("cardRadiusBR")?.value || 16)}px
+        ${(document.getElementById("cardRadiusBL")?.value || 16)}px`
+        : `
+        ${(document.getElementById("modalRadiusTL")?.value || 24)}px
+        ${(document.getElementById("modalRadiusTR")?.value || 24)}px
+        ${(document.getElementById("modalRadiusBR")?.value || 24)}px
+        ${(document.getElementById("modalRadiusBL")?.value || 24)}px`;
+
+    const modalAccentColor = inheritModal
+        ? (document.getElementById("priceTextColor")?.value || "#38bdf8")
+        : (document.getElementById("modalAccentColor")?.value || document.getElementById("activeTabColor")?.value || "#3b82f6");
+
+    const modalSeparatorColor = inheritModal
+        ? (document.getElementById("cardBorderColor")?.value || "#2a2e35")
+        : (document.getElementById("modalSeparatorColor")?.value || "#2a2e35");
+
+    const modalTitleFont = inheritModal
+        ? (document.getElementById("titleFontFamily")?.value || "Inter")
+        : (document.getElementById("modalTitleFont")?.value || "Inter");
+
+    const modalModifierFont = inheritModal
+        ? (document.getElementById("descFontFamily")?.value || "Inter")
+        : (document.getElementById("modalModifierFont")?.value || "Inter");
+
+    const modalTitleSize = inheritModal
+        ? (document.getElementById("titleFontSize")?.value || 16)
+        : (document.getElementById("modalTitleSize")?.value || 18);
+
+    const modalTitleWeight = inheritModal
+        ? (document.getElementById("titleFontWeight")?.value || 600)
+        : (document.getElementById("modalTitleWeight")?.value || 600);
+
+    const modalModifierSize = inheritModal
+        ? (document.getElementById("descFontSize")?.value || 12)
+        : (document.getElementById("modalModifierSize")?.value || 13);
+
+    const modalModifierWeight = inheritModal
+        ? (document.getElementById("descFontWeight")?.value || 400)
+        : (document.getElementById("modalModifierWeight")?.value || 400);
+
+    let style = document.getElementById("dynamicStyles");
+    if (!style) {
+        style = document.createElement("style");
+        style.id = "dynamicStyles";
+        document.head.appendChild(style);
+    }
+
+   style.textContent = `
+/* ---------- CATEGORY HEADERS ---------- */
+#menuPreview .category-header {
+    border-bottom: ${parseInt(document.getElementById("headerDividerThickness")?.value) || 2}px solid ${document.getElementById("headerDividerColor")?.value || "#2a2e35"};
+    text-align: ${headerAlign};
+}
+#menuPreview .category-header-name {
+    color: ${document.getElementById("headerNameColor")?.value || "#f1f5f9"};
+    font-family: "${headerFont}", sans-serif;
+    font-size: ${document.getElementById("headerFontSize")?.value || 22}px;
+    font-weight: ${document.getElementById("headerFontWeight")?.value || 700};
+    line-height: ${parseFloat(document.getElementById("headerLineHeight")?.value) || 1.2};
+}
+#menuPreview .category-header-desc {
+    color: ${bodyTextColor};
+    font-family: "${document.getElementById("descFontFamily")?.value}", sans-serif;
+    font-size: ${document.getElementById("descFontSize")?.value || 14}px;
+}
+
+/* ---------- TAB ALIGN ---------- */
+.categories-container.align-left { justify-content: flex-start; }
+.categories-container.align-center { justify-content: center; }
+.categories-container.align-right { justify-content: flex-end; }
+
+/* ---------- TABS ---------- */
+#menuPreview .category-link {
+    background: ${document.getElementById("defaultTabColor")?.value};
+    color: ${document.getElementById("defaultTabTextColor")?.value};
+    border: ${document.getElementById("tabBorderWidth")?.value || 0}px solid ${document.getElementById("tabBorderColor")?.value};
+
+    border-radius:
+        ${document.getElementById("tabRadiusTL")?.value || 0}px
+        ${document.getElementById("tabRadiusTR")?.value || 0}px
+        ${document.getElementById("tabRadiusBR")?.value || 0}px
+        ${document.getElementById("tabRadiusBL")?.value || 0}px;
+
+    font-family: "${document.getElementById("tabFontFamily")?.value}", sans-serif;
+    font-size: ${document.getElementById("tabFontSize")?.value}px;
+    font-weight: ${document.getElementById("tabFontWeight")?.value};
+}
+
+#menuPreview .category-link.active {
+    background: ${document.getElementById("activeTabColor")?.value};
+    color: ${document.getElementById("activeTabTextColor")?.value};
+    border-color: ${document.getElementById("activeTabColor")?.value};
+}
+
+/* Search and dropdown inherit tab styling */
+#menuPreview .category-search,
+#menuPreview .category-select {
+    background: ${document.getElementById("defaultTabColor")?.value};
+    color: ${document.getElementById("defaultTabTextColor")?.value};
+    border: ${document.getElementById("tabBorderWidth")?.value || 1}px solid ${document.getElementById("tabBorderColor")?.value};
+    border-radius:
+        ${document.getElementById("tabRadiusTL")?.value || 0}px
+        ${document.getElementById("tabRadiusTR")?.value || 0}px
+        ${document.getElementById("tabRadiusBR")?.value || 0}px
+        ${document.getElementById("tabRadiusBL")?.value || 0}px;
+    font-family: "${document.getElementById("tabFontFamily")?.value}", sans-serif;
+    font-size: ${document.getElementById("tabFontSize")?.value}px;
+    font-weight: ${document.getElementById("tabFontWeight")?.value};
+}
+
+/* ---------- CARDS ---------- */
+#menuPreview .list-item {
+    background: ${document.getElementById("cardBgColor")?.value};
+
+    border: ${document.getElementById("cardBorderWidth")?.value || 0}px solid ${document.getElementById("cardBorderColor")?.value};
+
+    border-radius:
+        ${document.getElementById("cardRadiusTL")?.value || 0}px
+        ${document.getElementById("cardRadiusTR")?.value || 0}px
+        ${document.getElementById("cardRadiusBR")?.value || 0}px
+        ${document.getElementById("cardRadiusBL")?.value || 0}px;
+}
+
+/* Content area gets the padding (image stays edge-to-edge) */
+#menuPreview .item-content {
+    padding:
+        ${document.getElementById("cardPaddingTop")?.value || 0}px
+        ${document.getElementById("cardPaddingRight")?.value || 0}px
+        ${document.getElementById("cardPaddingBottom")?.value || 0}px
+        ${document.getElementById("cardPaddingLeft")?.value || 0}px;
+}
+
+/* Grid image height — controlled by user */
+#menuPreview .layout-classic-grid .item-thumbnail-wrapper,
+#menuPreview .layout-hero-grid .item-thumbnail-wrapper,
+#menuPreview .layout-compact-cards .item-thumbnail-wrapper,
+#menuPreview .layout-split-view .item-thumbnail-wrapper {
+    height: ${imageHeight}px;
+}
+
+/* List layouts: image column width matches reserved padding */
+#menuPreview .layout-list-image-left .list-item,
+#menuPreview .layout-list-image-right .list-item {
+    padding-left: 0;
+    padding-right: 0;
+}
+#menuPreview .layout-list-image-left .list-item { padding-left: ${imageHeight}px; }
+#menuPreview .layout-list-image-right .list-item { padding-right: ${imageHeight}px; }
+#menuPreview .layout-list-image-left .item-thumbnail-wrapper,
+#menuPreview .layout-list-image-right .item-thumbnail-wrapper {
+    width: ${imageHeight}px;
+}
+
+/* ---------- TEXT ---------- */
+#menuPreview .list-item-name {
+    color: ${document.getElementById("cardTitleColor")?.value};
+    font-family: ${document.getElementById("titleFontFamily")?.value};
+    font-size: ${document.getElementById("titleFontSize")?.value}px;
+    font-weight: ${document.getElementById("titleFontWeight")?.value};
+}
+
+#menuPreview .list-item-description {
+    color: ${document.getElementById("descTextColor")?.value};
+    font-family: ${document.getElementById("descFontFamily")?.value};
+    font-size: ${document.getElementById("descFontSize")?.value}px;
+    font-weight: ${document.getElementById("descFontWeight")?.value};
+    line-height: ${descLineHeight};
+}
+
+
+#menuPreview .list-item-price {
+    color: ${document.getElementById("priceTextColor")?.value};
+    font-family: ${document.getElementById("priceFontFamily")?.value};
+    font-size: ${document.getElementById("priceFontSize")?.value}px;
+    font-weight: ${document.getElementById("priceFontWeight")?.value};
+}
+/* ---------- MODAL STYLING ---------- */
+#modifierModalContent {
+    background: ${modalBg};
+    color: ${modalText};
+    border: ${modalBorder};
+    border-radius: ${modalRadius};
+        font-family: "${modalModifierFont}", sans-serif;
+    }
+
+    #modifierModalContent .modifier-modal-header h3 {
+        color: ${modalText};
+        font-family: "${modalTitleFont}", sans-serif;
+        font-size: ${modalTitleSize}px;
+        font-weight: ${modalTitleWeight};
+}
+
+#modifierModalContent .modal-close:hover {
+    color: ${modalText};
+    opacity: 0.8;
+}
+
+.modifier-group-name {
+    font-family: "${modalModifierFont}", sans-serif;
+    font-size: ${modalModifierSize}px;
+    font-weight: 600;
+    color: ${modalText};
+}
+
+.modifier-option span {
+    color: ${modalText};
+        font-family: "${modalModifierFont}", sans-serif;
+        font-size: ${modalModifierSize}px;
+        font-weight: ${modalModifierWeight};
+    }
+
+    .modifier-option span:last-child,
+    .modifier-limits {
+        color: ${modalAccentColor};
+        opacity: 0.95;
+        font-family: "${modalModifierFont}", sans-serif;
+        font-size: ${modalModifierSize}px;
+        font-weight: ${modalModifierWeight};
+/* Modal separator lines dynamic */
+.modifier-group {
+    border-bottom: 1px solid ${modalSeparatorColor};
+}
+.modifier-group:last-child {
+    border-bottom: none;
+}
+`;
+
+    // Modal style update (NO full re-render to prevent state reset)
+    const modal = document.getElementById("modifierModal");
+    if (modal && modal.classList.contains("active")) {
+        const content = document.getElementById("modifierModalContent");
+        if (content) {
+            // only force style refresh, keep DOM intact
+            content.style.transform = "translateZ(0)";
+        }
+    }
+}
+
+/* ------------------ CONTROLS ------------------ */
+function initControls() {
+
+    document.getElementById("layoutType").addEventListener("change", renderMenu);
+
+    document.querySelectorAll("input[name='tabsPosition']").forEach(r =>
+        r.addEventListener("change", renderMenu)
+    );
+
+    document.querySelectorAll("input[name='tabAlign']").forEach(r =>
+        r.addEventListener("change", renderMenu)
+    );
+
+    document.getElementById("showImages").addEventListener("change", renderMenu);
+    document.getElementById("showPrices").addEventListener("change", renderMenu);
+    document.getElementById("showModifiers").addEventListener("change", renderMenu);
+
+    // --- Independent toggles for category search/dropdown/tabs ---
+    const searchToggle = document.getElementById("showCategorySearch");
+    const dropdownToggle = document.getElementById("showCategoryDropdown");
+    const tabsToggle = document.getElementById("showTabs");
+
+    if (searchToggle) {
+        searchToggle.addEventListener("change", renderMenu);
+    }
+
+    if (dropdownToggle) {
+        dropdownToggle.addEventListener("change", renderMenu);
+    }
+
+    if (tabsToggle) {
+        tabsToggle.addEventListener("change", renderMenu);
+    }
+
+    const headersToggle = document.getElementById("showCategoryHeaders");
+    if (headersToggle) {
+        const syncHeaderControls = () => {
+            const on = headersToggle.checked;
+            document.getElementById("headerControlsWrapper").style.display = on ? "block" : "none";
+            document.getElementById("headerOffNote").style.display = on ? "none" : "block";
+        };
+        headersToggle.addEventListener("change", () => {
+            syncHeaderControls();
+            renderMenu();
+        });
+        syncHeaderControls(); // set initial state
+    }
+
+    document.querySelectorAll("input[name='headerAlign']").forEach(r =>
+        r.addEventListener("change", applyStyles)
+    );
+
+    document.querySelectorAll("input[name='categorySort']").forEach(r =>
+        r.addEventListener("change", () => { if (currentMenuData) renderMenu(); })
+    );
+   [
+    "cardBgColor","cardTitleColor","descTextColor","bodyTextColor","priceTextColor",
+
+    "activeTabColor","defaultTabColor",
+    "defaultTabTextColor","activeTabTextColor",
+
+    "tabBorderColor","tabBorderWidth",
+    "cardBorderColor","cardBorderWidth",
+
+    "tabRadiusTL","tabRadiusTR","tabRadiusBR","tabRadiusBL",
+    "cardRadiusTL","cardRadiusTR","cardRadiusBR","cardRadiusBL",
+
+    "cardPaddingTop","cardPaddingRight","cardPaddingBottom","cardPaddingLeft",
+    "imageHeight",
+    "headerNameColor","headerDividerColor","headerDividerThickness","headerFontFamily","headerFontSize","headerFontWeight","headerLineHeight",
+
+    "tabFontFamily","tabFontSize","tabFontWeight",
+    "titleFontFamily","titleFontSize","titleFontWeight",
+    "descFontFamily","descFontSize","descFontWeight",
+    "priceFontFamily","priceFontSize","priceFontWeight",
+    "descLineHeight",
+    "modalTitleFont","modalTitleSize","modalTitleWeight",
+    "modalModifierFont","modalModifierSize","modalModifierWeight"
+].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    el.addEventListener("input", applyStyles);
+    el.addEventListener("change", applyStyles);
+});
+
+    // --- Modifiers modal inherit toggle ---
+    const inherit = document.getElementById("inheritCardStyle");
+    if (inherit) {
+        const toggle = () => {
+            const section = document.getElementById("customModalStyles");
+            if (!section) return;
+
+            section.style.display = inherit.checked ? "none" : "block";
+            applyStyles();
+        };
+
+        inherit.addEventListener("change", toggle);
+        toggle();
+    }
+    // --- Sync color hex value spans ---
+    document.querySelectorAll('input[type="color"]').forEach(input => {
+        const spanId = input.id + "Value";
+        const span = document.getElementById(spanId);
+        if (span) {
+            input.addEventListener("input", () => { span.textContent = input.value; });
+        }
+    });
+}
+
+function fixDatalistDropdowns() {
+    const fontInputs = [
+        "tabFontFamily",
+        "titleFontFamily",
+        "descFontFamily",
+        "priceFontFamily",
+        "headerFontFamily",
+        "modalTitleFont",
+        "modalModifierFont"
+    ];
+
+    fontInputs.forEach(id => {
+        const input = document.getElementById(id);
+        if (!input) return;
+
+        input.setAttribute("autocomplete", "off");
+        input.setAttribute("spellcheck", "false");
+
+        const openDropdown = (e) => {
+            // Prevent any default behavior that might interfere
+            if (e) e.preventDefault();
+
+            // Store current value
+            const prevValue = input.value;
+
+            // Focus first
+            input.focus();
+
+            // IMPORTANT: temporarily clear value so datalist shows ALL options
+            input.value = "";
+
+            // Try native picker first (best behaviour)
+            try {
+                if (typeof input.showPicker === "function") {
+                    input.showPicker();
+                }
+            } catch (err) {}
+
+            // Fallback: trigger input event so datalist refreshes fully
+            const event = new Event("input", { bubbles: true });
+            input.dispatchEvent(event);
+
+            // Restore value shortly AFTER dropdown has opened
+            // (keeps selection but avoids filtering out options)
+            setTimeout(() => {
+                input.value = prevValue;
+            }, 0);
+        };
+
+        // IMPORTANT: use pointerdown so dropdown opens BEFORE blur/focus conflicts
+        input.addEventListener("pointerdown", openDropdown);
+    });
+}
+
+/* ------------------ EMBED CODE GENERATION ------------------ */
+function generateEmbedCode() {
+
+    // Resolve modal values (respects inheritCardStyle checkbox)
+    const inheritModal = document.getElementById("inheritCardStyle")?.checked;
+    const _modalBg = inheritModal
+        ? (document.getElementById("cardBgColor")?.value || "#111315")
+        : (document.getElementById("modalBgColor")?.value || "#1a1d21");
+    const _modalText = inheritModal
+        ? (document.getElementById("cardTitleColor")?.value || "#f1f5f9")
+        : (document.getElementById("modalTextColor")?.value || "#f1f5f9");
+    const _modalAccent = inheritModal
+        ? (document.getElementById("priceTextColor")?.value || "#38bdf8")
+        : (document.getElementById("modalAccentColor")?.value || "#3b82f6");
+    const _modalSeparator = inheritModal
+        ? (document.getElementById("cardBorderColor")?.value || "#2a2e35")
+        : (document.getElementById("modalSeparatorColor")?.value || "#2a2e35");
+    const _modalRadius = inheritModal
+        ? `${document.getElementById("cardRadiusTL")?.value||16}px ${document.getElementById("cardRadiusTR")?.value||16}px ${document.getElementById("cardRadiusBR")?.value||16}px ${document.getElementById("cardRadiusBL")?.value||16}px`
+        : null;
+    const _modalTitleFont = inheritModal
+        ? (document.getElementById("titleFontFamily")?.value || "Inter")
+        : (document.getElementById("modalTitleFont")?.value || "Inter");
+    const _modalModifierFont = inheritModal
+        ? (document.getElementById("descFontFamily")?.value || "Inter")
+        : (document.getElementById("modalModifierFont")?.value || "Inter");
+    const _modalTitleSize = inheritModal
+        ? (document.getElementById("titleFontSize")?.value || 16)
+        : (document.getElementById("modalTitleSize")?.value || 18);
+    const _modalTitleWeight = inheritModal
+        ? (document.getElementById("titleFontWeight")?.value || 600)
+        : (document.getElementById("modalTitleWeight")?.value || 600);
+    const _modalModifierSize = inheritModal
+        ? (document.getElementById("descFontSize")?.value || 12)
+        : (document.getElementById("modalModifierSize")?.value || 13);
+    const _modalModifierWeight = inheritModal
+        ? (document.getElementById("descFontWeight")?.value || 400)
+        : (document.getElementById("modalModifierWeight")?.value || 400);
+
+    const config = {
+        source: "SpotOnMenuEditor",
+        version: "3.0.0",
+        generatedBy: "Sara Bustamante",
+        repository: "https://github.com/sarabus-coder/Spocho-Projects",
+        generatedAt: new Date().toISOString(),
+        jsonUrl: document.getElementById("jsonUrl")?.value || "",
+        layoutType: document.getElementById("layoutType")?.value,
+        tabsPosition: document.querySelector("input[name=tabsPosition]:checked")?.value,
+        tabAlign: document.querySelector("input[name=tabAlign]:checked")?.value,
+        showImages: document.getElementById("showImages")?.checked,
+        showPrices: document.getElementById("showPrices")?.checked,
+        showCategorySearch: document.getElementById("showCategorySearch")?.checked,
+        showCategoryDropdown: document.getElementById("showCategoryDropdown")?.checked,
+        showTabs: document.getElementById("showTabs")?.checked !== false,
+        showCategoryHeaders: document.getElementById("showCategoryHeaders")?.checked || false,
+        categorySort: document.querySelector("input[name='categorySort']:checked")?.value || "default",
+        showModifiers: document.getElementById("showModifiers")?.checked,
+        excludedCategories: excludedCategories || [],
+        styles: {
+            cardBgColor: document.getElementById("cardBgColor")?.value,
+            cardBorderColor: document.getElementById("cardBorderColor")?.value,
+            cardBorderWidth: document.getElementById("cardBorderWidth")?.value,
+            cardRadiusTL: document.getElementById("cardRadiusTL")?.value,
+            cardRadiusTR: document.getElementById("cardRadiusTR")?.value,
+            cardRadiusBR: document.getElementById("cardRadiusBR")?.value,
+            cardRadiusBL: document.getElementById("cardRadiusBL")?.value,
+            cardPaddingTop: document.getElementById("cardPaddingTop")?.value,
+            cardPaddingRight: document.getElementById("cardPaddingRight")?.value,
+            cardPaddingBottom: document.getElementById("cardPaddingBottom")?.value,
+            cardPaddingLeft: document.getElementById("cardPaddingLeft")?.value,
+            imageHeight: parseInt(document.getElementById("imageHeight")?.value) || 180,
+            cardTitleColor: document.getElementById("cardTitleColor")?.value,
+            descTextColor: document.getElementById("descTextColor")?.value,
+            bodyTextColor: document.getElementById("bodyTextColor")?.value || "#cbd5e1",
+            priceTextColor: document.getElementById("priceTextColor")?.value,
+            descLineHeight: Math.max(1.5, parseFloat(document.getElementById("descLineHeight")?.value) || 1.6),
+            headerNameColor: document.getElementById("headerNameColor")?.value || "#f1f5f9",
+            headerDividerColor: document.getElementById("headerDividerColor")?.value || "#2a2e35",
+            headerDividerThickness: parseInt(document.getElementById("headerDividerThickness")?.value) || 2,
+            headerFontFamily: document.getElementById("headerFontFamily")?.value || "Inter",
+            headerFontSize: document.getElementById("headerFontSize")?.value || "22",
+            headerFontWeight: document.getElementById("headerFontWeight")?.value || "700",
+            headerLineHeight: parseFloat(document.getElementById("headerLineHeight")?.value) || 1.2,
+            headerAlign: document.querySelector("input[name=headerAlign]:checked")?.value || "left",
+            activeTabColor: document.getElementById("activeTabColor")?.value,
+            defaultTabColor: document.getElementById("defaultTabColor")?.value,
+            defaultTabTextColor: document.getElementById("defaultTabTextColor")?.value,
+            activeTabTextColor: document.getElementById("activeTabTextColor")?.value,
+            tabBorderColor: document.getElementById("tabBorderColor")?.value,
+            tabBorderWidth: document.getElementById("tabBorderWidth")?.value,
+            tabRadiusTL: document.getElementById("tabRadiusTL")?.value || 40,
+            tabRadiusTR: document.getElementById("tabRadiusTR")?.value || 40,
+            tabRadiusBR: document.getElementById("tabRadiusBR")?.value || 40,
+            tabRadiusBL: document.getElementById("tabRadiusBL")?.value || 40,
+            tabFontFamily: document.getElementById("tabFontFamily")?.value,
+            tabFontSize: document.getElementById("tabFontSize")?.value,
+            tabFontWeight: document.getElementById("tabFontWeight")?.value,
+            titleFontFamily: document.getElementById("titleFontFamily")?.value,
+            titleFontSize: document.getElementById("titleFontSize")?.value,
+            titleFontWeight: document.getElementById("titleFontWeight")?.value,
+            descFontFamily: document.getElementById("descFontFamily")?.value,
+            descFontSize: document.getElementById("descFontSize")?.value,
+            descFontWeight: document.getElementById("descFontWeight")?.value,
+            priceFontFamily: document.getElementById("priceFontFamily")?.value,
+            priceFontSize: document.getElementById("priceFontSize")?.value,
+            priceFontWeight: document.getElementById("priceFontWeight")?.value,
+            googleFonts: (() => {
+                const fonts = new Set();
+                // Always collect all user-set font families
+                [
+                    document.getElementById("tabFontFamily")?.value,
+                    document.getElementById("titleFontFamily")?.value,
+                    document.getElementById("descFontFamily")?.value,
+                    document.getElementById("priceFontFamily")?.value,
+                    document.getElementById("headerFontFamily")?.value,
+                    // Use RESOLVED modal fonts (respects inheritCardStyle)
+                    _modalTitleFont,
+                    _modalModifierFont,
+                ].forEach(val => {
+                    if (val && val !== 'inherit') fonts.add(val);
+                });
+                return Array.from(fonts);
+            })(),
+            modalBgColor: _modalBg,
+            modalTextColor: _modalText,
+            modalAccentColor: _modalAccent,
+            modalBorderRadius: _modalRadius,
+            modalSeparatorColor: _modalSeparator,
+            modalTitleFont: _modalTitleFont,
+            modalTextFont: _modalModifierFont,
+            modalTitleSize: _modalTitleSize,
+            modalTitleWeight: _modalTitleWeight,
+            modalModifierSize: _modalModifierSize,
+            modalModifierWeight: _modalModifierWeight
+        }
+    };
+
+    const embedCode = `
+<!-- SpotOn Menu Embed -->
+<div id="spoton-menu-root"></div>
+
+<script>
+    /*  SpotOn Menu Editor Author: Sara Bustamante GitHub: https://github.com/sarabus-coder  */
+(function() {
+const config = ${JSON.stringify(config, null, 2)};
+
+if (config.styles.googleFonts && config.styles.googleFonts.length) {
+    config.styles.googleFonts.forEach(font => {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = \`https://fonts.googleapis.com/css2?family=\${font.replace(/ /g, "+")}:wght@300;400;500;600;700&display=swap\`;
+        document.head.appendChild(link);
+    });
+}
+
+if (!config || !config.jsonUrl) {
+    console.error("SpotOn Menu: Missing config");
+    return;
+}
+
+let menuData = null;
+let itemsMap = new Map();
+let activeCategoryId = null;
+
+// Safe price parser — handles {amount: N}, raw number, or missing
+function parsePrice(p) {
+    if (p == null) return "0.00";
+    if (typeof p === "object" && p.amount != null) return (Number(p.amount) / 100).toFixed(2);
+    const n = Number(p);
+    return isNaN(n) ? "0.00" : (n / 100).toFixed(2);
+}
+
+// Parse SpotOn JSON into categories and items
+function parseJSON(raw) {
+    const catNameMap = new Map();
+    
+    if (raw.menu?.categories && Array.isArray(raw.menu.categories)) {
+        raw.menu.categories.forEach(cat => {
+            catNameMap.set(cat.id, cat.name);
+        });
+    }
+    
+    const categories = [];
+    const itemsByCategory = {};
+    const itemsFull = new Map();
+    
+    // First pass: collect all category ids from items
+    const allCatIds = new Set();
+    
+    if (raw.items && Array.isArray(raw.items)) {
+        raw.items.forEach(item => {
+            if (item.category_ids && Array.isArray(item.category_ids)) {
+                item.category_ids.forEach(catId => {
+                    allCatIds.add(catId);
+                });
+            } else if (item.category_id) {
+                allCatIds.add(item.category_id);
+            }
+        });
+    }
+    
+    // Create categories for all catIds, with names from map — skip undeclared ones
+    allCatIds.forEach(catId => {
+        if (!catNameMap.has(catId)) return; // not in menu.categories — skip
+        if (!config.excludedCategories.includes(catId)) {
+            categories.push({
+                id: catId,
+                name: catNameMap.get(catId)
+            });
+            itemsByCategory[catId] = [];
+        }
+    });
+    
+    // Then add items
+    if (raw.items && Array.isArray(raw.items)) {
+        raw.items.forEach(item => {
+            if (item.category_ids && Array.isArray(item.category_ids)) {
+                item.category_ids.forEach(catId => {
+                    if (!config.excludedCategories.includes(catId) && itemsByCategory[catId]) {
+                        const parsed = {
+                            id: item.id,
+                            name: item.name,
+                            description: item.description || "",
+                            price: parsePrice(item.price),
+                            imageUrl: item.image_url || item.photos?.[0]?.url,
+                            modifier_groups: item.modifier_groups || item.modifiers || []
+                        };
+                        
+                        itemsFull.set(item.id, parsed);
+                        itemsByCategory[catId].push(parsed);
+                    }
+                });
+            } else if (item.category_id) {
+                const catId = item.category_id;
+                if (!config.excludedCategories.includes(catId) && itemsByCategory[catId]) {
+                    const parsed = {
+                        id: item.id,
+                        name: item.name,
+                        description: item.description || "",
+                        price: parsePrice(item.price),
+                        imageUrl: item.image_url || item.photos?.[0]?.url,
+                        modifier_groups: item.modifier_groups || item.modifiers || []
+                    };
+                    
+                    itemsFull.set(item.id, parsed);
+                    itemsByCategory[catId].push(parsed);
+                }
+            }
+        });
+    }
+    
+    return { categories, itemsByCategory, itemsFull };
+}
+
+// Apply dynamic styles
+function applyStyles() {
+    const s = config.styles;
+    const styleId = "spoton-dynamic-styles";
+    let style = document.getElementById(styleId);
+    
+    if (!style) {
+        style = document.createElement("style");
+        style.id = styleId;
+        document.head.appendChild(style);
+    }
+    
+    style.textContent = \`
+        #spoton-menu-root * { box-sizing: border-box; }
+        .menu-layout { display: flex; gap: 24px; min-height: 0; }
+        .menu-layout.tabs-top { flex-direction: column; }
+        .menu-layout.tabs-bottom { flex-direction: column-reverse; }
+        .menu-layout.tabs-top .menu-tabs-area,
+        .menu-layout.tabs-bottom .menu-tabs-area { width: 100%; flex-shrink: 0; }
+        .menu-layout.tabs-left { flex-direction: row; align-items: flex-start; }
+        .menu-layout.tabs-right { flex-direction: row-reverse; align-items: flex-start; }
+        .menu-layout.tabs-left .menu-tabs-area,
+        .menu-layout.tabs-right .menu-tabs-area { width: clamp(140px, 18vw, 260px); flex-shrink: 0; flex-grow: 0; }
+        .menu-tabs-area { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+        .menu-root { flex: 1; min-width: 0; }
+        
+        .category-toolbar { margin-bottom: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
+        /* Search and dropdown inherit tab styling */
+        .category-search, .category-select {
+            padding: 8px 14px;
+            border: \${s.tabBorderWidth}px solid \${s.tabBorderColor};
+            border-radius: \${s.tabRadiusTL}px \${s.tabRadiusTR}px \${s.tabRadiusBR}px \${s.tabRadiusBL}px;
+            font-family: "\${s.tabFontFamily}", sans-serif;
+            font-size: \${s.tabFontSize}px;
+            font-weight: \${s.tabFontWeight};
+            background: \${s.defaultTabColor || '#1a1d21'};
+            color: \${s.defaultTabTextColor || '#e2e8f0'};
+            width: 100%;
+            cursor: pointer;
+        }
+        
+        .categories-container { display: flex; flex-wrap: wrap; gap: 8px; }
+        .menu-layout.tabs-left .categories-container,
+        .menu-layout.tabs-right .categories-container { flex-direction: column; flex-wrap: nowrap; }
+        .menu-layout.tabs-left .category-link,
+        .menu-layout.tabs-right .category-link {
+            white-space: normal; word-break: break-word; display: block; width: 100%; box-sizing: border-box; text-align: left;
+        }
+        .align-center { justify-content: center; }
+        .align-left { justify-content: flex-start; }
+        .align-right { justify-content: flex-end; }
+        
+        .category-link {
+            padding: 8px 14px;
+            background: \${s.defaultTabColor};
+            color: \${s.defaultTabTextColor};
+            border: \${s.tabBorderWidth}px solid \${s.tabBorderColor};
+            border-radius: \${s.tabRadiusTL}px \${s.tabRadiusTR}px \${s.tabRadiusBR}px \${s.tabRadiusBL}px;
+            font-family: "\${s.tabFontFamily}", sans-serif;
+            font-size: \${s.tabFontSize}px;
+            font-weight: \${s.tabFontWeight};
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .category-link.active {
+            background: \${s.activeTabColor};
+            color: \${s.activeTabTextColor};
+            border-color: \${s.activeTabColor};
+        }
+        
+        .menu-root { flex: 1; }
+        .layout-classic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(270px, 100%), 1fr)); gap: 24px; }
+        .layout-hero-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(290px, 100%), 1fr)); gap: 28px; }
+        .layout-compact-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr)); gap: 16px; }
+        .layout-split-view { display: grid; grid-template-columns: repeat(2, minmax(min(200px, 100%), 1fr)); gap: 24px; }
+        .layout-list-image-left, .layout-list-image-right { display: flex; flex-direction: column; gap: 20px; }
+        
+        .item {
+            background: \${s.cardBgColor};
+            border: \${s.cardBorderWidth}px solid \${s.cardBorderColor};
+            border-radius: \${s.cardRadiusTL}px \${s.cardRadiusTR}px \${s.cardRadiusBR}px \${s.cardRadiusBL}px;
+            overflow: hidden;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .item.clickable { cursor: pointer; }
+        .item.clickable:hover { transform: translateY(-2px); }
+        
+        .layout-list-image-left .item,
+        .layout-list-image-right .item {
+            flex-direction: row;
+            align-items: stretch;
+            position: relative;
+        }
+        .layout-list-image-left .item { padding-left: \${s.imageHeight || 160}px; }
+        .layout-list-image-right .item { padding-right: \${s.imageHeight || 160}px; }
+        
+        .item-img-wrapper {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        /* Grid layouts: fixed image height from control */
+        .layout-classic-grid .item-img-wrapper,
+        .layout-hero-grid .item-img-wrapper,
+        .layout-compact-cards .item-img-wrapper,
+        .layout-split-view .item-img-wrapper {
+            height: \${s.imageHeight || 180}px;
+        }
+        /* List layouts: absolutely positioned, height = content height */
+        .layout-list-image-left .item-img-wrapper,
+        .layout-list-image-right .item-img-wrapper {
+            position: absolute;
+            top: 0; bottom: 0;
+            width: \${s.imageHeight || 160}px;
+            height: auto;
+        }
+        .layout-list-image-left .item-img-wrapper { left: 0; }
+        .layout-list-image-right .item-img-wrapper { right: 0; }
+        .layout-list-image-left .item-img-wrapper:empty,
+        .layout-list-image-right .item-img-wrapper:empty { display: none; }
+        .item-img {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: center;
+            display: block;
+        }
+        
+        /* Content padding — applied to text area, image stays edge-to-edge */
+        .item-content {
+            padding: \${s.cardPaddingTop}px \${s.cardPaddingRight}px \${s.cardPaddingBottom}px \${s.cardPaddingLeft}px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        .item-name {
+            font-family: "\${s.titleFontFamily}", sans-serif;
+            font-size: \${s.titleFontSize}px;
+            font-weight: \${s.titleFontWeight};
+            color: \${s.cardTitleColor};
+            margin-bottom: 6px;
+        }
+        .item-desc {
+            font-family: "\${s.descFontFamily}", sans-serif;
+            font-size: \${s.descFontSize}px;
+            font-weight: \${s.descFontWeight};
+            color: \${s.descTextColor};
+            margin-bottom: 10px;
+            line-height: \${Math.max(1.5, s.descLineHeight || 1.6)};
+        }
+        .item-content {
+            color: \${s.bodyTextColor || s.descTextColor};
+        }
+        .item-price {
+            font-family: "\${s.priceFontFamily}", sans-serif;
+            font-size: \${s.priceFontSize}px;
+            font-weight: \${s.priceFontWeight};
+            color: \${s.priceTextColor};
+            margin-top: auto;
+        }
+
+        /* ── CATEGORY HEADERS ── */
+        .category-header {
+            padding: 20px 0 10px;
+            margin-bottom: 16px;
+            border-bottom: \${s.headerDividerThickness || 2}px solid \${s.headerDividerColor || "#2a2e35"};
+            text-align: \${s.headerAlign || "left"};
+        }
+        .category-header:first-child { padding-top: 0; }
+        .category-header-name {
+            color: \${s.headerNameColor || "#f1f5f9"};
+            font-family: "\${s.headerFontFamily || s.titleFontFamily}", sans-serif;
+            font-size: \${s.headerFontSize || 22}px;
+            font-weight: \${s.headerFontWeight || 700};
+            line-height: \${s.headerLineHeight || 1.2};
+            margin-bottom: 4px;
+        }
+        .category-header-desc {
+            color: \${s.bodyTextColor || s.descTextColor};
+            font-family: "\${s.descFontFamily}", sans-serif;
+            font-size: \${s.descFontSize}px;
+            line-height: 1.5;
+        }
+
+        /* ── SCROLL-LIST LAYOUT ── */
+        .layout-scroll-list { display: flex; flex-direction: column; }
+        .scroll-list-category { margin-bottom: 40px; }
+        .scroll-list-category:last-child { margin-bottom: 0; }
+        .scroll-list-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 24px;
+        }
+        
+        .spoton-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 999999;
+            align-items: center;
+            justify-content: center;
+        }
+        .spoton-modal.active { display: flex; }
+        .spoton-modal-content {
+            background: \${s.modalBgColor || s.cardBgColor};
+            color: \${s.modalTextColor || s.cardTitleColor};
+            padding: 24px;
+            border-radius: \${s.modalBorderRadius || (s.cardRadiusTL + 'px ' + s.cardRadiusTR + 'px ' + s.cardRadiusBR + 'px ' + s.cardRadiusBL + 'px')};
+            width: 90%;
+            max-width: 420px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        .spoton-modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: \${s.modalTextColor || s.cardTitleColor};
+            padding: 0;
+            width: auto;
+            height: auto;
+            margin: 0;
+        }
+        .spoton-modal-header {
+            font-family: "\${s.modalTitleFont || s.titleFontFamily}", sans-serif;
+            font-size: \${s.modalTitleSize || s.titleFontSize || 20}px;
+            font-weight: \${s.modalTitleWeight || s.titleFontWeight || 700};
+            color: \${s.modalTextColor || s.cardTitleColor || "#f1f5f9"};
+            margin-bottom: 16px;
+            padding-right: 40px;
+        }
+        .spoton-modifier-group {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid \${s.modalSeparatorColor || "#2a2e35"};
+        }
+        .spoton-modifier-group:last-child { border-bottom: none; }
+        .spoton-modifier-group-name {
+            font-family: "\${s.modalTextFont || s.descFontFamily}", sans-serif;
+            font-size: \${s.modalModifierSize || s.descFontSize || 13}px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: \${s.modalTextColor || s.cardTitleColor};
+        }
+        .spoton-modifier-option {
+            font-family: "\${s.modalTextFont || s.descFontFamily}", sans-serif;
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: \${s.modalModifierSize || s.descFontSize || 13}px;
+        }
+        .spoton-modifier-option span:first-child {
+            color: \${s.modalTextColor || s.cardTitleColor};
+        }
+        .spoton-modifier-option span:last-child {
+            color: \${s.modalAccentColor || s.activeTabColor};
+            font-weight: 600;
+        }
+        .spoton-modifier-limits {
+            font-family: "\${s.modalTextFont || s.descFontFamily}", sans-serif;
+            font-size: \${s.modalModifierSize || s.descFontSize || 13}px;
+            color: \${s.modalAccentColor || s.activeTabColor};
+            font-weight: 600;
+        }
+        @media (max-width: 768px) {
+            .menu-layout.tabs-left, .menu-layout.tabs-right { flex-direction: column !important; }
+            .tabs-left .categories-container, .tabs-right .categories-container { flex-direction: row !important; flex-wrap: nowrap !important; min-width: auto !important; max-width: none !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+            .categories-container { flex-wrap: nowrap !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+            .categories-container::-webkit-scrollbar { display: none; }
+            .category-link { flex-shrink: 0; }
+            .layout-list-image-left .item, .layout-list-image-right .item {
+                flex-direction: column !important;
+                position: static !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                width: 100%;
+            }
+            .layout-list-image-left .item-img-wrapper, .layout-list-image-right .item-img-wrapper {
+                position: static !important;
+                width: 100% !important;
+                height: 200px !important;
+            }
+            .layout-list-image-left .item-img-wrapper:empty,
+            .layout-list-image-right .item-img-wrapper:empty { display: none !important; }
+            .layout-compact-cards { grid-template-columns: 1fr !important; }
+            .layout-split-view { grid-template-columns: 1fr !important; }
+        }
+    \`;
+}
+
+// Render menu
+function render() {
+    const root = document.getElementById("spoton-menu-root");
+    if (!root || !menuData) return;
+    
+    const { categories, itemsByCategory } = menuData;
+    let filteredCats = categories.filter(c => !config.excludedCategories.includes(c.id));
+    
+    if (categorySearchQuery) {
+        filteredCats = filteredCats.filter(c => c.name.toLowerCase().includes(categorySearchQuery.toLowerCase()));
+    }
+
+    // Apply sort order
+    if (config.categorySort === 'az') filteredCats = [...filteredCats].sort((a, b) => a.name.localeCompare(b.name));
+    else if (config.categorySort === 'za') filteredCats = [...filteredCats].sort((a, b) => b.name.localeCompare(a.name));
+    
+    if (!activeCategoryId && filteredCats.length) activeCategoryId = filteredCats[0].id;
+    
+    const allCats = categories.filter(c => !config.excludedCategories.includes(c.id));
+    const layout = config.layoutType;
+    const isScrollList = layout === 'scroll-list';
+    const tabsPos = config.tabsPosition;
+    const align = config.tabAlign;
+    const showSearch = config.showCategorySearch;
+    const showDropdown = config.showCategoryDropdown;
+    const showTabs = config.showTabs !== false;
+    const showHeaders = config.showCategoryHeaders;
+
+    // ── SCROLL-LIST: render all categories sequentially ──
+    if (isScrollList) {
+        root.innerHTML = \`<div class="layout-scroll-list" id="menuRoot"></div>\`;
+        const menuRoot = document.getElementById('menuRoot');
+        filteredCats.forEach(cat => {
+            const section = document.createElement('div');
+            section.className = 'scroll-list-category';
+            if (showHeaders) {
+                section.innerHTML = \`<div class="category-header"><div class="category-header-name">\${cat.name}</div></div>\`;
+            }
+            const grid = document.createElement('div');
+            grid.className = 'scroll-list-items';
+            section.appendChild(grid);
+            menuRoot.appendChild(section);
+            renderItemsIntoEl(grid, cat.id);
+        });
+        return;
+    }
+
+    // ── TABBED MODE ──
+    const hasNavContent = showSearch || showDropdown || showTabs;
+
+    let html = \`<div class="menu-layout tabs-\${tabsPos}">\`;
+
+    if (hasNavContent) {
+        let toolbar = \`<div class="category-toolbar">\`;
+
+        if (showSearch) {
+            toolbar += \`<input type="text" id="categorySearchInput" class="category-search"
+                placeholder="Search categories..."
+                value="\${categorySearchQuery.replace(/"/g, '&quot;')}"
+                oninput="window.__spotOnCategorySearch(this.value)" />\`;
+        }
+
+        if (showDropdown) {
+            toolbar += \`<select class="category-select" onchange="window.__spotOnSelectCategory(this.value)">
+                \${allCats.map(c => \`<option value="\${encodeURIComponent(c.id)}" \${c.id === activeCategoryId ? "selected" : ""}>\${c.name}</option>\`).join("")}
+            </select>\`;
+        }
+
+        toolbar += \`</div>\`;
+        html += \`<div class="menu-tabs-area">\`;
+        html += toolbar;
+
+        if (showTabs) {
+            html += \`<div class="categories-container align-\${align}">\`;
+            filteredCats.forEach(c => {
+                html += \`<div class="category-link \${c.id===activeCategoryId?'active':''}" onclick="window.__spotOnSelectCategory(decodeURIComponent('\${encodeURIComponent(c.id)}'))">\${c.name}</div>\`;
+            });
+            html += \`</div>\`;
+        }
+
+        html += \`</div>\`;
+    }
+
+    html += \`<div class="menu-root layout-\${layout}" id="menuRoot"></div>\`;
+    html += \`</div>\`;
+    
+    const preview = document.getElementById("spoton-menu-root");
+    if (!preview) return;
+    
+    let layoutRoot = document.getElementById("menuLayoutRoot");
+    if (!layoutRoot) {
+        preview.innerHTML = \`<div id="menuLayoutRoot"></div>\`;
+        layoutRoot = document.getElementById("menuLayoutRoot");
+    }
+    
+    const temp = document.createElement("div");
+    temp.innerHTML = html;
+    const newLayout = temp.querySelector(".menu-layout");
+    if (!newLayout) return;
+    
+    const existingLayout = layoutRoot.querySelector(".menu-layout");
+    if (!existingLayout) {
+        layoutRoot.appendChild(newLayout);
+    } else {
+        existingLayout.replaceWith(newLayout);
+    }
+    
+    displayItems(activeCategoryId);
+}
+
+// Modal
+const modalHtml = \`
+    <div id="spoton-modal" class="spoton-modal" onclick="if(event.target.id==='spoton-modal') window.__spotOnCloseModal()">
+        <div class="spoton-modal-content">
+            <button class="spoton-modal-close" onclick="window.__spotOnCloseModal()">&times;</button>
+            <div class="spoton-modal-header" id="spoton-modal-title"></div>
+            <div id="spoton-modal-body"></div>
+        </div>
+    </div>
+\`;
+
+if (!document.getElementById("spoton-modal")) {
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function selectCategory(cid){
+    if (activeCategoryId === cid) return;
+    activeCategoryId = cid;
+    render();
+}
+
+let categorySearchQuery = "";
+
+function handleCategorySearch(value) {
+    categorySearchQuery = value;
+
+    if (!menuData) return;
+
+    let visibleCats = menuData.categories
+        .filter(c => !config.excludedCategories.includes(c.id))
+        .filter(c => c.name.toLowerCase().includes(categorySearchQuery.toLowerCase()));
+
+    // If current active category disappears, reset it
+    if (!visibleCats.find(c => c.id === activeCategoryId)) {
+        activeCategoryId = visibleCats[0]?.id || null;
+    }
+
+    render();
+
+    // Restore focus to search input after rendering
+    setTimeout(() => {
+        const searchInput = document.getElementById("categorySearchInput");
+        if (searchInput) {
+            searchInput.focus();
+            // Set cursor to end of input
+            searchInput.setSelectionRange(value.length, value.length);
+        }
+    }, 0);
+}
+
+// Shared card renderer — writes items into any container
+function renderItemsIntoEl(container, cid) {
+    const items = menuData.itemsByCategory[cid] || [];
+    const layout = config.layoutType;
+    const isListLayout = layout === 'list-image-left' || layout === 'list-image-right';
+    let html = '';
+    items.forEach(item => {
+        const hasModifiers = config.showModifiers && item.modifier_groups?.length;
+        const clickable = hasModifiers ? 'clickable' : '';
+        const onclick = hasModifiers ? \`onclick="window.__spotOnOpenModal(decodeURIComponent('\${encodeURIComponent(item.id)}'))"\` : '';
+        html += \`<div class="item \${clickable}" \${onclick}>\`;
+        if (config.showImages) {
+            if (isListLayout) {
+                if (item.imageUrl) {
+                    html += \`<div class="item-img-wrapper"><img class="item-img" src="\${item.imageUrl}" alt="\${item.name}" loading="lazy"></div>\`;
+                }
+            } else {
+                // Always render wrapper for equal card heights
+                html += \`<div class="item-img-wrapper">\${item.imageUrl ? \`<img class="item-img" src="\${item.imageUrl}" alt="\${item.name}" loading="lazy">\` : ''}</div>\`;
+            }
+        }
+        html += \`<div class="item-content">
+            <div class="item-name">\${item.name}</div>
+            \${item.description ? \`<div class="item-desc">\${item.description}</div>\` : ''}
+            \${config.showPrices ? \`<div class="item-price">$\${item.price}</div>\` : ''}
+        </div></div>\`;
+    });
+    container.innerHTML = html;
+}
+
+// Tabbed mode: render one category with optional header
+function displayItems(cid) {
+    const root = document.getElementById("menuRoot");
+    if (!root || !menuData) return;
+
+    const cat = menuData.categories.find(c => c.id === cid);
+    const showHeaders = config.showCategoryHeaders;
+
+    root.innerHTML = '';
+
+    if (showHeaders && cat) {
+        root.style.cssText = 'display:flex; flex-direction:column; min-width:0; width:100%;';
+
+        const header = document.createElement('div');
+        header.className = 'category-header';
+        header.innerHTML = \`<div class="category-header-name">\${cat.name}</div>\`;
+        root.appendChild(header);
+
+        const grid = document.createElement('div');
+        grid.className = \`layout-\${config.layoutType}\`;
+        grid.style.cssText = 'min-width:0; width:100%;';
+        root.appendChild(grid);
+        renderItemsIntoEl(grid, cid);
+    } else {
+        root.style.cssText = '';
+        renderItemsIntoEl(root, cid);
+    }
+}
+
+window.__spotOnSelectCategory = function(catId) {
+    activeCategoryId = decodeURIComponent(catId);
+    render();
+};
+
+window.__spotOnCategorySearch = function(value) {
+    handleCategorySearch(value);
+};
+
+window.__spotOnOpenModal = function(itemId) {
+    const item = itemsMap.get(decodeURIComponent(itemId));
+    if (!item) return;
+    
+    document.getElementById("spoton-modal-title").textContent = item.name;
+    
+    const body = document.getElementById("spoton-modal-body");
+    const modifiers = item.modifier_groups || [];
+    
+    if (!modifiers.length) {
+        body.innerHTML = '<div>No modifiers available</div>';
+    } else {
+        body.innerHTML = modifiers.map(group => \`
+            <div class="spoton-modifier-group">
+                <div class="spoton-modifier-group-name">\${group.name || "Options"}</div>
+                <div class="spoton-modifier-limits">\${group.min_select || 0} - \${group.max_select || "&infin;"} selected</div>
+                \${(group.options || []).map(opt => \`
+                    <div class="spoton-modifier-option">
+                        <span>\${opt.name}</span>
+                        <span>\${opt.price ? "$" + (opt.price / 100).toFixed(2) : ""}</span>
+                    </div>
+                \`).join('')}
+            </div>
+        \`).join('');
+    }
+    
+    document.getElementById("spoton-modal").classList.add("active");
+};
+
+window.__spotOnCloseModal = function() {
+    document.getElementById("spoton-modal").classList.remove("active");
+};
+
+// Initialize
+async function init() {
+    try {
+        const res = await fetch(config.jsonUrl);
+        const json = await res.json();
+        
+        const parsed = parseJSON(json);
+        menuData = parsed;
+        itemsMap = parsed.itemsFull;
+        
+        applyStyles();
+        render();
+    } catch (err) {
+        console.error("SpotOn Menu: Failed to load", err);
+        document.getElementById("spoton-menu-root").innerHTML = 
+            '<div style="padding:20px;color:#ef4444;">Failed to load menu. Please check the console.</div>';
+    }
+}
+
+init();
+})();
+<\/script>
+`;
+
+    document.getElementById("embedCodeDisplay").textContent = embedCode.trim();
+}
+
+function showCopySuccess() {
+    const el = document.getElementById("copySuccessMsg");
+    if (!el) return;
+    el.style.display = "block";
+    setTimeout(() => {
+        el.style.display = "none";
+    }, 2000);
+}
+
+function closeModifierModal() {
+    currentModalItemId = null;
+    const modal = document.getElementById("modifierModal");
+    if (modal) modal.classList.remove("active");
+}
+
+function closeCodeModal() {
+    document.getElementById("codeModal").classList.remove("active");
+}
+
+/* ------------------ INIT ------------------ */
+document.addEventListener("DOMContentLoaded", () => {
+    initControls();
+    fixDatalistDropdowns();
+
+    // ── DYNAMIC URL LOADING (debounced) ──
+    let _urlTimer = null;
+    const urlInput = document.getElementById("jsonUrl");
+    const loadBtn = document.getElementById("loadUrlBtn");
+
+    const triggerLoad = () => {
+        const url = urlInput?.value?.trim();
+        if (!url) return;
+        loadFromUrl(url);
+    };
+
+    if (urlInput) {
+        urlInput.addEventListener("input", () => {
+            clearTimeout(_urlTimer);
+            // Show "typing" state on button
+            if (loadBtn) { loadBtn.textContent = "…"; loadBtn.disabled = true; }
+            _urlTimer = setTimeout(() => {
+                if (loadBtn) { loadBtn.textContent = "Load"; loadBtn.disabled = false; }
+                triggerLoad();
+            }, 800);
+        });
+    }
+
+    if (loadBtn) {
+        loadBtn.onclick = () => {
+            clearTimeout(_urlTimer);
+            triggerLoad();
+        };
+    }
+
+    // ── AUTO-RERENDER ON ALL SETTING CHANGES ──
+    // (only after menu is loaded — renderMenu guards on currentMenuData)
+    const allSettingIds = [
+        "layoutType","showImages","showPrices","showModifiers",
+        "showTabs","showCategorySearch","showCategoryDropdown","showCategoryHeaders"
+    ];
+    allSettingIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("change", () => { if (currentMenuData) renderMenu(); });
+    });
+    document.querySelectorAll("input[name='tabsPosition'], input[name='tabAlign']").forEach(el => {
+        el.addEventListener("change", () => { if (currentMenuData) renderMenu(); });
+    });
+
+    // Show code button
+    const showCodeBtn = document.getElementById("showCodeBtn");
+    if (showCodeBtn) {
+        showCodeBtn.addEventListener("click", () => {
+            generateEmbedCode();
+            document.getElementById("codeModal").classList.add("active");
+        });
+    }
+
+    // Copy button
+    const copyBtn = document.getElementById("modalFooterCopyBtn");
+    if (copyBtn) {
+        copyBtn.addEventListener("click", () => {
+            navigator.clipboard.writeText(document.getElementById("embedCodeDisplay").textContent);
+            showCopySuccess();
+        });
+    }
+
+    // Modifier modal click outside to close
+    const modal = document.getElementById("modifierModal");
+    if (modal) {
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) closeModifierModal();
+        });
+    }
+
+    window.menuState = null;
+    currentMenuData = null;
+});
+
+// ------------------ MENU STATE MANAGEMENT & FETCH ------------------
+window.menuState = null;
+
+function setMenuState(newState) {
+  // 1. Save raw state
+  window.menuState = newState;
+
+  // 2. Transform it to expected structure
+  const parsed = parseSpotOnJSON(newState);
+
+  // 3. Sync legacy variables (fixes null crash)
+  currentMenuData = parsed;
+  currentItemsMap = parsed.itemsFull;
+  activeCategoryId = parsed.categories[0]?.id;
+
+  // 4. Render using existing system
+  renderMenu();
+}
+
+function updateMenuState(patch) {
+  // merge patch into state
+  const updated = {
+    ...window.menuState,
+    ...patch
+  };
+
+  // reuse full pipeline
+  setMenuState(updated);
+}
+
+
+</script>
+<script>
+// ------------------ MODIFIER MODAL FUNCTION ------------------
+function openModifierModal(itemId) {
+    currentModalItemId = itemId;
+    const item = currentItemsMap.get(itemId);
+    if (!item) return;
+
+    document.getElementById("modalItemName").innerText = item.name;
+
+    const body = document.getElementById("modifierModalBody");
+
+    const modifiers = item.modifier_groups || item.modifiers || [];
+
+    if (!modifiers.length) {
+        body.innerHTML = `<div class="no-modifiers">No modifiers available</div>`;
+    } else {
+        body.innerHTML = modifiers.map(group => `
+            <div class="modifier-group">
+                <div class="modifier-group-name">${group.name || "Options"}</div>
+                <div class="modifier-limits">${group.min_select || 0} - ${group.max_select || "&infin;"} selected</div>
+                ${(group.options || []).map(opt => `
+                    <div class="modifier-option">
+                        <span>${opt.name}</span>
+                        <span class="modifier-price">${opt.price ? `$${(opt.price/100).toFixed(2)}` : ""}</span>
+                    </div>
+                `).join("")}
+            </div>
+        `).join("");
+    }
+
+    document.getElementById("modifierModal").classList.add("active");
+    // Ensure modal reflects latest live styles immediately (no stale state when re-opening same item)
+    applyStyles();
+}
+
+// Global functions for preview compatibility
+window.__spotOnCategorySearch = handleCategorySearch;
+window.__spotOnSelectCategory = selectCategory;
+window.__spotOnOpenModal = openModifierModal;
+window.__spotOnCloseModal = closeModifierModal;
+</script>
+<div id="importModal" class="modal-overlay" style="z-index:3000;">
+    <div class="modifier-modal-content" style="max-width:680px; background:#1a1d21;">
+        <div class="modifier-modal-header">
+            <h3 style="color:#f1f5f9; font-size:16px; font-weight:600;">Import Embed Code</h3>
+            <button class="modal-close" onclick="closeImportModal()" style="color:#94a3b8;">&times;</button>
+        </div>
+        <div style="padding:0 24px 24px;">
+            <p style="color:#94a3b8; font-size:13px; margin-bottom:12px;">Paste your previously generated embed code below. All settings will be restored.</p>
+            <textarea id="importCodeTextarea" placeholder="Paste embed code here..." style="width:100%; height:220px; background:#0d0f12; border:1px solid #2a2e35; border-radius:8px; color:#e2e8f0; font-size:12px; font-family:monospace; padding:12px; resize:vertical; box-sizing:border-box;"></textarea>
+            <div id="importError" style="display:none; color:#ef4444; font-size:12px; margin-top:8px;"></div>
+            <div style="display:flex; gap:10px; margin-top:14px;">
+                <button onclick="applyImportedConfig()" class="btn btn-primary" style="flex:1;">Apply Settings</button>
+                <button onclick="closeImportModal()" class="btn btn-secondary" style="flex:1;">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ── IMPORT EMBED CODE ── */
+function openImportModal() {
+    document.getElementById("importCodeTextarea").value = "";
+    document.getElementById("importError").style.display = "none";
+    document.getElementById("importModal").classList.add("active");
+}
+function closeImportModal() {
+    document.getElementById("importModal").classList.remove("active");
+}
+
+function applyImportedConfig() {
+    const raw = document.getElementById("importCodeTextarea").value.trim();
+    const errEl = document.getElementById("importError");
+    errEl.style.display = "none";
+
+    // Extract the config JSON from the embed code
+    const match = raw.match(/const config\s*=\s*(\{[\s\S]*?\});\s*(?:if|\/\/|function|\})/);
+    if (!match) {
+        errEl.textContent = "Could not find a config object in the pasted code. Make sure you paste the full embed code.";
+        errEl.style.display = "block";
+        return;
+    }
+
+    let cfg;
+    try {
+        cfg = JSON.parse(match[1]);
+    } catch(e) {
+        errEl.textContent = "Failed to parse config: " + e.message;
+        errEl.style.display = "block";
+        return;
+    }
+
+    // Apply top-level settings
+    const setVal = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined && val !== null) el.value = val; };
+    const setCheck = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.checked = !!val; };
+    const setRadio = (name, val) => { const el = document.querySelector(`input[name="${name}"][value="${val}"]`); if (el) el.checked = true; };
+
+    if (cfg.jsonUrl) setVal("jsonUrl", cfg.jsonUrl);
+    if (cfg.layoutType) setVal("layoutType", cfg.layoutType);
+    if (cfg.tabsPosition) setRadio("tabsPosition", cfg.tabsPosition);
+    if (cfg.tabAlign) setRadio("tabAlign", cfg.tabAlign);
+    if (cfg.categorySort) setRadio("categorySort", cfg.categorySort);
+
+    setCheck("showImages", cfg.showImages);
+    setCheck("showPrices", cfg.showPrices);
+    setCheck("showModifiers", cfg.showModifiers);
+    setCheck("showTabs", cfg.showTabs !== false);
+    setCheck("showCategorySearch", cfg.showCategorySearch);
+    setCheck("showCategoryDropdown", cfg.showCategoryDropdown);
+    setCheck("showCategoryHeaders", cfg.showCategoryHeaders);
+
+    const s = cfg.styles || {};
+
+    // Colors
+    const colorMap = {
+        cardBgColor: s.cardBgColor, cardTitleColor: s.cardTitleColor,
+        descTextColor: s.descTextColor, priceTextColor: s.priceTextColor,
+        activeTabColor: s.activeTabColor, defaultTabColor: s.defaultTabColor,
+        defaultTabTextColor: s.defaultTabTextColor, activeTabTextColor: s.activeTabTextColor,
+        tabBorderColor: s.tabBorderColor, cardBorderColor: s.cardBorderColor,
+        modalBgColor: s.modalBgColor, modalTextColor: s.modalTextColor,
+        modalAccentColor: s.modalAccentColor, modalSeparatorColor: s.modalSeparatorColor,
+        headerNameColor: s.headerNameColor, headerDividerColor: s.headerDividerColor,
+    };
+    Object.entries(colorMap).forEach(([id, val]) => {
+        if (!val) return;
+        const el = document.getElementById(id);
+        if (el) {
+            el.value = val;
+            const span = document.getElementById(id + "Value");
+            if (span) span.textContent = val;
+        }
+    });
+
+    // Numbers / text
+    const valMap = {
+        tabBorderWidth: s.tabBorderWidth, tabRadiusTL: s.tabRadiusTL, tabRadiusTR: s.tabRadiusTR,
+        tabRadiusBR: s.tabRadiusBR, tabRadiusBL: s.tabRadiusBL,
+        tabFontFamily: s.tabFontFamily, tabFontSize: s.tabFontSize, tabFontWeight: s.tabFontWeight,
+        cardBorderWidth: s.cardBorderWidth, cardRadiusTL: s.cardRadiusTL, cardRadiusTR: s.cardRadiusTR,
+        cardRadiusBR: s.cardRadiusBR, cardRadiusBL: s.cardRadiusBL,
+        cardPaddingTop: s.cardPaddingTop, cardPaddingRight: s.cardPaddingRight,
+        cardPaddingBottom: s.cardPaddingBottom, cardPaddingLeft: s.cardPaddingLeft,
+        imageHeight: s.imageHeight, titleFontFamily: s.titleFontFamily,
+        titleFontSize: s.titleFontSize, titleFontWeight: s.titleFontWeight,
+        descFontFamily: s.descFontFamily, descFontSize: s.descFontSize,
+        descFontWeight: s.descFontWeight, descLineHeight: s.descLineHeight,
+        priceFontFamily: s.priceFontFamily, priceFontSize: s.priceFontSize,
+        priceFontWeight: s.priceFontWeight,
+        modalTitleFont: s.modalTitleFont, modalTitleSize: s.modalTitleSize, modalTitleWeight: s.modalTitleWeight,
+        modalModifierFont: s.modalTextFont || s.modalModifierFont,
+        modalModifierSize: s.modalModifierSize, modalModifierWeight: s.modalModifierWeight,
+        modalRadiusTL: s.modalRadiusTL || 24, modalRadiusTR: s.modalRadiusTR || 24,
+        modalRadiusBR: s.modalRadiusBR || 24, modalRadiusBL: s.modalRadiusBL || 24,
+        headerFontFamily: s.headerFontFamily, headerFontSize: s.headerFontSize,
+        headerFontWeight: s.headerFontWeight, headerLineHeight: s.headerLineHeight,
+        headerDividerThickness: s.headerDividerThickness,
+    };
+    Object.entries(valMap).forEach(([id, val]) => { if (val !== undefined && val !== null) setVal(id, val); });
+
+    if (s.headerAlign) setRadio("headerAlign", s.headerAlign);
+
+    // Handle excludedCategories
+    if (cfg.excludedCategories) {
+        excludedCategories = cfg.excludedCategories;
+    }
+
+    // Sync header controls visibility
+    const headersToggle = document.getElementById("showCategoryHeaders");
+    const wrapper = document.getElementById("headerControlsWrapper");
+    const note = document.getElementById("headerOffNote");
+    if (headersToggle && wrapper && note) {
+        wrapper.style.display = headersToggle.checked ? "block" : "none";
+        note.style.display = headersToggle.checked ? "none" : "block";
+    }
+
+    closeImportModal();
+
+    // Reload menu if URL is set
+    const url = document.getElementById("jsonUrl")?.value?.trim();
+    if (url) loadFromUrl(url);
+    else { applyStyles(); renderMenu(); }
+
+    setUrlStatus("✓ Config imported", "ok");
+}
+
+/* ── JSDELIVR URL GENERATOR ── */
+document.addEventListener("DOMContentLoaded", () => {
+    const importBtn = document.getElementById("importConfigBtn");
+    if (importBtn) importBtn.addEventListener("click", openImportModal);
+
+    const genBtn = document.getElementById("generateJsDelivrBtn");
+    if (genBtn) genBtn.addEventListener("click", () => {
+        const file = document.getElementById("githubFile")?.value?.trim();
+        if (!file) { alert("Please enter a file name."); return; }
+        const url = `https://cdn.jsdelivr.net/gh/sarabus-coder/JSON-Menu-Files@main/${file}`;
+        document.getElementById("jsdelivrUrl").value = url;
+        document.getElementById("jsdelivrResult").style.display = "block";
+        // Auto-populate URL field and load
+        document.getElementById("jsonUrl").value = url;
+        loadFromUrl(url);
+    });
+
+    // Also trigger on Enter key in filename input
+    document.getElementById("githubFile")?.addEventListener("keydown", e => {
+        if (e.key === "Enter") document.getElementById("generateJsDelivrBtn")?.click();
+    });
+
+    const copyBtn = document.getElementById("copyJsdelivrBtn");
+    if (copyBtn) copyBtn.addEventListener("click", () => {
+        const url = document.getElementById("jsdelivrUrl")?.value;
+        if (url) navigator.clipboard.writeText(url).then(() => {
+            copyBtn.textContent = "✓";
+            setTimeout(() => copyBtn.textContent = "Copy", 1500);
+        });
+    });
+
+    // Close import modal on backdrop click
+    document.getElementById("importModal")?.addEventListener("click", e => {
+        if (e.target.id === "importModal") closeImportModal();
+    });
+});
+</script>
+</body>
+</html>
