@@ -642,7 +642,7 @@
             this.showStatus('Loading live menu...', 'info');
             try {
                 const date = new Date().toISOString().slice(0,10);
-                const url = `https://qa-ecommerce-api.spoton.com/v1/restaurants/${mid}/menu-groups?orderDateTime=${date}T10:22:25-05:00&orderTypeId=3uxw5e1y0vgz3dwi1we2ioj1lq`;
+                const url = `https://ecommerce-api.spoton.com/v1/restaurants/${mid}/menu-groups?orderDateTime=${date}T10:22:25-05:00&orderTypeId=3uxw5e1y0vgz3dwi1we2ioj1lq`;
                 const res = await fetch(url);
                 if (!res.ok) throw new Error('API error');
                 const cats = await res.json();
@@ -894,7 +894,7 @@ ${fontLinksHtml}
         if(!merchantId) { container.innerHTML = '<div style="padding:20px;text-align:center;">⚠️ No Merchant ID provided</div>'; return; }
         try {
             const date = new Date().toISOString().slice(0,10);
-            const url = \`https://qa-ecommerce-api.spoton.com/v1/restaurants/\${merchantId}/menu-groups?orderDateTime=\${date}T10:22:25-05:00&orderTypeId=3uxw5e1y0vgz3dwi1we2ioj1lq\`;
+            const url = \`https://ecommerce-api.spoton.com/v1/restaurants/\${merchantId}/menu-groups?orderDateTime=\${date}T10:22:25-05:00&orderTypeId=3uxw5e1y0vgz3dwi1we2ioj1lq\`;
             const res = await fetch(url);
             if(!res.ok) throw new Error();
             const cats = await res.json();
