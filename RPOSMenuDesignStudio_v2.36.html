@@ -351,7 +351,10 @@ details.panel-section > *:not(summary) { padding: 0 18px 14px; }
       <img src="https://help.spoton.com/images/6686c186-6fa4-480f-b228-b4a34eacf6d2" alt="SpotOn" class="logo">
       <div class="header-text"><h1>Menu Studio</h1></div>
     </div>
+    <!-- Modifiers are hidden studio-wide until the live API exposes modifier data (currently returns modifiers: null).
+         Re-enable this badge once modifier support is restored.
     <div class="badge" style="background:transparent;color:#fca5a5;border:1px solid #ef4444;display:flex;align-items:center;gap:6px;"><span style="width:7px;height:7px;border-radius:50%;background:#ef4444;display:inline-block;flex-shrink:0;"></span>Modifiers not shown</div>
+    -->
   </div>
 </div>
 
@@ -437,7 +440,9 @@ details.panel-section > *:not(summary) { padding: 0 18px 14px; }
         <div class="toggle-group">
           <label>Show Images <input type="checkbox" id="showImages" checked></label>
           <label>Show Prices <input type="checkbox" id="showPrices" checked></label>
+          <!-- Hidden until live API returns modifier data (currently modifiers: null). Restore when supported:
           <label>Show Modifiers (clickable) <input type="checkbox" id="showModifiers" checked></label>
+          -->
         </div>
       </div>
       <div class="control-group">
@@ -856,7 +861,7 @@ class MenuStudio {
 
   async fetchMenu(mid) {
     const date = new Date().toISOString().slice(0,10);
-    const directUrl = `https://qa-ecommerce-api.spoton.com/v1/restaurants/${mid}/menu-groups?orderDateTime=${date}T10:22:25-05:00&orderTypeId=3uxw5e1y0vgz3dwi1we2ioj1lq`;
+    const directUrl = `https://ecommerce-api.spoton.com/v1/restaurants/${mid}/menu-groups?orderDateTime=${date}T10:22:25-05:00&orderTypeId=3uxw5e1y0vgz3dwi1we2ioj1lq`;
 
     const fetchWithTimeout = (url, opts = {}, ms = 8000) => {
       const ctrl = new AbortController();
@@ -1026,7 +1031,7 @@ class MenuStudio {
     if (showTabs || showSearch || showDropdown) {
       html += `<div class="categories-column">`;
       if (showSearch || showDropdown) {
-        html += `<div class="category-toolbar" id="catToolbar">`;
+        html += `<div class="category-toolbar" id="catToolbar" style="${!isLR ? `justify-content:${alignStyle};` : ''}">`;
         if (showSearch) html += `<div class="search-wrapper"><input type="text" class="category-search" id="catSearch" placeholder="Search categories…" autocomplete="off"><div class="search-suggestions" id="searchSuggestions"></div></div>`;
         if (showDropdown) html += `<select class="category-select" id="catSelect">${activeCategories.map(cid => `<option value="${cid}">${this.escapeHtml(this.categoryNames[cid])}</option>`).join('')}</select>`;
         html += `</div>`;
@@ -1141,6 +1146,10 @@ class MenuStudio {
   _renderCards(container, categoryId, showImages, layout) {
     const items = this.itemsByCategory[categoryId] || [];
     const showPrices = this.checked('showPrices');
+    // NOTE: #showModifiers control is currently hidden from the UI (live API returns modifiers: null).
+    // this.checked() safely returns false when the element doesn't exist, so hasMods below stays false
+    // and no modifier badge/click-to-customize UI renders. Un-hide the checkbox in the Navigation panel
+    // (search "Show Modifiers") to restore this feature once the API exposes modifier data.
     const showModifiers = this.checked('showModifiers');
     const isListLayout = layout === 'list-image-left' || layout === 'list-image-right';
     const imgH = this.num('imageHeight') || 180;
@@ -1426,6 +1435,11 @@ ${fontLinks}
   .menu-layout.tabs-right{flex-direction:row-reverse;align-items:flex-start;}
   .categories-container{display:flex;flex-wrap:wrap;gap:8px;}
   .tabs-left .categories-container,.tabs-right .categories-container{flex-direction:column;min-width:180px;}
+  #sp-nav{display:flex;flex-direction:column;gap:8px;}
+  #sp-nav .sp-cat-search,#sp-nav .sp-cat-dropdown{width:100%;}
+  .tabs-top #sp-nav,.tabs-bottom #sp-nav{flex-direction:row;flex-wrap:wrap;justify-content:${alignStyle};}
+  .tabs-top .sp-cat-search,.tabs-bottom .sp-cat-search{width:auto;min-width:200px;}
+  .tabs-top .sp-cat-dropdown,.tabs-bottom .sp-cat-dropdown{width:auto;min-width:180px;}
   .category-link{
     padding:9px 18px;text-decoration:none;transition:all 0.2s;cursor:pointer;display:inline-block;
     background:${s.defaultTabColor};color:${s.defaultTabTextColor};
@@ -1476,6 +1490,8 @@ ${fontLinks}
     .layout-list-image-left .item-thumbnail-wrapper:empty,.layout-list-image-right .item-thumbnail-wrapper:empty{display:none!important;}
     .layout-compact-cards{grid-template-columns:1fr!important;}
     .layout-split-view{grid-template-columns:1fr;}
+    #sp-nav{flex-direction:column!important;}
+    .sp-cat-search,.sp-cat-dropdown{width:100%!important;min-width:0!important;}
   }
 </style>
 
@@ -1532,7 +1548,7 @@ ${fontLinks}
     if(SHOW_SEARCH){
       const srch=document.createElement('input');
       srch.type='text'; srch.placeholder='Search categories…'; srch.className='sp-cat-search';
-      srch.style.cssText=\`width:100%;padding:9px 14px;border:1px solid ${s.tabBorderColor};border-radius:${s.tabRadiusTL}px ${s.tabRadiusTR}px ${s.tabRadiusBR}px ${s.tabRadiusBL}px;font-family:'${s.tabFontFamily}',sans-serif;font-size:${s.tabFontSize}px;background:${s.defaultTabColor};color:${s.defaultTabTextColor};outline:none;box-sizing:border-box;margin-bottom:8px;display:block;\`;
+      srch.style.cssText=\`padding:9px 14px;border:1px solid ${s.tabBorderColor};border-radius:${s.tabRadiusTL}px ${s.tabRadiusTR}px ${s.tabRadiusBR}px ${s.tabRadiusBL}px;font-family:'${s.tabFontFamily}',sans-serif;font-size:${s.tabFontSize}px;background:${s.defaultTabColor};color:${s.defaultTabTextColor};outline:none;box-sizing:border-box;\`;
       srch.addEventListener('input',()=>{
         const term=srch.value.toLowerCase();
         document.querySelectorAll('.sp-tab-link').forEach(el=>{
@@ -1546,7 +1562,7 @@ ${fontLinks}
     if(SHOW_DROPDOWN){
       const sel=document.createElement('select');
       sel.id='sp-cat-select'; sel.className='sp-cat-dropdown';
-      sel.style.cssText=\`width:100%;padding:9px 14px;border:1px solid ${s.tabBorderColor};border-radius:${s.tabRadiusTL}px ${s.tabRadiusTR}px ${s.tabRadiusBR}px ${s.tabRadiusBL}px;font-family:'${s.tabFontFamily}',sans-serif;font-size:${s.tabFontSize}px;background:${s.defaultTabColor};color:${s.defaultTabTextColor};outline:none;box-sizing:border-box;margin-bottom:8px;display:block;appearance:auto;cursor:pointer;\`;
+      sel.style.cssText=\`padding:9px 14px;border:1px solid ${s.tabBorderColor};border-radius:${s.tabRadiusTL}px ${s.tabRadiusTR}px ${s.tabRadiusBR}px ${s.tabRadiusBL}px;font-family:'${s.tabFontFamily}',sans-serif;font-size:${s.tabFontSize}px;background:${s.defaultTabColor};color:${s.defaultTabTextColor};outline:none;box-sizing:border-box;appearance:auto;cursor:pointer;\`;
       ids.forEach(id=>{ const opt=document.createElement('option'); opt.value=id; opt.textContent=categoryNames[id]; sel.appendChild(opt); });
       sel.addEventListener('change',()=>setActive(sel.value));
       navEl.appendChild(sel);
@@ -1631,7 +1647,7 @@ ${fontLinks}
     if(!MID) return;
     try{
       const date=new Date().toISOString().slice(0,10);
-      const r=await fetch(\`https://qa-ecommerce-api.spoton.com/v1/restaurants/\${MID}/menu-groups?orderDateTime=\${date}T10:22:25-05:00&orderTypeId=3uxw5e1y0vgz3dwi1we2ioj1lq\`);
+      const r=await fetch(\`https://ecommerce-api.spoton.com/v1/restaurants/\${MID}/menu-groups?orderDateTime=\${date}T10:22:25-05:00&orderTypeId=3uxw5e1y0vgz3dwi1we2ioj1lq\`);
       if(!r.ok) throw new Error();
       const cats=await r.json();
       cats.forEach(c=>{ if(c.menuItems?.length){ categoryNames[c.id]=c.name.trim(); itemsByCategory[c.id]=c.menuItems; if(c.description) categoryDescs[c.id]=c.description.trim(); } });
