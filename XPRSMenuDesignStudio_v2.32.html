@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!--SpotOn Menu Editor Author: Sara Bustamante - GitHub: https://github.com/sarabus-coder Signature: SpotOn Menu Studio by Sara Bustamante Version: 3.0.0-->
+<!--SpotOn Menu Editor Author: Sara Bustamante - GitHub: https://github.com/sarabus-coder Signature: SpotOn Menu Studio by Sara Bustamante Version: 3.0.1-TEST-->
 <meta name="author" content="Sara Bustamante">
 <meta name="creator" content="SpotOn Menu Studio by Sara Bustamante">
 <meta name="source" content="https://github.com/sarabus-coder/Spocho-Projects">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>SpotOn Menu Editor</title>
+    <title>SpotOn Menu Editor (TEST)</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         img.list-item-image {
@@ -593,7 +593,7 @@
             <img src="https://posphilly.com/wp-content/uploads/2022/12/cropped-SpotOn_Logo-removebg-preview11.png" alt="SpotOn" class="logo">
             <div class="header-text"><h1>Menu Studio</h1></div>
         </div>
-        <div class="badge" style="background:#0d1f17; color:#CCEEDC; border:1px solid #2a5c3f;">● Modifiers shown</div>
+        <div class="badge" style="background:#0d1f17; color:#CCEEDC; border:1px solid #2a5c3f;">● Modifiers shown · TEST build</div>
     </div>
 </div>
 
@@ -1017,6 +1017,34 @@ function loadFont(font) {
     document.head.appendChild(link);
 }
 
+/* ------------------ MODIFIER NORMALIZER (SpotOn JSON → designer shape) ------------------ */
+// SpotOn stores modifiers as group.modifiers[], limits{min,max,multi_select_max}, price.amount in cents.
+// Output: { name, min_select, max_select, options: [{ name, price (dollars) }] }
+function normalizeModifierGroups(groups) {
+    return (groups || [])
+        .filter(g => g && g.active !== false)
+        .map(g => {
+            const limits = g.limits || {};
+            const caps = [limits.max, limits.multi_select_max].filter(v => v != null);
+            const cap = caps.length ? Math.min(...caps) : null;
+            const options = (g.modifiers || g.options || [])
+                .filter(m => m && m.active !== false && m.is_available !== false)
+                .map(m => ({
+                    name: m.name,
+                    price: typeof m.price === "object"
+                        ? (Number(m.price?.amount) || 0) / 100
+                        : (Number(m.price) || 0) / 100
+                }));
+            return {
+                name: g.name || "Options",
+                min_select: Number(limits.min ?? g.min_select ?? 0),
+                max_select: cap && cap < 99 ? cap : null,
+                options
+            };
+        })
+        .filter(g => g.options.length);
+}
+
 /* ------------------ PARSER ------------------ */
 function parseSpotOnJSON(jsonObj) {
     const catsRaw = jsonObj.menu?.categories || jsonObj.categories || [];
@@ -1048,7 +1076,10 @@ function parseSpotOnJSON(jsonObj) {
     itemsRaw.forEach(item => {
         if (item.active === false) return;
 
-        itemsFull.set(item.id, item);
+        itemsFull.set(item.id, {
+            ...item,
+            modifier_groups: normalizeModifierGroups(item.modifier_groups || item.modifiers)
+        });
 
         (item.category_ids || (item.category_id ? [item.category_id] : [])).forEach(cid => {
             if (!catMap.has(cid)) return;
@@ -1065,7 +1096,7 @@ function parseSpotOnJSON(jsonObj) {
                 description: item.description || "",
                 price: (priceAmt / 100).toFixed(2),
                 imageUrl: item.image_url || item.thumbnail_url || "",
-                modifier_groups: item.modifier_groups || item.modifiers || []
+                modifier_groups: normalizeModifierGroups(item.modifier_groups || item.modifiers)
             });
         });
     });
@@ -1954,7 +1985,7 @@ function generateEmbedCode() {
 
     const config = {
         source: "SpotOnMenuEditor",
-        version: "3.0.0",
+        version: "3.0.1-TEST",
         generatedBy: "Sara Bustamante",
         repository: "https://github.com/sarabus-coder/Spocho-Projects",
         generatedAt: new Date().toISOString(),
@@ -2085,6 +2116,32 @@ function parsePrice(p) {
     return isNaN(n) ? "0.00" : (n / 100).toFixed(2);
 }
 
+// Modifier normalizer (SpotOn JSON → { name, min_select, max_select, options[{name, price in dollars}] })
+function normalizeModifierGroups(groups) {
+    return (groups || [])
+        .filter(g => g && g.active !== false)
+        .map(g => {
+            const limits = g.limits || {};
+            const caps = [limits.max, limits.multi_select_max].filter(v => v != null);
+            const cap = caps.length ? Math.min(...caps) : null;
+            const options = (g.modifiers || g.options || [])
+                .filter(m => m && m.active !== false && m.is_available !== false)
+                .map(m => ({
+                    name: m.name,
+                    price: typeof m.price === "object"
+                        ? (Number(m.price?.amount) || 0) / 100
+                        : (Number(m.price) || 0) / 100
+                }));
+            return {
+                name: g.name || "Options",
+                min_select: Number(limits.min ?? g.min_select ?? 0),
+                max_select: cap && cap < 99 ? cap : null,
+                options
+            };
+        })
+        .filter(g => g.options.length);
+}
+
 // Parse SpotOn JSON into categories and items
 function parseJSON(raw) {
     const catNameMap = new Map();
@@ -2138,7 +2195,7 @@ function parseJSON(raw) {
                             description: item.description || "",
                             price: parsePrice(item.price),
                             imageUrl: item.image_url || item.photos?.[0]?.url,
-                            modifier_groups: item.modifier_groups || item.modifiers || []
+                            modifier_groups: normalizeModifierGroups(item.modifier_groups || item.modifiers)
                         };
                         
                         itemsFull.set(item.id, parsed);
@@ -2154,7 +2211,7 @@ function parseJSON(raw) {
                         description: item.description || "",
                         price: parsePrice(item.price),
                         imageUrl: item.image_url || item.photos?.[0]?.url,
-                        modifier_groups: item.modifier_groups || item.modifiers || []
+                        modifier_groups: normalizeModifierGroups(item.modifier_groups || item.modifiers)
                     };
                     
                     itemsFull.set(item.id, parsed);
@@ -2713,13 +2770,8 @@ window.__spotOnOpenModal = function(itemId) {
         body.innerHTML = modifiers.map(group => \`
             <div class="spoton-modifier-group">
                 <div class="spoton-modifier-group-name">\${group.name || "Options"}</div>
-                <div class="spoton-modifier-limits">\${group.min_select || 0} - \${group.max_select || "&infin;"} selected</div>
-                \${(group.options || []).map(opt => \`
-                    <div class="spoton-modifier-option">
-                        <span>\${opt.name}</span>
-                        <span>\${opt.price ? "$" + (opt.price / 100).toFixed(2) : ""}</span>
-                    </div>
-                \`).join('')}
+                <div class="spoton-modifier-limits">\${group.min_select && group.min_select === group.max_select ? "Select " + group.max_select : group.max_select ? "Select up to " + group.max_select : ""}</div>
+                <div class="spoton-modifier-option-list" style="line-height:1.6;">\${(group.options || []).map(opt => opt.price ? opt.name + " (+$" + Number(opt.price).toFixed(2) + ")" : opt.name).join(", ")}</div>
             </div>
         \`).join('');
     }
@@ -2890,6 +2942,14 @@ function updateMenuState(patch) {
 </script>
 <script>
 // ------------------ MODIFIER MODAL FUNCTION ------------------
+function modifierLimitText(group) {
+    const min = group.min_select || 0;
+    const max = group.max_select;
+    if (max && min === max) return `Select ${max}`;
+    if (max) return `Select up to ${max}`;
+    return "";
+}
+
 function openModifierModal(itemId) {
     currentModalItemId = itemId;
     const item = currentItemsMap.get(itemId);
@@ -2899,7 +2959,7 @@ function openModifierModal(itemId) {
 
     const body = document.getElementById("modifierModalBody");
 
-    const modifiers = item.modifier_groups || item.modifiers || [];
+    const modifiers = item.modifier_groups || [];
 
     if (!modifiers.length) {
         body.innerHTML = `<div class="no-modifiers">No modifiers available</div>`;
@@ -2907,13 +2967,8 @@ function openModifierModal(itemId) {
         body.innerHTML = modifiers.map(group => `
             <div class="modifier-group">
                 <div class="modifier-group-name">${group.name || "Options"}</div>
-                <div class="modifier-limits">${group.min_select || 0} - ${group.max_select || "&infin;"} selected</div>
-                ${(group.options || []).map(opt => `
-                    <div class="modifier-option">
-                        <span>${opt.name}</span>
-                        <span class="modifier-price">${opt.price ? `$${(opt.price/100).toFixed(2)}` : ""}</span>
-                    </div>
-                `).join("")}
+                <div class="modifier-limits">${modifierLimitText(group)}</div>
+                <div class="modifier-option-list" style="font-size:14px; line-height:1.6; color:#cbd5e1;">${(group.options || []).map(opt => opt.price ? `${opt.name} (+$${Number(opt.price).toFixed(2)})` : opt.name).join(", ")}</div>
             </div>
         `).join("");
     }
