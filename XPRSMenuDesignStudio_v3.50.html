@@ -1,0 +1,2983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--SpotOn Menu Studio · Author: Sara Bustamante-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>SpotOn Menu Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0c10; color: #e2e8f0; }
+
+/* ── HEADER ── */
+.studio-header { background: rgba(17,19,21,0.95); border-bottom: 1px solid #2a2e35; padding: 16px 32px; position: sticky; top: 0; z-index: 10; backdrop-filter: blur(10px); }
+.header-content { max-width: 1800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.logo-area { display: flex; align-items: center; gap: 16px; }
+.logo { height: 36px; object-fit: contain; filter: brightness(0) invert(1); }
+.header-text h1 { font-size: 18px; font-weight: 600; color: white; }
+.badge { background: #1e293b; color: #60a5fa; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+
+/* ── LAYOUT ── */
+.studio-container { max-width: 1800px; margin: 0 auto; padding: 24px 40px; display: grid; grid-template-columns: 420px 1fr; gap: 28px; }
+
+/* ── CONTROLS PANEL ── */
+.controls-panel {
+  background: #111315; border-radius: 16px; border: 1px solid #2a2e35;
+  overflow-y: auto; position: sticky; top: 80px;
+  max-height: calc(100vh - 106px);
+  display: flex; flex-direction: column; width: 100%; min-width: 0;
+  scrollbar-width: thin; scrollbar-color: #2a2e35 transparent;
+}
+.controls-panel::-webkit-scrollbar { width: 4px; }
+.controls-panel::-webkit-scrollbar-thumb { background: #2a2e35; border-radius: 4px; }
+
+/* details/summary collapsible sections */
+details.panel-section { border-bottom: 1px solid #2a2e35; }
+details.panel-section:last-of-type { border-bottom: none; }
+details.panel-section summary {
+  cursor: pointer; list-style: none; padding: 11px 18px;
+  display: flex; align-items: center; gap: 9px; user-select: none;
+}
+details.panel-section summary::-webkit-details-marker { display: none; }
+details.panel-section summary::before {
+  content: "▶"; color: #60a5fa; font-size: 9px; flex-shrink: 0;
+  transition: transform 0.18s ease; display: inline-block;
+}
+details.panel-section[open] summary::before { transform: rotate(90deg); }
+details.panel-section[open] > summary + * { margin-top: 2px; }
+details.panel-section > *:not(summary) { padding: 0 18px 14px; }
+
+.section-title { font-size: 13px; font-weight: 500; color: #cbd5e1; display: flex; align-items: center; gap: 7px; margin: 0; line-height: 1.4; }
+
+/* controls */
+.control-group { margin-bottom: 10px; }
+.control-group:last-child { margin-bottom: 0; }
+.control-group label { display: block; font-size: 12px; font-weight: 500; margin-bottom: 5px; color: #94a3b8; }
+.helper-text { font-size: 11px; color: #475569; margin-top: 4px; line-height: 1.5; }
+
+.control-group input[type="text"],
+.control-group input[type="number"],
+.control-group select,
+.control-group textarea {
+  width: 100%; padding: 7px 10px; border: 1px solid #2a2e35; border-radius: 8px;
+  font-size: 13px; font-family: inherit; background: #1a1d21; color: #e2e8f0;
+  box-sizing: border-box; transition: border-color 0.15s, box-shadow 0.15s;
+}
+.control-group input:hover, .control-group select:hover { border-color: #3b82f6; }
+.control-group input:focus, .control-group select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.25); }
+
+/* radio pills */
+.radio-group { display: flex; gap: 5px; flex-wrap: wrap; }
+.radio-group label {
+  display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 400;
+  color: #94a3b8; background: #1a1d21; padding: 5px 10px; border-radius: 6px;
+  border: 1px solid #2a2e35; cursor: pointer; white-space: nowrap; transition: all 0.15s;
+}
+.radio-group label:has(input:checked) { background: #1e3a5f; border-color: #3b82f6; color: #93c5fd; }
+.radio-group input[type="radio"] { width: 12px; height: 12px; accent-color: #3b82f6; flex-shrink: 0; margin: 0; }
+
+/* toggle list */
+.toggle-group { display: flex; flex-direction: column; gap: 0; }
+.toggle-group label {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 13px; font-weight: 400; color: #cbd5e1;
+  padding: 7px 6px; border-radius: 6px; cursor: pointer; user-select: none; gap: 10px;
+}
+.toggle-group label:hover { background: #1a1d21; }
+.controls-panel input[type="checkbox"] {
+  width: 17px; height: 17px; accent-color: #3b82f6; cursor: pointer; margin: 0; flex-shrink: 0;
+  border: 1.5px solid #475569; border-radius: 4px; background: #0d0f11; box-shadow: none;
+}
+.controls-panel input[type="checkbox"]:hover { border-color: #64748b; }
+.controls-panel input[type="checkbox"]:checked { border-color: #3b82f6; }
+.controls-panel input[type="checkbox"]:focus-visible { outline: 2px solid #3b82f6; outline-offset: 1px; }
+
+/* subgroups */
+.subgroup-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #475569; margin: 12px 0 5px; padding-bottom: 4px; border-bottom: 1px solid #1e2330; }
+.subgroup-label:first-child { margin-top: 0; }
+.subgroup { background: #0d0f12; border-radius: 10px; padding: 10px; margin-bottom: 4px; }
+
+/* color row */
+.color-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 10px; }
+.color-row-item { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.color-row-item > span { font-size: 10px; color: #475569; font-weight: 500; }
+.color-row-item .color-input { flex-direction: column; gap: 3px; align-items: flex-start; }
+.color-row-item .color-input input[type="color"] { width: 36px; height: 36px; }
+.color-row-item .color-input span { font-size: 10px; color: #475569; font-family: monospace; }
+
+/* color-size-row */
+.color-size-row { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; margin-bottom: 10px; }
+.color-swatch-col, .size-col { display: flex; flex-direction: column; gap: 4px; }
+.color-swatch-col span, .size-col span { font-size: 10px; color: #475569; }
+.color-size-row input[type="color"] { width: 38px; height: 38px; padding: 2px; border-radius: 8px; border: 1px solid #2a2e35; background: #1a1d21; cursor: pointer; }
+.color-size-row input[type="number"] { width: 100%; padding: 7px 8px; border: 1px solid #2a2e35; border-radius: 8px; font-size: 13px; font-family: inherit; background: #1a1d21; color: #e2e8f0; box-sizing: border-box; }
+.color-size-row input[type="number"]:hover { border-color: #3b82f6; }
+.color-size-row input[type="number"]:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.25); }
+
+/* inline color input */
+.color-input { display: flex; gap: 8px; align-items: center; }
+.color-input input[type="color"] { width: 38px; height: 38px; padding: 3px; border-radius: 8px; cursor: pointer; border: 1px solid #2a2e35; background: #1a1d21; }
+
+/* typography grid 3-col */
+.typography-grid { display: grid; grid-template-columns: 1fr 58px 76px; gap: 6px; min-width: 0; }
+.typography-grid input, .typography-grid select {
+  padding: 7px 8px; border: 1px solid #2a2e35; border-radius: 8px; font-size: 12px;
+  font-family: inherit; background: #1a1d21; color: #e2e8f0; width: 100%; min-width: 0; box-sizing: border-box;
+}
+.typography-grid input:hover, .typography-grid select:hover { border-color: #3b82f6; }
+.typography-grid input:focus, .typography-grid select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.25); }
+
+/* typography grid 2-col (family + weight) */
+.typography-grid-2 { display: grid; grid-template-columns: 1fr 76px; gap: 6px; min-width: 0; }
+.typography-grid-2 input, .typography-grid-2 select {
+  padding: 7px 8px; border: 1px solid #2a2e35; border-radius: 8px; font-size: 12px;
+  font-family: inherit; background: #1a1d21; color: #e2e8f0; width: 100%; min-width: 0; box-sizing: border-box;
+}
+.typography-grid-2 input:hover, .typography-grid-2 select:hover { border-color: #3b82f6; }
+.typography-grid-2 input:focus, .typography-grid-2 select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.25); }
+
+.typo-col-labels { display: grid; grid-template-columns: 1fr 58px 76px; gap: 6px; margin-top: 3px; }
+.typo-col-labels span { font-size: 10px; color: #334155; padding-left: 2px; }
+.typo-col-labels-2 { display: grid; grid-template-columns: 1fr 76px; gap: 6px; margin-top: 3px; }
+.typo-col-labels-2 span { font-size: 10px; color: #334155; padding-left: 2px; }
+
+.font-note { font-size: 11px; color: #334155; margin-bottom: 8px; }
+.font-note a { color: #3b82f6; text-decoration: none; }
+.font-note a:hover { text-decoration: underline; }
+
+/* padding / radius grids */
+.padding-grid, .radius-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+.padding-grid > div, .radius-grid > div { display: flex; flex-direction: column; gap: 3px; }
+.padding-grid span, .radius-grid span { font-size: 10px; color: #475569; }
+.padding-grid input, .radius-grid input {
+  width: 100%; padding: 6px 8px; border: 1px solid #2a2e35; border-radius: 8px;
+  font-size: 12px; font-family: inherit; background: #1a1d21; color: #e2e8f0; box-sizing: border-box;
+}
+.padding-grid input:hover, .radius-grid input:hover { border-color: #3b82f6; }
+.padding-grid input:focus, .radius-grid input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.25); }
+
+/* border control */
+.border-control { display: flex; gap: 8px; align-items: center; }
+.border-control input[type="color"] { width: 36px; height: 36px; padding: 2px; border-radius: 8px; border: 1px solid #2a2e35; background: #1a1d21; flex-shrink: 0; }
+.border-control input[type="number"] {
+  width: 60px; flex-shrink: 0; padding: 6px 8px; border: 1px solid #2a2e35; border-radius: 8px;
+  font-size: 12px; font-family: inherit; background: #1a1d21; color: #e2e8f0; box-sizing: border-box;
+}
+.border-control input[type="number"]:hover { border-color: #3b82f6; }
+.border-control input[type="number"]:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.25); }
+.border-control span { font-size: 12px; color: #475569; flex-shrink: 0; }
+
+.side-toggle-row { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
+.side-toggle-row label { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #94a3b8; background: #1a1d21; border: 1px solid #2a2e35; border-radius: 6px; padding: 5px 8px; cursor: pointer; user-select: none; }
+.side-toggle-row input { margin: 0; cursor: pointer; }
+.no-bg-toggle { display: flex; align-items: center; gap: 4px; font-size: 10px; color: #94a3b8; margin-top: 2px; cursor: pointer; user-select: none; white-space: nowrap; }
+.no-bg-toggle input { margin: 0; cursor: pointer; }
+.shadow-enable-row { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #cbd5e1; cursor: pointer; user-select: none; }
+.shadow-enable-row input { margin: 0; cursor: pointer; }
+.color-input.is-disabled { opacity: 0.35; pointer-events: none; }
+
+/* line-height row */
+.line-height-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.line-height-row label { font-size: 11px; color: #94a3b8; margin: 0; white-space: nowrap; }
+.line-height-row input { width: 72px; padding: 6px 8px; border: 1px solid #2a2e35; border-radius: 8px; font-size: 12px; font-family: inherit; background: #1a1d21; color: #e2e8f0; box-sizing: border-box; }
+.line-height-row input:hover { border-color: #3b82f6; }
+.line-height-row input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.25); }
+.qa-badge { font-size: 10px; color: #f59e0b; background: rgba(245,158,11,0.1); padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
+
+/* action buttons */
+.action-buttons { padding: 16px 18px; display: flex; gap: 10px; }
+.btn { flex: 1; padding: 9px 14px; border-radius: 8px; font-weight: 600; font-size: 13px; font-family: inherit; cursor: pointer; text-align: center; border: none; transition: all 0.15s; }
+.btn-primary { background: #3b82f6; color: white; }
+.btn-primary:hover { background: #2563eb; }
+.btn-secondary { background: #1a1d21; color: #e2e8f0; border: 1px solid #2a2e35; }
+.btn-secondary:hover { background: #2a2e35; }
+
+/* ── PREVIEW PANEL ── */
+.preview-panel { background: #111315; border-radius: 16px; border: 1px solid #2a2e35; display: flex; flex-direction: column; }
+.preview-header { padding: 14px 20px; border-bottom: 1px solid #2a2e35; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+.preview-header h2 { font-size: 15px; font-weight: 600; color: #f1f5f9; }
+.preview-badge { background: #1e293b; color: #60a5fa; font-size: 11px; padding: 3px 10px; border-radius: 20px; }
+.menu-preview { padding: 24px; background: #0a0c10; min-height: 500px; overflow-y: auto; flex: 1; }
+.menu-preview:focus { outline: 2px solid #3b82f6; outline-offset: -2px; }
+
+/* ── MENU LAYOUT ── */
+.menu-layout { display: flex; gap: 24px; position: relative; }
+.menu-layout.tabs-top { flex-direction: column; }
+.menu-layout.tabs-bottom { flex-direction: column-reverse; }
+.menu-layout.tabs-left { flex-direction: row; align-items: flex-start; }
+.menu-layout.tabs-right { flex-direction: row-reverse; align-items: flex-start; }
+
+.categories-column { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+/* Scrolling List mode: keep nav reachable while scrolling through stacked categories.
+   z-index is kept low (2) so this never renders on top of the host site's own sticky
+   header/nav — it should tuck politely behind other sticky elements on the page, not fight them.
+   Bottom tab position is intentionally excluded — sticky-to-top doesn't make sense for a nav
+   that's visually below the content (it would only pin once you've scrolled nearly to the end). */
+.is-scroll-list.tabs-top .categories-column {
+  position: sticky; top: 0; z-index: 2; padding: 12px 0; margin: -12px 0;
+}
+.is-scroll-list.tabs-left .categories-column, .is-scroll-list.tabs-right .categories-column {
+  position: sticky; top: 0; align-self: flex-start; max-height: 100vh; overflow-y: auto; z-index: 2;
+}
+.tabs-left .categories-column, .tabs-right .categories-column { min-width: 180px; max-width: 220px; flex-shrink: 0; }
+
+.category-toolbar { display: flex; flex-direction: column; gap: 8px; }
+.tabs-top .category-toolbar, .tabs-bottom .category-toolbar { flex-direction: row; flex-wrap: wrap; }
+
+.categories-container { display: flex; flex-wrap: wrap; gap: 8px; }
+.tabs-left .categories-container, .tabs-right .categories-container { flex-direction: column; }
+
+.category-link {
+  padding: 9px 18px; background: #1a1d21; border: 1px solid #2a2e35; border-radius: 40px;
+  text-decoration: none; color: #cbd5e1; font-size: 14px; font-weight: 500;
+  transition: all 0.2s; white-space: nowrap; cursor: pointer; display: inline-block;
+}
+.tabs-left .category-link, .tabs-right .category-link { white-space: normal; word-break: break-word; width: 100%; box-sizing: border-box; text-align: center; }
+.category-link.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+.menu-root { flex: 1; min-width: 0; }
+
+/* ── SEARCH ── */
+.search-wrapper { position: relative; }
+.tabs-top .search-wrapper, .tabs-bottom .search-wrapper { min-width: 200px; }
+.category-search {
+  width: 100%; padding: 9px 14px; border: 1px solid #2a2e35; border-radius: 40px;
+  font-size: 13px; line-height: normal; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #1a1d21; color: #e2e8f0; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.category-search:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
+.category-dropdown { position: relative; }
+.category-select { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 14px; border: 1px solid #2a2e35; border-radius: 40px; font-size: 13px; line-height: normal; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #1a1d21; color: #e2e8f0; width: 100%; cursor: pointer; appearance: none; -webkit-appearance: none; outline: none; text-align: left; }
+.category-select-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.category-select-chevron { flex-shrink: 0; transition: transform 0.15s; opacity: 0.7; }
+.category-dropdown.open .category-select-chevron { transform: rotate(180deg); }
+.tabs-top .category-select, .tabs-bottom .category-select { width: auto; min-width: 180px; }
+.tabs-top .category-dropdown, .tabs-bottom .category-dropdown { width: auto; min-width: 180px; }
+
+.category-dropdown-list { display: none; position: absolute; top: calc(100% + 5px); left: 0; right: 0; background: #1a1d21; border: 1px solid #2a2e35; border-radius: 12px; overflow: hidden; z-index: 100; max-height: 260px; overflow-y: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+.category-dropdown.open .category-dropdown-list { display: block; }
+.dropdown-option { padding: 9px 14px; font-size: 13px; color: #cbd5e1; cursor: pointer; transition: background 0.15s; }
+.dropdown-option:hover, .dropdown-option.active { background: #2a2e35; color: #f1f5f9; }
+
+.search-suggestions { display: none; position: absolute; top: calc(100% + 5px); left: 0; right: 0; background: #1a1d21; border: 1px solid #3b82f6; border-radius: 12px; overflow: hidden; z-index: 100; max-height: 220px; overflow-y: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+.search-suggestions.open { display: block; }
+.suggestion-item { padding: 9px 14px; font-size: 13px; color: #cbd5e1; cursor: pointer; transition: background 0.15s; }
+.suggestion-item:hover, .suggestion-item.highlighted { background: #2a2e35; color: #f1f5f9; }
+.suggestion-item mark { background: transparent; color: #60a5fa; font-weight: 600; }
+.suggestion-empty { padding: 10px 14px; font-size: 12px; color: #475569; font-style: italic; }
+
+/* ── GRID LAYOUTS ── */
+.card-grid { display: grid; grid-template-columns: repeat(var(--menu-cols, 3), minmax(0, 1fr)); gap: var(--card-gap, 24px); }
+.scroll-list-category { margin-bottom: 32px; scroll-margin-top: 20px; }
+.scroll-list-category:last-child { margin-bottom: 0; }
+
+/* ── SIDE-IMAGE (LEFT/RIGHT) LAYOUTS ── */
+/* .img-pos-left/.img-pos-right are combined with .card-grid for column layout — see .card-grid above */
+.img-pos-left .list-item, .img-pos-right .list-item { display: flex; gap: 0; align-items: stretch; position: relative; min-height: var(--img-w, 140px); }
+.img-pos-left .list-item { padding-left: var(--img-w, 140px); }
+.img-pos-right .list-item { padding-right: var(--img-w, 140px); }
+.img-pos-left .item-thumbnail-wrapper, .img-pos-right .item-thumbnail-wrapper { position: absolute; top: 0; bottom: 0; width: var(--img-w, 140px); min-width: var(--img-w, 140px); overflow: hidden; }
+.img-pos-left .item-thumbnail-wrapper { left: 0; }
+.img-pos-right .item-thumbnail-wrapper { right: 0; }
+.img-pos-left .item-content, .img-pos-right .item-content { flex: 1; min-width: 0; }
+.img-pos-right .list-item { flex-direction: row; }
+
+/* ── TOP-IMAGE LAYOUT ── */
+.img-pos-top .item-thumbnail-wrapper { width: 100%; height: var(--img-h, 180px); min-height: var(--img-h, 180px); }
+
+/* ── CARDS ── */
+.list-item { background: #111315; border-radius: 16px; border: 1px solid #2a2e35; display: flex; flex-direction: column; height: 100%; min-width: 0; }
+.list-item.has-modifiers { cursor: pointer; transition: transform 0.18s, box-shadow 0.18s; }
+.list-item.has-modifiers:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,0.35); }
+.item-thumbnail-wrapper { background: #111315; overflow: hidden; flex-shrink: 0; }
+.list-item-image { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+.item-content { padding: 16px; flex: 1; display: flex; flex-direction: column; min-width: 0; overflow-wrap: break-word; word-wrap: break-word; }
+.list-item-name { font-size: 18px; font-weight: 600; margin-bottom: 6px; color: #f1f5f9; line-height: 1.3; }
+.list-item-description { font-size: 16px; color: #94a3b8; margin-bottom: 10px; line-height: 1.5; overflow-wrap: break-word; word-wrap: break-word; }
+.list-item-price { font-size: 16px; font-weight: 700; color: #3b82f6; margin-top: auto; padding-top: 8px; }
+.item-content > .list-item-price:first-child { margin-top: 0; padding-top: 0; margin-bottom: 10px; }
+.price-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; margin-bottom: 6px; }
+.price-row .list-item-name { margin-bottom: 0; flex: 1 1 auto; min-width: 0; }
+.price-row .list-item-price { margin-top: 0; padding-top: 0; flex-shrink: 0; white-space: nowrap; }
+.price-leader { flex: 1 1 auto; min-width: 8px; align-self: center; border-bottom-width: 2px; }
+.price-leader.leader-dots { border-bottom-style: dotted; }
+.price-leader.leader-dashes { border-bottom-style: dashed; }
+.price-leader.leader-none { border-bottom-style: none; }
+.modifier-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #60a5fa; margin-top: 8px; }
+.modifier-badge svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+/* ── CATEGORY HEADERS ── */
+.category-header { padding: 20px 0 10px; margin-bottom: 16px; border-bottom: 2px solid #2a2e35; }
+.category-header:first-child { padding-top: 0; }
+.category-header-name { font-size: 22px; font-weight: 700; color: #f1f5f9; margin-bottom: 4px; }
+.category-header-desc { font-size: 13px; color: #64748b; line-height: 1.5; }
+
+/* ── SCREEN READER ACCESSIBILITY ── */
+h2.category-header-name { margin-top: 0; margin-left: 0; margin-right: 0; padding: 0; }
+h3.list-item-name { margin-top: 0; margin-left: 0; margin-right: 0; padding: 0; }
+p.list-item-description, p.category-header-desc { margin: 0; padding: 0; }
+p.list-item-price { margin-left: 0; margin-right: 0; margin-bottom: 0; }
+.category-header-name:focus { outline: none; }
+.dropdown-option.highlighted { background: #2a2e35; color: #f1f5f9; }
+.img-pos-top .item-thumbnail-wrapper { border-radius: 16px 16px 0 0; }
+.img-pos-left .item-thumbnail-wrapper { border-radius: 16px 0 0 16px; }
+.img-pos-right .item-thumbnail-wrapper { border-radius: 0 16px 16px 0; }
+
+/* ── EXCLUDE WIDGET ── */
+.exclude-widget { border: 1px solid #2a2e35; border-radius: 10px; background: #1a1d21; }
+.exclude-trigger { padding: 8px 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; color: #cbd5e1; font-size: 13px; }
+.exclude-trigger:hover { background: #2a2e35; border-radius: 10px; }
+.exclude-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px 12px; border-top: 1px solid #2a2e35; }
+.exclude-chip { background: #2a2e35; padding: 3px 8px 3px 10px; border-radius: 20px; font-size: 11px; display: inline-flex; align-items: center; gap: 5px; color: #e2e8f0; }
+.exclude-chip-remove { cursor: pointer; font-size: 13px; line-height: 1; color: #64748b; }
+.exclude-chip-remove:hover { color: #ef4444; }
+.exclude-dropdown { display: none; border-top: 1px solid #2a2e35; max-height: 200px; overflow-y: auto; background: #1a1d21; border-radius: 0 0 10px 10px; }
+.exclude-dropdown.show { display: block; }
+.exclude-option { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; cursor: pointer; color: #cbd5e1; font-size: 13px; gap: 10px; }
+.exclude-option span { flex: 1; }
+.exclude-option input[type="checkbox"] { margin: 0; flex-shrink: 0; cursor: pointer; }
+.exclude-option:hover { background: #2a2e35; }
+
+/* ── STATUS ── */
+.status { padding: 10px 14px; border-radius: 10px; margin-bottom: 16px; font-size: 13px; }
+.status.success { background: #14532d; color: #86efac; border-left: 4px solid #22c55e; }
+.status.error { background: #7f1a1a; color: #fecaca; border-left: 4px solid #ef4444; }
+.status.info { background: #0c4a6e; color: #bae6fd; border-left: 4px solid #0ea5e9; }
+
+/* ── MODALS (shared) ── */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.active { display: flex; }
+.modal-content { background: #111315; border: 1px solid #2a2e35; border-radius: 20px; width: 100%; max-width: 850px; max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 24px 48px rgba(0,0,0,0.5); overflow: hidden; }
+.modal-content.modal-narrow { max-width: 540px; }
+.modal-header { padding: 18px 22px; border-bottom: 1px solid #2a2e35; display: flex; justify-content: space-between; align-items: center; }
+.modal-header h3 { font-size: 16px; font-weight: 600; color: #f1f5f9; margin: 0; }
+.modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b; line-height: 1; transition: color 0.15s; }
+.modal-close:hover { color: #f1f5f9; }
+.modal-body { padding: 18px 22px; overflow-y: auto; flex: 1; }
+.modal-footer { padding: 14px 22px; border-top: 1px solid #2a2e35; display: flex; justify-content: flex-end; gap: 10px; }
+
+/* code embed modal */
+.code-container { background: #0a0c10; border-radius: 12px; padding: 14px; position: relative; border: 1px solid #2a2e35; }
+.code-container textarea { color: #e2e8f0; font-family: monospace; font-size: 11px; white-space: pre-wrap; word-wrap: break-word; max-height: 480px; height: 480px; overflow-y: auto; width: 100%; box-sizing: border-box; background: transparent; border: none; outline: none; resize: vertical; }
+.copy-code-btn { position: absolute; top: 10px; right: 10px; background: #3b82f6; color: white; border: none; padding: 5px 11px; border-radius: 20px; cursor: pointer; font-size: 11px; }
+
+/* modifier modal */
+.modifier-group { margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid #2a2e35; }
+.modifier-group:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.modifier-group-name { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #64748b; margin: 0 0 4px; }
+.modifier-options { list-style: none; margin: 0; padding: 0; }
+#modifierModal:focus { outline: none; }
+.modifier-group-limits { font-size: 11px; color: #3b82f6; margin-bottom: 10px; font-weight: 500; }
+.modifier-option { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #1e2330; gap: 10px; }
+.modifier-option:last-child { border-bottom: none; }
+.modifier-option-name { font-size: 14px; color: #cbd5e1; flex: 1; }
+.modifier-option-price { font-size: 13px; font-weight: 600; color: #64748b; flex-shrink: 0; }
+.modifier-option-price.has-price { color: #3b82f6; }
+.modifier-no-options { font-size: 13px; color: #475569; font-style: italic; }
+
+/* import modal */
+.import-error { display: none; color: #fecaca; background: #7f1a1a; border: 1px solid #ef4444; border-radius: 8px; padding: 8px 12px; font-size: 12px; margin-top: 8px; }
+
+/* ── MOBILE ── */
+@media (max-width: 900px) {
+  .studio-container { grid-template-columns: 1fr; padding: 16px; gap: 20px; }
+  .controls-panel { position: static; max-height: none; }
+  .menu-layout.tabs-left, .menu-layout.tabs-right { flex-direction: column; }
+  .tabs-left .categories-column, .tabs-right .categories-column { min-width: unset; max-width: unset; width: 100%; }
+  .categories-container { flex-wrap: wrap !important; justify-content: center !important; overflow-x: visible; }
+  .hide-tabs-mobile .categories-container { display: none !important; }
+  .tabs-left .categories-container, .tabs-right .categories-container { flex-direction: row !important; }
+  .img-pos-left .list-item, .img-pos-right .list-item { flex-direction: column !important; position: static !important; padding-left: 0 !important; padding-right: 0 !important; width: 100%; min-height: auto; }
+  .img-pos-left .item-thumbnail-wrapper, .img-pos-right .item-thumbnail-wrapper { position: static !important; width: 100% !important; height: 200px !important; }
+  .img-pos-left .item-thumbnail-wrapper:empty, .img-pos-right .item-thumbnail-wrapper:empty { display: none !important; }
+  .card-grid { grid-template-columns: 1fr !important; }
+  .search-wrapper { width: 100% !important; }
+  .category-select { width: 100% !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="studio-header">
+  <div class="header-content">
+    <div class="logo-area">
+      <img src="https://help.spoton.com/images/6686c186-6fa4-480f-b228-b4a34eacf6d2" alt="SpotOn" class="logo">
+      <div class="header-text"><h1>Menu Studio</h1></div>
+    </div>
+    <!-- Modifiers are hidden studio-wide until the live API exposes modifier data (currently returns modifiers: null).
+         Re-enable this badge once modifier support is restored.
+    <div class="badge" style="background:transparent;color:#fca5a5;border:1px solid #ef4444;display:flex;align-items:center;gap:6px;"><span style="width:7px;height:7px;border-radius:50%;background:#ef4444;display:inline-block;flex-shrink:0;"></span>Modifiers not shown</div>
+    -->
+  </div>
+</div>
+
+<div class="studio-container">
+<div class="controls-panel">
+
+  <!-- ① MENU SOURCE -->
+  <details class="panel-section" open>
+    <summary><span class="section-title">📂 Menu Source</span></summary>
+    <div>
+      <div class="control-group">
+        <label>Location ID</label>
+        <div style="display:flex;gap:6px;">
+          <input type="text" id="merchantId" placeholder="e.g. BL-A592-91DA-EA9E" style="flex:1;min-width:0;">
+          <button id="refreshBtn" class="btn btn-secondary" style="flex-shrink:0;padding:7px 12px;font-size:12px;">↻</button>
+        </div>
+        <div class="helper-text">Auto-loads on input. ↻ forces reload.</div>
+      </div>
+      <div class="control-group">
+        <button id="importConfigBtn" class="btn btn-secondary" style="width:100%;">📥 Import from Embed Code</button>
+        <div class="helper-text">Paste a previously generated embed code to restore all settings.</div>
+      </div>
+      <div class="control-group">
+        <label>Business Name</label>
+        <input type="text" id="businessName" placeholder="e.g. Slyderz Bar & Grill">
+        <div class="helper-text">Shown as "Business Name menu" above the embed.</div>
+      </div>
+      <div class="control-group">
+        <label>Fallback Menu JSON</label>
+        <input type="file" id="menuJsonFile" accept=".json,application/json" style="width:100%;">
+        <input type="text" id="ghAccount" placeholder="Account (goes in the commit note)" style="width:100%;margin-bottom:6px;">
+        <button id="uploadJsonBtn" class="btn btn-secondary" style="width:100%;">⬆️ Upload JSON to GitHub</button>
+        <input type="text" id="menuJsonUrl" placeholder="JSON URL (filled automatically after upload)" style="width:100%;margin-top:6px;">
+        <label style="font-size:12px;display:block;margin-top:6px;"><input type="checkbox" id="useJsonFallback" checked> Use this JSON if the live menu fails</label>
+        <div id="jsonStatus" class="helper-text"></div>
+      </div>
+      <div class="control-group">
+        <label>Excluded Categories</label>
+        <div id="excludeWidget" class="exclude-widget">
+          <div class="exclude-trigger">Select categories to exclude <span>▼</span></div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ② LAYOUT -->
+  <details class="panel-section" open>
+    <summary><span class="section-title">📐 Layout</span></summary>
+    <div>
+      <div class="control-group">
+        <label>Image Position</label>
+        <div class="radio-group" style="flex-wrap:nowrap;">
+          <label><input type="radio" name="cardImagePosition" value="top" checked> Top</label>
+          <label><input type="radio" name="cardImagePosition" value="left"> Left</label>
+          <label><input type="radio" name="cardImagePosition" value="right"> Right</label>
+        </div>
+      </div>
+      <div class="control-group" id="columnsControlGroup">
+        <label>Columns</label>
+        <input type="number" id="cardColumns" value="3" min="1" max="6">
+        <div class="helper-text">Auto-reduces on narrow screens. With Left/Right image, each column keeps its own side image.</div>
+      </div>
+      <div class="control-group">
+        <label>Card Gap (px)</label>
+        <input type="number" id="cardGap" value="24" min="0">
+      </div>
+      <div class="control-group">
+        <label>Scrolling List</label>
+        <div class="toggle-group"><label>Show all categories stacked; tabs/dropdown/search become jump links <input type="checkbox" id="scrollingListMode"></label></div>
+      </div>
+      <div class="control-group" id="stickyNavOffsetGroup" style="display:none;">
+        <label>Sticky Nav Offset (px)</label>
+        <input type="number" id="stickyNavOffset" value="0" min="0">
+        <div class="helper-text">If the site this embeds into has its own sticky header, enter its height here so our nav sticks just below it instead of overlapping.</div>
+      </div>
+      <div class="control-group">
+        <label>Tabs Position</label>
+        <div class="radio-group">
+          <label><input type="radio" name="tabsPosition" value="top" checked> Top</label>
+          <label><input type="radio" name="tabsPosition" value="bottom"> Bottom</label>
+          <label><input type="radio" name="tabsPosition" value="left"> Left</label>
+          <label><input type="radio" name="tabsPosition" value="right"> Right</label>
+        </div>
+      </div>
+      <div class="control-group">
+        <label>Tab Alignment <span class="helper-text" style="display:inline;">(top/bottom)</span></label>
+        <div class="radio-group">
+          <label><input type="radio" name="tabAlign" value="left" checked> Left</label>
+          <label><input type="radio" name="tabAlign" value="center"> Center</label>
+          <label><input type="radio" name="tabAlign" value="right"> Right</label>
+        </div>
+      </div>
+      <div class="subgroup-label">Image Size</div>
+      <div class="subgroup">
+        <div class="control-group" style="margin-bottom:0;" id="imageHeightGroup">
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="number" id="imageHeight" value="180" min="80" max="500" step="10" style="width:90px;">
+            <span style="font-size:12px;color:#475569;">px height — Top position</span>
+          </div>
+        </div>
+        <div class="control-group" style="margin-bottom:0;margin-top:8px;display:none;" id="imageWidthGroup">
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="number" id="imageWidthSide" value="140" min="60" max="400" step="10" style="width:90px;">
+            <span style="font-size:12px;color:#475569;">px width — Left/Right position</span>
+          </div>
+        </div>
+      </div>
+      <div class="subgroup-label">Image Alignment</div>
+      <div class="subgroup">
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <select id="imageAlignH">
+            <option value="left">Focus Left</option>
+            <option value="center" selected>Focus Center</option>
+            <option value="right">Focus Right</option>
+          </select>
+          <select id="imageAlignV">
+            <option value="top">Focus Top</option>
+            <option value="center" selected>Focus Middle</option>
+            <option value="bottom">Focus Bottom</option>
+          </select>
+        </div>
+        <div class="helper-text" style="margin-top:6px;">Controls which part of the image stays visible when cropped.</div>
+      </div>
+      <div class="subgroup-label">Text Alignment</div>
+      <div class="subgroup">
+        <div class="radio-group" style="flex-wrap:nowrap;">
+          <label><input type="radio" name="cardTextAlign" value="left" checked> Left</label>
+          <label><input type="radio" name="cardTextAlign" value="center"> Center</label>
+          <label><input type="radio" name="cardTextAlign" value="right"> Right</label>
+        </div>
+        <div class="helper-text" style="margin-top:6px;">Applies to title, description &amp; price (Below/Above positions).</div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ③ NAVIGATION -->
+  <details class="panel-section" open>
+    <summary><span class="section-title">🧭 Navigation</span></summary>
+    <div>
+      <div class="control-group">
+        <label>Content</label>
+        <div class="toggle-group">
+          <label>Show Images <input type="checkbox" id="showImages" checked></label>
+          <label>Show Prices <input type="checkbox" id="showPrices" checked></label>
+          <label>Show Modifiers (clickable) <input type="checkbox" id="showModifiers" checked></label>
+        </div>
+      </div>
+      <div class="control-group">
+        <label>Category Order</label>
+        <div class="radio-group">
+          <label><input type="radio" name="categorySort" value="default" checked> Default</label>
+          <label><input type="radio" name="categorySort" value="az"> A → Z</label>
+          <label><input type="radio" name="categorySort" value="za"> Z → A</label>
+        </div>
+      </div>
+      <div class="control-group">
+        <label>Navigation Elements</label>
+        <div class="toggle-group">
+          <label>Tabs <input type="checkbox" id="showTabs" checked></label>
+          <label>Category Search <input type="checkbox" id="showCategorySearch"></label>
+          <label>Category Dropdown <input type="checkbox" id="showCategoryDropdown"></label>
+          <label>Hide Tabs on Mobile (dropdown only) <input type="checkbox" id="hideTabsMobile"></label>
+          <label>Category Headers <input type="checkbox" id="showCategoryHeaders" checked></label>
+        </div>
+        <div class="helper-text" style="margin-top:6px;">Headers appear above items in all layouts.</div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ④ TABS -->
+  <details class="panel-section" open>
+    <summary><span class="section-title">🏷️ Tabs</span></summary>
+    <div>
+      <div class="subgroup-label">Colors</div>
+      <div class="subgroup">
+        <div class="color-row">
+          <div class="color-row-item"><span>Default BG</span><div class="color-input"><input type="color" id="defaultTabColor" value="#1a1d21"><span id="defaultTabColorValue">#1a1d21</span></div><label class="no-bg-toggle"><input type="checkbox" id="defaultTabColorTransparent"> No BG</label></div>
+          <div class="color-row-item"><span>Default Text</span><div class="color-input"><input type="color" id="defaultTabTextColor" value="#cbd5e1"><span id="defaultTabTextColorValue">#cbd5e1</span></div></div>
+          <div class="color-row-item"><span>Active BG</span><div class="color-input"><input type="color" id="activeTabColor" value="#3b82f6"><span id="activeTabColorValue">#3b82f6</span></div><label class="no-bg-toggle"><input type="checkbox" id="activeTabColorTransparent"> No BG</label><div class="helper-text" style="margin-top:2px;">Color stays editable — also used for the active tab's border.</div></div>
+          <div class="color-row-item"><span>Active Text</span><div class="color-input"><input type="color" id="activeTabTextColor" value="#ffffff"><span id="activeTabTextColorValue">#ffffff</span></div></div>
+        </div>
+        <div class="subgroup" id="dropdownBgWrapper" style="display:none;margin-top:10px;padding-top:10px;border-top:1px dashed #2a2e35;">
+          <div class="color-row" style="grid-template-columns:1fr;max-width:140px;">
+            <div class="color-row-item"><span>Suggestions BG</span><div class="color-input"><input type="color" id="dropdownBgColor" value="#1a1d21"><span id="dropdownBgColorValue">#1a1d21</span></div></div>
+          </div>
+          <div class="helper-text" style="margin-top:6px;">Always solid — used for the search dropdown/suggestions list even when Default BG above is set to No BG, since a see-through popup would be unreadable.</div>
+        </div>
+      </div>
+      <div class="subgroup-label">Border & Shape</div>
+      <div class="subgroup">
+        <div class="border-control">
+          <input type="color" id="tabBorderColor" value="#2a2e35">
+          <input type="number" id="tabBorderWidth" value="1" min="0" max="5" step="0.5">
+          <span>px</span>
+        </div>
+        <div class="side-toggle-row">
+          <label><input type="checkbox" id="tabBorderTop" checked> Top</label>
+          <label><input type="checkbox" id="tabBorderRight" checked> Right</label>
+          <label><input type="checkbox" id="tabBorderBottom" checked> Bottom</label>
+          <label><input type="checkbox" id="tabBorderLeft" checked> Left</label>
+        </div>
+        <div class="control-group" style="margin-bottom:0;margin-top:10px;">
+          <label>Radius (px)</label>
+          <div class="radius-grid">
+            <div><span>Top-left</span><input type="number" id="tabRadiusTL" value="40"></div>
+            <div><span>Top-right</span><input type="number" id="tabRadiusTR" value="40"></div>
+            <div><span>Bottom-right</span><input type="number" id="tabRadiusBR" value="40"></div>
+            <div><span>Bottom-left</span><input type="number" id="tabRadiusBL" value="40"></div>
+          </div>
+        </div>
+      </div>
+      <div class="subgroup-label">Shadow</div>
+      <div class="subgroup">
+        <label class="shadow-enable-row"><input type="checkbox" id="tabShadowEnabled"> Enable shadow</label>
+        <div class="padding-grid" style="margin-top:8px;">
+          <div><span>Offset X</span><input type="number" id="tabShadowX" value="0"></div>
+          <div><span>Offset Y</span><input type="number" id="tabShadowY" value="2"></div>
+          <div><span>Blur</span><input type="number" id="tabShadowBlur" value="8" min="0"></div>
+          <div><span>Spread</span><input type="number" id="tabShadowSpread" value="0"></div>
+        </div>
+        <div class="color-row" style="margin-top:8px;">
+          <div class="color-row-item"><span>Color</span><div class="color-input"><input type="color" id="tabShadowColor" value="#000000"><span id="tabShadowColorValue">#000000</span></div></div>
+        </div>
+      </div>
+      <div class="subgroup-label">Typography</div>
+      <div class="subgroup">
+        <div class="font-note">Copy exact name from <a href="https://fonts.google.com" target="_blank">fonts.google.com</a></div>
+        <div class="typography-grid">
+          <input type="text" id="tabFontFamily" list="fontList" placeholder="Inter" value="Inter">
+          <input type="number" id="tabFontSize" value="14" min="10">
+          <select id="tabFontWeight">
+            <option value="400">400</option><option value="500">500</option>
+            <option value="600" selected>600</option><option value="700">700</option>
+          </select>
+        </div>
+        <div class="typo-col-labels"><span>Family</span><span>Size</span><span>Weight</span></div>
+        <div class="helper-text" style="margin-top:8px;">Search & Dropdown inherit tab styling.</div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ⑤ CARDS -->
+  <details class="panel-section" open>
+    <summary><span class="section-title">🃏 Cards</span></summary>
+    <div>
+      <div class="subgroup-label">Background</div>
+      <div class="subgroup">
+        <div class="color-row">
+          <div class="color-row-item"><span>Card BG</span><div class="color-input"><input type="color" id="cardBgColor" value="#111315"><span id="cardBgColorValue">#111315</span></div><label class="no-bg-toggle"><input type="checkbox" id="cardBgColorTransparent"> No BG</label></div>
+        </div>
+      </div>
+      <div class="subgroup-label">Border & Shape</div>
+      <div class="subgroup">
+        <div class="border-control">
+          <input type="color" id="cardBorderColor" value="#2a2e35">
+          <input type="number" id="cardBorderWidth" value="1" min="0" step="0.5">
+          <span>px</span>
+        </div>
+        <div class="side-toggle-row">
+          <label><input type="checkbox" id="cardBorderTop" checked> Top</label>
+          <label><input type="checkbox" id="cardBorderRight" checked> Right</label>
+          <label><input type="checkbox" id="cardBorderBottom" checked> Bottom</label>
+          <label><input type="checkbox" id="cardBorderLeft" checked> Left</label>
+        </div>
+        <div class="control-group" style="margin-bottom:0;margin-top:10px;">
+          <label>Radius (px)</label>
+          <div class="radius-grid">
+            <div><span>Top-left</span><input type="number" id="cardRadiusTL" value="16"></div>
+            <div><span>Top-right</span><input type="number" id="cardRadiusTR" value="16"></div>
+            <div><span>Bottom-right</span><input type="number" id="cardRadiusBR" value="16"></div>
+            <div><span>Bottom-left</span><input type="number" id="cardRadiusBL" value="16"></div>
+          </div>
+        </div>
+      </div>
+      <div class="subgroup-label">Shadow</div>
+      <div class="subgroup">
+        <label class="shadow-enable-row"><input type="checkbox" id="cardShadowEnabled"> Enable shadow</label>
+        <div class="padding-grid" style="margin-top:8px;">
+          <div><span>Offset X</span><input type="number" id="cardShadowX" value="0"></div>
+          <div><span>Offset Y</span><input type="number" id="cardShadowY" value="4"></div>
+          <div><span>Blur</span><input type="number" id="cardShadowBlur" value="12" min="0"></div>
+          <div><span>Spread</span><input type="number" id="cardShadowSpread" value="0"></div>
+        </div>
+        <div class="color-row" style="margin-top:8px;">
+          <div class="color-row-item"><span>Color</span><div class="color-input"><input type="color" id="cardShadowColor" value="#000000"><span id="cardShadowColorValue">#000000</span></div></div>
+        </div>
+      </div>
+      <div class="subgroup-label">Content Padding (px)</div>
+      <div class="subgroup">
+        <div class="padding-grid">
+          <div><span>Top</span><input type="number" id="cardPaddingTop" value="16"></div>
+          <div><span>Right</span><input type="number" id="cardPaddingRight" value="16"></div>
+          <div><span>Bottom</span><input type="number" id="cardPaddingBottom" value="16"></div>
+          <div><span>Left</span><input type="number" id="cardPaddingLeft" value="16"></div>
+        </div>
+        <div class="helper-text" style="margin-top:6px;">Images always fill edge-to-edge.</div>
+      </div>
+      <div class="subgroup-label">Title</div>
+      <div class="subgroup">
+        <div class="color-size-row">
+          <div class="color-swatch-col"><span>Color</span><div class="color-input"><input type="color" id="cardTitleColor" value="#f1f5f9"><span id="cardTitleColorValue">#f1f5f9</span></div></div>
+          <div class="size-col"><span>Size (px)</span><input type="number" id="titleFontSize" value="18"></div>
+        </div>
+        <div class="font-note">Copy exact name from <a href="https://fonts.google.com" target="_blank">fonts.google.com</a></div>
+        <div class="typography-grid-2">
+          <input type="text" id="titleFontFamily" list="fontList" placeholder="Inter" value="Inter">
+          <select id="titleFontWeight">
+            <option value="400">400</option><option value="500">500</option>
+            <option value="600" selected>600</option><option value="700">700</option>
+          </select>
+        </div>
+        <div class="typo-col-labels-2"><span>Family</span><span>Weight</span></div>
+        <div class="line-height-row">
+          <label>Line Height</label>
+          <input type="number" id="titleLineHeight" value="1.3" min="1" max="3" step="0.05">
+        </div>
+      </div>
+      <div class="subgroup-label">Description</div>
+      <div class="subgroup">
+        <div class="color-size-row">
+          <div class="color-swatch-col"><span>Color</span><div class="color-input"><input type="color" id="descTextColor" value="#94a3b8"><span id="descTextColorValue">#94a3b8</span></div></div>
+          <div class="size-col"><span>Size (px)</span><input type="number" id="descFontSize" value="16"></div>
+        </div>
+        <div class="typography-grid-2">
+          <input type="text" id="descFontFamily" list="fontList" placeholder="Inter" value="Inter">
+          <select id="descFontWeight"><option value="400" selected>400</option><option value="500">500</option></select>
+        </div>
+        <div class="typo-col-labels-2"><span>Family</span><span>Weight</span></div>
+        <div class="line-height-row">
+          <label>Line Height</label>
+          <input type="number" id="descLineHeight" value="1.5" min="1.5" max="3" step="0.05">
+          <span class="qa-badge">min 1.5 QA</span>
+        </div>
+      </div>
+      <div class="subgroup-label">Price</div>
+      <div class="subgroup">
+        <div class="color-size-row">
+          <div class="color-swatch-col"><span>Color</span><div class="color-input"><input type="color" id="priceTextColor" value="#3b82f6"><span id="priceTextColorValue">#3b82f6</span></div></div>
+          <div class="size-col"><span>Size (px)</span><input type="number" id="priceFontSize" value="16"></div>
+        </div>
+        <div class="typography-grid-2">
+          <input type="text" id="priceFontFamily" list="fontList" placeholder="Inter" value="Inter">
+          <select id="priceFontWeight">
+            <option value="400">400</option><option value="500">500</option>
+            <option value="600">600</option><option value="700" selected>700</option>
+          </select>
+        </div>
+        <div class="typo-col-labels-2"><span>Family</span><span>Weight</span></div>
+        <div class="line-height-row">
+          <label>Line Height</label>
+          <input type="number" id="priceLineHeight" value="1.4" min="1" max="3" step="0.05">
+        </div>
+        <div class="subgroup-label" style="margin-top:12px;">Position</div>
+        <div class="radio-group" style="flex-wrap:nowrap;">
+          <label><input type="radio" name="pricePosition" value="below" checked> Below</label>
+          <label><input type="radio" name="pricePosition" value="above"> Above</label>
+          <label><input type="radio" name="pricePosition" value="left"> Left</label>
+          <label><input type="radio" name="pricePosition" value="right"> Right</label>
+        </div>
+        <div id="priceLeaderWrapper" style="display:none;margin-top:10px;">
+          <div class="subgroup-label">Leader (Left/Right only)</div>
+          <div class="radio-group" style="flex-wrap:nowrap;margin-bottom:8px;">
+            <label><input type="radio" name="priceLeaderStyle" value="none"> None</label>
+            <label><input type="radio" name="priceLeaderStyle" value="dots" checked> Dots</label>
+            <label><input type="radio" name="priceLeaderStyle" value="dashes"> Dashes</label>
+          </div>
+          <div class="color-row-item" style="max-width:120px;">
+            <span>Leader Color</span>
+            <div class="color-input"><input type="color" id="priceLeaderColor" value="#cbd5e1"><span id="priceLeaderColorValue">#cbd5e1</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ⑥ CATEGORY HEADERS -->
+  <details class="panel-section">
+    <summary><span class="section-title">🗂️ Category Headers</span></summary>
+    <div>
+      <div id="headerOffNote" class="helper-text" style="margin-bottom:8px;">Enable "Category Headers" in Navigation to unlock these settings.</div>
+      <div id="headerControlsWrapper">
+        <div class="subgroup-label">Alignment</div>
+        <div class="subgroup">
+          <div class="radio-group" style="flex-wrap:nowrap;">
+            <label><input type="radio" name="headerAlign" value="left" checked> Left</label>
+            <label><input type="radio" name="headerAlign" value="center"> Center</label>
+            <label><input type="radio" name="headerAlign" value="right"> Right</label>
+          </div>
+        </div>
+        <div class="subgroup-label">Divider</div>
+        <div class="subgroup">
+          <div class="color-size-row">
+            <div class="color-swatch-col"><span>Color</span><div class="color-input"><input type="color" id="headerDividerColor" value="#2a2e35"><span id="headerDividerColorValue">#2a2e35</span></div></div>
+            <div class="size-col"><span>Thickness (px)</span><input type="number" id="headerDividerThickness" value="2" min="0" max="10"></div>
+          </div>
+        </div>
+        <div class="subgroup-label">Color & Typography</div>
+        <div class="subgroup">
+          <div class="color-row" style="margin-bottom:10px;">
+            <div class="color-row-item"><span>Text Color</span><div class="color-input"><input type="color" id="headerNameColor" value="#f1f5f9"><span id="headerNameColorValue">#f1f5f9</span></div></div>
+          </div>
+          <div class="font-note">Copy exact name from <a href="https://fonts.google.com" target="_blank">fonts.google.com</a></div>
+          <div class="typography-grid">
+            <input type="text" id="headerFontFamily" list="fontList" placeholder="Inter" value="Inter">
+            <input type="number" id="headerFontSize" value="22" min="12">
+            <select id="headerFontWeight">
+              <option value="400">400</option><option value="500">500</option>
+              <option value="600">600</option><option value="700" selected>700</option><option value="800">800</option>
+            </select>
+          </div>
+          <div class="typo-col-labels"><span>Family</span><span>Size</span><span>Weight</span></div>
+          <div class="line-height-row" style="margin-top:10px;">
+            <label>Line Height</label>
+            <input type="number" id="headerLineHeight" value="1.2" min="1" max="3" step="0.05">
+          </div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <datalist id="fontList">
+    <option>Inter</option><option>Roboto</option><option>Open Sans</option><option>Lato</option>
+    <option>Poppins</option><option>Montserrat</option><option>Nunito</option><option>Playfair Display</option>
+    <option>Merriweather</option><option>Raleway</option><option>Oswald</option><option>Source Sans Pro</option>
+    <option>Ubuntu</option><option>Roboto Condensed</option><option>Cabin</option><option>Dosis</option>
+    <option>Quicksand</option><option>Work Sans</option><option>Barlow</option><option>Fira Sans</option>
+    <option>Josefin Sans</option><option>Mulish</option><option>Manrope</option><option>Karla</option>
+    <option>Heebo</option><option>Comfortaa</option><option>DM Sans</option><option>Figtree</option>
+    <option>Plus Jakarta Sans</option><option>Space Grotesk</option><option>Sora</option>
+    <option>Lexend</option><option>Instrument Sans</option><option>Bricolage Grotesque</option>
+  </datalist>
+
+  <div class="action-buttons">
+    <button class="btn btn-primary" id="showCodeBtn">📋 Generate Embed Code</button>
+  </div>
+
+</div><!-- /controls-panel -->
+
+<div class="preview-panel">
+  <div class="preview-header">
+    <h2>Menu Preview</h2>
+  </div>
+  <div class="menu-preview" id="menuPreview" tabindex="0" aria-label="Menu preview">
+    <div class="status info">Enter a Location ID above to load your menu.</div>
+  </div>
+</div>
+</div><!-- /studio-container -->
+
+<!-- EMBED CODE MODAL -->
+<div id="codeModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Embed Code – Copy into Webflow</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" style="padding:16px;">
+      <div class="code-container">
+        <button class="copy-code-btn" id="modalCopyBtn">Copy</button>
+        <textarea id="embedCodeDisplay" readonly spellcheck="false" wrap="soft" onclick="this.select()"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT EMBED CODE MODAL -->
+<div id="importModal" class="modal-overlay">
+  <div class="modal-content modal-narrow">
+    <div class="modal-header">
+      <h3>📥 Import from Embed Code</h3>
+      <button class="modal-close" onclick="closeImportModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:#94a3b8;margin-bottom:12px;">Paste a previously generated embed code below. All styling settings will be restored.</p>
+      <textarea id="importCodeTextarea" rows="12" style="width:100%;padding:10px;background:#0a0c10;border:1px solid #2a2e35;border-radius:8px;color:#e2e8f0;font-family:monospace;font-size:11px;resize:vertical;box-sizing:border-box;" placeholder="Paste embed code here…"></textarea>
+      <div id="importError" class="import-error"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeImportModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="applyImportedConfig()">Apply Settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODIFIER MODAL -->
+<div id="modifierOverlay" class="modal-overlay" onclick="if(event.target===this)closeModifierModal()">
+  <div class="modal-content modal-narrow" id="modifierModal" role="dialog" aria-modal="true" aria-labelledby="modifierModalTitle" tabindex="-1">
+    <div class="modal-header">
+      <h3 id="modifierModalTitle">Item</h3>
+      <button class="modal-close" onclick="closeModifierModal()" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-body" id="modifierModalBody"></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   MENU STUDIO — Main Class
+═══════════════════════════════════════════ */
+const googleFontsList = [
+  "Inter","Roboto","Open Sans","Lato","Poppins","Montserrat","Nunito","Playfair Display",
+  "Merriweather","Raleway","Oswald","Source Sans Pro","Ubuntu","Roboto Condensed","Cabin",
+  "Dosis","Quicksand","Work Sans","Barlow","Fira Sans","Josefin Sans","Mulish","Manrope",
+  "Karla","Heebo","Comfortaa","DM Sans","Figtree","Plus Jakarta Sans","Space Grotesk",
+  "Sora","Lexend","Instrument Sans","Bricolage Grotesque"
+].sort();
+
+var SPOTON_API = 'https://o.spoton.com/api/v1/locations/';
+
+function spotonRawGroups(groups) {
+  return (groups || []).map(function (g) {
+    var max = g.maxSelections > 0 ? g.maxSelections : 99;
+    var min = g.minSelections || 0;
+    return {
+      name: g.title || g.name || 'Options',
+      active: true,
+      limits: { min: min, max: max, multi_select_max: max },
+      modifiers: (g.modifiers || []).map(function (m) {
+        var cents = (typeof m.price === 'number') ? m.price : ((m.price && m.price.amount) || 0);
+        return {
+          name: m.title || m.name || '',
+          active: true,
+          is_available: m.isAvailable !== false,
+          price: { amount: cents, pricing_kind: 'PRICING_KIND_FIXED' }
+        };
+      })
+    };
+  });
+}
+
+function spotonNormalizeGroups(groups) {
+  return (groups || [])
+    .filter(function (g) { return g && g.active !== false; })
+    .map(function (g) {
+      var limits = g.limits || {};
+      var caps = [limits.max, limits.multi_select_max].filter(function (v) { return v != null; });
+      var cap = caps.length ? Math.min.apply(null, caps) : null;
+      var options = (g.modifiers || g.options || [])
+        .filter(function (m) { return m && m.active !== false && m.is_available !== false; })
+        .map(function (m) {
+          var cents = (typeof m.price === 'object' && m.price) ? (Number(m.price.amount) || 0) : (Number(m.price) || 0);
+          return { name: m.name || '', price: cents / 100 };
+        });
+      return {
+        name: g.name || 'Options',
+        min_select: Number(limits.min != null ? limits.min : (g.min_select || 0)),
+        max_select: (cap != null && cap < 99) ? cap : null,
+        options: options
+      };
+    })
+    .filter(function (g) { return g.options.length; });
+}
+
+async function loadMenuJson(url) {
+  var r = await fetch(url);
+  if (!r.ok) throw new Error('JSON ' + r.status);
+  var j = await r.json();
+  var cats = (j.menu && j.menu.categories) || [];
+  var itemsByCategory = {}, categoryNames = {}, categoryDescs = {};
+  (j.items || []).forEach(function (it) {
+    if (it.active === false) return;
+    var cid = String((it.category_ids && it.category_ids[0]) || (it.category_references && it.category_references[0] && it.category_references[0].category_id) || '');
+    if (!cid) return;
+    var cents = (typeof it.price === 'object' && it.price) ? (Number(it.price.amount) || 0) : (Number(it.price) || 0);
+    (itemsByCategory[cid] = itemsByCategory[cid] || []).push({
+      id: String(it.id),
+      name: String(it.name || '').trim(),
+      description: it.description || '',
+      price: cents / 100,
+      imageUrl: it.image_url || it.thumbnail_url || '',
+      modifier_groups: spotonNormalizeGroups(it.modifier_groups || [])
+    });
+  });
+  cats.forEach(function (c) {
+    var cid = String(c.id);
+    if (!itemsByCategory[cid]) return;
+    categoryNames[cid] = String(c.name || '').trim();
+    if (c.description) categoryDescs[cid] = String(c.description).trim();
+  });
+  Object.keys(itemsByCategory).forEach(function (cid) { if (!categoryNames[cid]) categoryNames[cid] = 'Category ' + cid; });
+  return { menuId: 'json', categoryNames: categoryNames, categoryDescs: categoryDescs, itemsByCategory: itemsByCategory };
+}
+
+async function spotonFetchMenu(locationId) {
+  var api = SPOTON_API + encodeURIComponent(locationId);
+  var mr = await fetch(api + '/menus');
+  if (!mr.ok) throw new Error('menus ' + mr.status);
+  var menus = (await mr.json()).menus || [];
+  var preferred = menus.filter(function (m) { return /default|pickup|online/i.test(m.name || ''); });
+  var order = preferred.concat(menus.filter(function (m) { return preferred.indexOf(m) === -1; }));
+  if (!order.length) throw new Error('No menus returned for this location');
+  var ids = order.map(function (m) { return m.id; });
+  if (ids.indexOf('default') === -1) ids.push('default');
+  var menu = null, base = '', data = null, lastErr = '';
+  var dtq = '?datetime=' + encodeURIComponent(new Date().toISOString());
+  for (var mi = 0; mi < ids.length && !data; mi++) {
+    var candidate = api + '/menus/' + ids[mi];
+    var sr = await fetch(candidate + '/summary' + dtq);
+    if (!sr.ok) { lastErr = ids[mi] + ' summary ' + sr.status; continue; }
+    var d = await sr.json();
+    var hasItems = (d.menuGroups || []).some(function (g) { return (g.menuItems || []).length > 0; });
+    if (hasItems) { menu = { id: ids[mi] }; base = candidate; data = d; }
+    else { lastErr = ids[mi] + ' has no items'; }
+  }
+  if (!data) throw new Error('No menu with items (' + lastErr + ')');
+
+  var pairs = [];
+  (data.menuGroups || []).forEach(function (g) {
+    (g.menuItems || []).forEach(function (it) { pairs.push({ g: g, it: it }); });
+  });
+  var details = {};
+  for (var n = 0; n < pairs.length; n += 6) {
+    await Promise.all(pairs.slice(n, n + 6).map(function (p) {
+      return fetch(base + '/menu-groups/' + p.g.id + '/items/' + p.it.id + dtq)
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) { if (d) details[p.it.id] = d; })
+        .catch(function () {});
+    }));
+  }
+
+  var categoryNames = {}, categoryDescs = {}, itemsByCategory = {};
+  (data.menuGroups || []).forEach(function (g) {
+    var cid = String(g.id);
+    var list = [];
+    (g.menuItems || []).forEach(function (it) {
+      var d = details[it.id] || {};
+      var priceSrc = (d.price != null) ? d.price : it.price;
+      var cents = (typeof priceSrc === 'number') ? priceSrc : ((priceSrc && priceSrc.amount) || 0);
+      list.push({
+        id: String(it.id),
+        name: String(d.title || it.title || it.name || '').trim(),
+        description: d.description || it.description || '',
+        price: cents / 100,
+        imageUrl: d.imageUrl || it.imageUrl || '',
+        modifier_groups: spotonNormalizeGroups(spotonRawGroups(d.modifierGroups))
+      });
+    });
+    if (list.length) {
+      categoryNames[cid] = String(g.title || g.name || '').trim();
+      if (g.description) categoryDescs[cid] = String(g.description).trim();
+      itemsByCategory[cid] = list;
+    }
+  });
+  return { menuId: menu.id, categoryNames: categoryNames, categoryDescs: categoryDescs, itemsByCategory: itemsByCategory };
+}
+
+class MenuStudio {
+  constructor() {
+    this.categoryNames = {};
+    this.categoryDescriptions = {};
+    this.itemsByCategory = {};
+    this.excludedCategories = [];
+    this.isLoading = false;
+    this.fontLinks = {};
+    this._activeCid = null;
+    this.init();
+  }
+
+  /* ── INIT ── */
+  init() {
+    // Color hex display
+    const colorIds = [
+      'defaultTabColor','defaultTabTextColor','activeTabColor','activeTabTextColor',
+      'cardBgColor','cardTitleColor','descTextColor','priceTextColor',
+      'cardBorderColor','tabBorderColor','headerDividerColor','headerNameColor',
+      'tabShadowColor','cardShadowColor','priceLeaderColor','dropdownBgColor'
+    ];
+    colorIds.forEach(id => {
+      const el = document.getElementById(id);
+      const span = document.getElementById(`${id}Value`);
+      if (el && span) el.addEventListener('input', () => { span.textContent = el.value; });
+    });
+
+    // Buttons
+    document.getElementById('refreshBtn').addEventListener('click', () => this.loadMenu(true));
+    document.getElementById('showCodeBtn').addEventListener('click', () => this.showEmbedCode());
+    document.getElementById('importConfigBtn').addEventListener('click', () => openImportModal());
+
+    // Merchant ID auto-load
+    const midEl = document.getElementById('merchantId');
+    if (midEl) {
+      midEl.addEventListener('input', () => {
+        clearTimeout(this._midTimeout);
+        this._midTimeout = setTimeout(() => this.loadMenu(false), 800);
+      });
+    }
+
+    // descLineHeight clamp
+    const lhEl = document.getElementById('descLineHeight');
+    if (lhEl) lhEl.addEventListener('change', () => { if (parseFloat(lhEl.value) < 1.5) lhEl.value = 1.5; });
+
+    // showCategoryHeaders → toggle header controls
+    const headersToggle = document.getElementById('showCategoryHeaders');
+    const headerWrapper = document.getElementById('headerControlsWrapper');
+    const headerOffNote = document.getElementById('headerOffNote');
+    const syncHeaderUI = () => {
+      const on = headersToggle?.checked;
+      if (headerWrapper) headerWrapper.style.display = on ? '' : 'none';
+      if (headerOffNote) headerOffNote.style.display = on ? 'none' : '';
+    };
+    syncHeaderUI();
+    headersToggle?.addEventListener('change', () => { syncHeaderUI(); this.autoUpdate(); });
+
+    // Auto-update fields
+    const autoFields = [
+      'defaultTabColor','defaultTabTextColor','activeTabColor','activeTabTextColor',
+      'cardBgColor','cardTitleColor','descTextColor','priceTextColor',
+      'cardBorderColor','cardBorderWidth','tabBorderColor','tabBorderWidth',
+      'showPrices','hideTabsMobile','showCategorySearch','showCategoryDropdown','showImages','showTabs','showModifiers',
+      'cardPaddingTop','cardPaddingRight','cardPaddingBottom','cardPaddingLeft',
+      'cardRadiusTL','cardRadiusTR','cardRadiusBR','cardRadiusBL',
+      'tabRadiusTL','tabRadiusTR','tabRadiusBR','tabRadiusBL',
+      'tabFontFamily','tabFontSize','tabFontWeight',
+      'titleFontFamily','titleFontSize','titleFontWeight','titleLineHeight',
+      'descFontFamily','descFontSize','descFontWeight','descLineHeight',
+      'priceFontFamily','priceFontSize','priceFontWeight','priceLineHeight',
+      'headerFontFamily','headerFontSize','headerFontWeight','headerLineHeight',
+      'headerDividerColor','headerDividerThickness','headerNameColor',
+      'imageHeight','imageWidthSide','imageAlignH','imageAlignV',
+      'cardColumns','cardGap','scrollingListMode','stickyNavOffset',
+      'cardBorderTop','cardBorderRight','cardBorderBottom','cardBorderLeft',
+      'tabBorderTop','tabBorderRight','tabBorderBottom','tabBorderLeft',
+      'defaultTabColorTransparent','activeTabColorTransparent','cardBgColorTransparent',
+      'tabShadowEnabled','tabShadowX','tabShadowY','tabShadowBlur','tabShadowSpread','tabShadowColor',
+      'cardShadowEnabled','cardShadowX','cardShadowY','cardShadowBlur','cardShadowSpread','cardShadowColor',
+      'priceLeaderColor','dropdownBgColor',
+    ];
+    ['defaultTabColorTransparent','activeTabColorTransparent','cardBgColorTransparent'].forEach(id => {
+      document.getElementById(id)?.addEventListener('change', () => this._syncNoBgUI());
+    });
+    this._syncNoBgUI();
+    autoFields.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', () => this.autoUpdate());
+      if (el.tagName === 'SELECT' || el.type === 'checkbox') el.addEventListener('change', () => this.autoUpdate());
+    });
+    document.querySelectorAll('input[name="tabsPosition"],input[name="tabAlign"],input[name="headerAlign"],input[name="categorySort"],input[name="pricePosition"],input[name="priceLeaderStyle"],input[name="cardImagePosition"],input[name="cardTextAlign"]').forEach(r => {
+      r.addEventListener('change', () => this.autoUpdate());
+    });
+
+    // Price position → toggle leader controls visibility
+    const syncPriceLeaderUI = () => {
+      const pos = this.radio('pricePosition') || 'below';
+      const wrapper = document.getElementById('priceLeaderWrapper');
+      if (wrapper) wrapper.style.display = (pos === 'left' || pos === 'right') ? '' : 'none';
+    };
+    syncPriceLeaderUI();
+    document.querySelectorAll('input[name="pricePosition"]').forEach(r => r.addEventListener('change', syncPriceLeaderUI));
+
+    // Card image position → toggle image size fields (columns now work with all positions)
+    const syncImagePositionUI = () => {
+      const pos = this.radio('cardImagePosition') || 'top';
+      const isSide = pos === 'left' || pos === 'right';
+      const heightGroup = document.getElementById('imageHeightGroup');
+      const widthGroup = document.getElementById('imageWidthGroup');
+      if (heightGroup) heightGroup.style.display = isSide ? 'none' : '';
+      if (widthGroup) widthGroup.style.display = isSide ? '' : 'none';
+    };
+    syncImagePositionUI();
+    document.querySelectorAll('input[name="cardImagePosition"]').forEach(r => r.addEventListener('change', syncImagePositionUI));
+
+    // Search/Dropdown enabled → show the dedicated "Suggestions BG" field
+    const syncDropdownBgUI = () => {
+      const wrapper = document.getElementById('dropdownBgWrapper');
+      const needed = this.checked('showCategorySearch') || this.checked('showCategoryDropdown');
+      if (wrapper) wrapper.style.display = needed ? '' : 'none';
+    };
+    syncDropdownBgUI();
+    ['showCategorySearch', 'showCategoryDropdown'].forEach(id => {
+      document.getElementById(id)?.addEventListener('change', syncDropdownBgUI);
+    });
+
+    // Scrolling List enabled → show the sticky-nav offset field
+    const syncStickyOffsetUI = () => {
+      const wrapper = document.getElementById('stickyNavOffsetGroup');
+      if (wrapper) wrapper.style.display = this.checked('scrollingListMode') ? '' : 'none';
+    };
+    syncStickyOffsetUI();
+    document.getElementById('scrollingListMode')?.addEventListener('change', syncStickyOffsetUI);
+
+    // Close the custom category dropdown on outside click. Registered once here (not per
+    // render) since #catDropdown is recreated on every renderMenu() call.
+    document.addEventListener('click', e => {
+      const dd = document.getElementById('catDropdown');
+      if (dd && dd.classList.contains('open') && !dd.contains(e.target)) {
+        dd.classList.remove('open');
+        document.getElementById('catSelectBtn')?.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  val(id) { return document.getElementById(id)?.value || ''; }
+  num(id) { return parseFloat(this.val(id)) || 0; }
+  checked(id) { return document.getElementById(id)?.checked || false; }
+  radio(name) { return document.querySelector(`input[name="${name}"]:checked`)?.value || ''; }
+
+  /* ── LOAD MENU ── */
+  async loadMenu(forceRefresh = false) {
+    if (this.isLoading && !forceRefresh) return;
+    this.isLoading = true;
+    const mid = this.val('merchantId').trim();
+    if (!mid) { this.isLoading = false; return; }
+
+    this.showStatus('Loading menu…', 'info');
+    const btn = document.getElementById('refreshBtn');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
+
+    try {
+      await this.fetchMenu(mid);
+      if (Object.keys(this.itemsByCategory).length) {
+        this.renderMenu();
+        this.buildExcludeWidget();
+        this.showStatus('Menu loaded!', 'success');
+        this._showDebugPanel();
+      } else {
+        this.showStatus('No menu items found for this Location ID.', 'error');
+      }
+    } catch(e) {
+      console.error('[MenuStudio] loadMenu error:', e);
+      const msg = e.message?.includes('403') || e.message?.includes('All proxies')
+        ? 'The SpotOn API blocked this request (CORS). The embed code will work on the live merchant site.'
+        : `Load failed: ${e.message}`;
+      this.showStatus(msg, 'error');
+    } finally {
+      this.isLoading = false;
+      if (btn) { btn.disabled = false; btn.textContent = '↻'; }
+    }
+  }
+
+  async fetchMenu(mid) {
+    let m;
+    try { m = await spotonFetchMenu(mid); }
+    catch (err) {
+      const url = document.getElementById('menuJsonUrl')?.value.trim();
+      const useFallback = document.getElementById('useJsonFallback')?.checked;
+      if (!useFallback || (!window.localMenuText && !url)) throw err;
+      // A chosen file takes precedence; otherwise use the saved URL.
+      const src = window.localMenuText
+        ? URL.createObjectURL(new Blob([window.localMenuText], { type: 'application/json' }))
+        : url;
+      m = await loadMenuJson(src);
+      this.showStatus('Live menu failed (' + err.message + '). Using the ' + (window.localMenuText ? 'chosen file' : 'saved JSON') + '.', 'info');
+    }
+    Object.values(m.itemsByCategory).forEach(list => list.forEach(it => { it.modifierGroups = it.modifier_groups; }));
+    this.categoryNames = m.categoryNames;
+    this.itemsByCategory = m.itemsByCategory;
+    this.categoryDescriptions = m.categoryDescs;
+  }
+
+  /* ── EXCLUDE WIDGET ── */
+  buildExcludeWidget() {
+    const container = document.getElementById('excludeWidget');
+    if (!container) return;
+    const categories = Object.values(this.categoryNames);
+    const selectedSet = new Set(this.excludedCategories);
+    container.innerHTML = `
+      <div class="exclude-trigger" id="excludeTrigger"><span>Exclude categories</span><span>▼</span></div>
+      <div class="exclude-chips" id="excludeChips"></div>
+      <div class="exclude-dropdown" id="excludeDropdown">
+        ${categories.map(name => `
+          <label class="exclude-option">
+            <span>${this.escapeHtml(name)}</span>
+            <input type="checkbox" value="${this.escapeHtml(name)}" ${selectedSet.has(name) ? 'checked' : ''}>
+          </label>`).join('')}
+      </div>`;
+
+    const trigger = document.getElementById('excludeTrigger');
+    const dropdown = document.getElementById('excludeDropdown');
+    trigger.addEventListener('click', e => { e.stopPropagation(); dropdown.classList.toggle('show'); });
+    document.addEventListener('click', e => { if (!container.contains(e.target)) dropdown.classList.remove('show'); });
+
+    const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
+    const updateChips = () => {
+      this.excludedCategories = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+      const chips = document.getElementById('excludeChips');
+      chips.innerHTML = this.excludedCategories.map(name => `
+        <div class="exclude-chip"><span>${this.escapeHtml(name)}</span>
+          <span class="exclude-chip-remove" data-name="${this.escapeHtml(name)}">✕</span>
+        </div>`).join('');
+      chips.querySelectorAll('.exclude-chip-remove').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const cb = Array.from(checkboxes).find(cb => cb.value === btn.dataset.name);
+          if (cb) cb.checked = false;
+          updateChips(); this.autoUpdate();
+        });
+      });
+      this.autoUpdate();
+    };
+    checkboxes.forEach(cb => cb.addEventListener('change', updateChips));
+    updateChips();
+  }
+
+  /* ── AUTO UPDATE ── */
+  autoUpdate() {
+    clearTimeout(this._timeout);
+    this._timeout = setTimeout(() => {
+      if (Object.keys(this.itemsByCategory).length) this.renderMenu();
+    }, 120);
+  }
+
+  /* ── RENDER MENU ── */
+  renderMenu() {
+    const container = document.getElementById('menuPreview');
+    const cardPos = this.radio('cardImagePosition') || 'top';
+    const gridClass = `card-grid img-pos-${cardPos}`;
+    const tabsPos = this.radio('tabsPosition') || 'top';
+    const tabAlign = this.radio('tabAlign') || 'left';
+    const categorySort = this.radio('categorySort') || 'default';
+    const showSearch = this.checked('showCategorySearch');
+    const showDropdown = this.checked('showCategoryDropdown');
+    const showImages = this.checked('showImages');
+    const showTabs = this.checked('showTabs');
+    const showHeaders = this.checked('showCategoryHeaders');
+    const isScrollList = this.checked('scrollingListMode');
+    const isLR = tabsPos === 'left' || tabsPos === 'right';
+    const alignStyle = tabAlign === 'center' ? 'center' : tabAlign === 'right' ? 'flex-end' : 'flex-start';
+
+    let activeCategories = Object.keys(this.itemsByCategory)
+      .filter(cid => !this.excludedCategories.includes(this.categoryNames[cid]));
+    if (categorySort === 'az') activeCategories.sort((a,b) => this.categoryNames[a].localeCompare(this.categoryNames[b]));
+    else if (categorySort === 'za') activeCategories.sort((a,b) => this.categoryNames[b].localeCompare(this.categoryNames[a]));
+
+    container.querySelector('.status')?.remove();
+    this._scrollSpyObserver?.disconnect();
+    this._scrollSections = {};
+
+    // ── SHELL: nav column (tabs/search/dropdown) + content column. Shared by both modes,
+    // so scroll mode now respects Tabs Position and gets full nav like tabbed mode. ──
+    let html = `<div class="menu-layout tabs-${tabsPos}${isScrollList ? ' is-scroll-list' : ''}${this.checked('hideTabsMobile') ? ' hide-tabs-mobile' : ''}">`;
+    if (showTabs || showSearch || showDropdown) {
+      html += `<div id="stickyNavSentinel" style="position:absolute;top:0;left:0;width:1px;height:1px;pointer-events:none;opacity:0;"></div><div class="categories-column">`;
+      if (showSearch || showDropdown) {
+        html += `<div class="category-toolbar" id="catToolbar" style="${!isLR ? `justify-content:${alignStyle};` : ''}">`;
+        if (showSearch) html += `<div class="search-wrapper"><input type="text" class="category-search" id="catSearch" placeholder="Search categories…" autocomplete="off"><div class="search-suggestions" id="searchSuggestions"></div></div>`;
+        if (showDropdown) html += `<div class="category-dropdown" id="catDropdown"><button type="button" class="category-select" id="catSelectBtn" aria-haspopup="listbox" aria-expanded="false"><span class="category-select-label" id="catSelectLabel">${this.escapeHtml(this.categoryNames[activeCategories[0]] || '')}</span><svg class="category-select-chevron" viewBox="0 0 20 20" width="14" height="14"><path d="M5 7l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="category-dropdown-list" id="catSelectList" role="listbox">${activeCategories.map(cid => `<div class="dropdown-option" role="option" data-cid="${cid}">${this.escapeHtml(this.categoryNames[cid])}</div>`).join('')}</div></div>`;
+        html += `</div>`;
+      }
+      if (showTabs) html += `<div class="categories-container" id="categoriesContainer" style="${!isLR ? `justify-content:${alignStyle};` : ''}"></div>`;
+      html += `</div>`;
+    }
+    html += isScrollList ? `<div class="menu-root" id="menuRoot"></div></div>` : `<div class="menu-root ${gridClass}" id="menuRoot"></div></div>`;
+    container.innerHTML = html;
+
+    // ── NAV: tab links ──
+    if (showTabs) {
+      const cc = document.getElementById('categoriesContainer');
+      activeCategories.forEach((cid, idx) => {
+        const a = document.createElement('a');
+        a.href = '#'; a.className = 'category-link' + (idx === 0 && !isScrollList ? ' active' : '');
+        a.textContent = this.categoryNames[cid]; a.dataset.categoryId = cid;
+        a.addEventListener('click', e => {
+          e.preventDefault();
+          this._activateCategory(cid, isScrollList, showImages, showHeaders);
+          this._setDropdownDisplay(cid);
+          const srch = document.getElementById('catSearch'); if (srch) srch.value = '';
+          this._closeSuggestions();
+        });
+        cc.appendChild(a);
+      });
+    }
+
+    // ── NAV: dropdown (custom — native <select>/<option> styling is unreliable cross-browser
+    // and can leak the option list's background into the closed control) ──
+    const dropdownEl = document.getElementById('catDropdown');
+    const selBtn = document.getElementById('catSelectBtn');
+    const selList = document.getElementById('catSelectList');
+    if (dropdownEl && selBtn && selList) {
+      // Give each option an ID for aria-activedescendant
+      selList.querySelectorAll('.dropdown-option').forEach((opt, i) => {
+        opt.id = 'dd-opt-' + i;
+      });
+      selBtn.setAttribute('aria-controls', 'catSelectList');
+
+      const ddOptions = () => [...selList.querySelectorAll('.dropdown-option')];
+      const ddHighlight = (opts, idx) => {
+        opts.forEach(o => o.classList.remove('highlighted'));
+        if (opts[idx]) { opts[idx].classList.add('highlighted'); opts[idx].scrollIntoView({block:'nearest'}); selBtn.setAttribute('aria-activedescendant', opts[idx].id); }
+      };
+      const ddOpen = () => { dropdownEl.classList.add('open'); selBtn.setAttribute('aria-expanded','true'); };
+      const ddClose = () => { dropdownEl.classList.remove('open'); selBtn.setAttribute('aria-expanded','false'); ddOptions().forEach(o => o.classList.remove('highlighted')); selBtn.removeAttribute('aria-activedescendant'); };
+
+      selBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        if (dropdownEl.classList.contains('open')) ddClose(); else ddOpen();
+      });
+
+      selBtn.addEventListener('keydown', e => {
+        const opts = ddOptions();
+        const currentIdx = opts.findIndex(o => o.classList.contains('highlighted'));
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (!dropdownEl.classList.contains('open')) ddOpen();
+          ddHighlight(opts, currentIdx < opts.length - 1 ? currentIdx + 1 : 0);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (!dropdownEl.classList.contains('open')) ddOpen();
+          ddHighlight(opts, currentIdx > 0 ? currentIdx - 1 : opts.length - 1);
+        } else if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          if (dropdownEl.classList.contains('open')) {
+            const current = opts[currentIdx];
+            if (current) current.click();
+          } else { ddOpen(); }
+        } else if (e.key === 'Escape') {
+          e.preventDefault(); ddClose(); selBtn.focus();
+        } else if (e.key === 'Home') {
+          e.preventDefault(); if (dropdownEl.classList.contains('open')) ddHighlight(opts, 0);
+        } else if (e.key === 'End') {
+          e.preventDefault(); if (dropdownEl.classList.contains('open')) ddHighlight(opts, opts.length - 1);
+        }
+      });
+
+      selList.querySelectorAll('.dropdown-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          const cid = opt.dataset.cid;
+          this._activateCategory(cid, isScrollList, showImages, showHeaders);
+          this._setDropdownDisplay(cid);
+          ddClose();
+        });
+      });
+      this._setDropdownDisplay(activeCategories[0]);
+    }
+
+    // ── NAV: search + suggestions ──
+    const searchEl = document.getElementById('catSearch');
+    const suggestionsEl = document.getElementById('searchSuggestions');
+    if (searchEl && suggestionsEl) {
+      const showSuggestions = term => {
+        const matches = term.length === 0 ? activeCategories : activeCategories.filter(cid => this.categoryNames[cid].toLowerCase().includes(term.toLowerCase()));
+        if (!matches.length) { suggestionsEl.innerHTML = '<div class="suggestion-empty">No categories found</div>'; suggestionsEl.classList.add('open'); return; }
+        suggestionsEl.innerHTML = matches.map(cid => {
+          const name = this.categoryNames[cid];
+          const hl = term.length ? name.replace(new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<mark>$1</mark>') : name;
+          return `<div class="suggestion-item" data-cid="${cid}">${hl}</div>`;
+        }).join('');
+        suggestionsEl.classList.add('open');
+        suggestionsEl.querySelectorAll('.suggestion-item').forEach(item => {
+          item.addEventListener('mousedown', e => {
+            e.preventDefault(); const cid = item.dataset.cid;
+            this._activateCategory(cid, isScrollList, showImages, showHeaders);
+            searchEl.value = this.categoryNames[cid];
+            this._setDropdownDisplay(cid);
+            this._closeSuggestions();
+          });
+        });
+      };
+      searchEl.addEventListener('focus', () => showSuggestions(searchEl.value));
+      searchEl.addEventListener('input', () => showSuggestions(searchEl.value));
+      searchEl.addEventListener('blur', () => setTimeout(() => this._closeSuggestions(), 150));
+      searchEl.addEventListener('keydown', e => {
+        const items = suggestionsEl.querySelectorAll('.suggestion-item');
+        const current = suggestionsEl.querySelector('.suggestion-item.highlighted');
+        if (e.key === 'ArrowDown') { e.preventDefault(); const next = current ? current.nextElementSibling : items[0]; if (next) { current?.classList.remove('highlighted'); next.classList.add('highlighted'); next.scrollIntoView({block:'nearest'}); } }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); const prev = current?.previousElementSibling; if (prev) { current.classList.remove('highlighted'); prev.classList.add('highlighted'); prev.scrollIntoView({block:'nearest'}); } }
+        else if (e.key === 'Enter') { e.preventDefault(); const target = current || items[0]; if (target) { const cid = target.dataset.cid; this._activateCategory(cid, isScrollList, showImages, showHeaders); searchEl.value = this.categoryNames[cid]; this._setDropdownDisplay(cid); this._closeSuggestions(); } }
+        else if (e.key === 'Escape') this._closeSuggestions();
+      });
+    }
+
+    // ── CONTENT ──
+    if (isScrollList) {
+      const root = document.getElementById('menuRoot');
+      activeCategories.forEach(cid => {
+        const section = document.createElement('div');
+        section.className = 'scroll-list-category';
+        section.dataset.cid = cid;
+        section.setAttribute('tabindex', '-1');
+        if (showHeaders) {
+          const desc = this.categoryDescriptions?.[cid] || '';
+          const header = document.createElement('div');
+          header.className = 'category-header';
+          header.innerHTML = `<h2 class="category-header-name" tabindex="-1">${this.escapeHtml(this.categoryNames[cid])}</h2>${desc ? `<p class="category-header-desc">${this.escapeHtml(desc)}</p>` : ''}`;
+          section.appendChild(header);
+        }
+        const grid = document.createElement('div');
+        grid.className = gridClass;
+        grid.dataset.cid = cid;
+        section.appendChild(grid);
+        root.appendChild(section);
+        this._renderCards(grid, cid, showImages);
+        this._scrollSections[cid] = section;
+      });
+      this.applyStyles();
+      requestAnimationFrame(() => this._syncMenuCols());
+      if (activeCategories[0]) this.setActiveCategory(activeCategories[0]);
+      this._setupScrollSpy(activeCategories);
+      requestAnimationFrame(() => this._syncStickyNavOffset(tabsPos));
+      this._setupStickyBgWatcher();
+    } else {
+      const firstCid = activeCategories[0];
+      if (firstCid) {
+        this._activeCid = firstCid;
+        this._displayTabCategory(firstCid, showImages, showHeaders);
+        if (showTabs) this.setActiveCategory(firstCid);
+      }
+      // Note: applyStyles() + _syncMenuCols() are called inside _displayTabCategory
+    }
+  }
+
+  /* Jumps to a category: scrolls to its section in Scrolling List mode, or swaps the
+     visible category in tabbed mode. Shared by tab clicks, dropdown, and search. */
+  _activateCategory(cid, isScroll, showImages, showHeaders) {
+    this._activeCid = cid;
+    this.setActiveCategory(cid);
+    if (isScroll) {
+      this._scrollSections?.[cid]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const heading = this._scrollSections?.[cid]?.querySelector('h2');
+      if (heading) requestAnimationFrame(() => heading.focus());
+    } else {
+      this._displayTabCategory(cid, showImages, showHeaders);
+    }
+  }
+
+  /* Tracks which category section is in view while scrolling (Scrolling List mode) and
+     keeps the active tab / dropdown value in sync, without re-rendering any content. */
+  _setupScrollSpy(activeCategories) {
+    const sections = activeCategories.map(cid => this._scrollSections[cid]).filter(Boolean);
+    if (!sections.length || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const cid = entry.target.dataset.cid;
+        this.setActiveCategory(cid);
+        this._setDropdownDisplay(cid);
+      });
+    }, { root: null, rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+    sections.forEach(s => observer.observe(s));
+    this._scrollSpyObserver = observer;
+  }
+
+  /* Updates the custom category dropdown's trigger label + highlighted option. */
+  _setDropdownDisplay(cid) {
+    const label = document.getElementById('catSelectLabel');
+    if (label) label.textContent = this.categoryNames[cid] || '';
+    document.getElementById('catSelectList')?.querySelectorAll('.dropdown-option').forEach(o => { o.classList.toggle('active', o.dataset.cid === cid); o.setAttribute('aria-selected', o.dataset.cid === cid ? 'true' : 'false'); });
+  }
+
+  /* Only a sticky-top nav can visually hide the top of a jumped-to section, so give sections
+     enough scroll-margin-top to clear it. Left/Right and non-sticky (bottom) nav don't need this.
+     Also applies the user-defined Sticky Nav Offset so our sticky nav sits below the host site's
+     own sticky header instead of overlapping it — and reserves that same space at the very top
+     of the widget, since at initial page load (before any scrolling) the nav sits at its natural
+     position, not yet "stuck", so without this the host's fixed header can cover it and the first
+     category's header/cards on load. */
+  _syncStickyNavOffset(tabsPos) {
+    const userOffset = this.num('stickyNavOffset') || 0;
+    const col = document.querySelector('.categories-column');
+    if (col) col.style.top = userOffset + 'px';
+    const layout = document.querySelector('.menu-layout');
+    if (layout) layout.style.paddingTop = userOffset + 'px';
+    const offset = (tabsPos === 'top' && col) ? col.offsetHeight + userOffset + 12 : 20 + userOffset;
+    document.querySelectorAll('.scroll-list-category').forEach(s => { s.style.scrollMarginTop = offset + 'px'; });
+  }
+
+  /* When the sticky nav has actually scrolled away from its natural position (i.e. it's now
+     "stuck"), the search box and dropdown trigger need a real background even if No BG is set —
+     otherwise they'd be see-through against whatever content has scrolled underneath them. At
+     the natural (non-stuck) position they keep respecting the configured background as normal. */
+  _setupStickyBgWatcher() {
+    this._stickyBgObserver?.disconnect();
+    const col = document.querySelector('.categories-column');
+    const sentinel = document.getElementById('stickyNavSentinel');
+    if (!col || !sentinel || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => col.classList.toggle('is-stuck', !entry.isIntersecting));
+    }, { root: null, threshold: 0 });
+    observer.observe(sentinel);
+    this._stickyBgObserver = observer;
+  }
+
+  _closeSuggestions() { document.getElementById('searchSuggestions')?.classList.remove('open'); }
+
+  setActiveCategory(cid) {
+    document.querySelectorAll('.category-link').forEach(l => l.classList.toggle('active', l.dataset.categoryId === cid));
+  }
+
+  _displayTabCategory(cid, showImages, showHeaders) {
+    const root = document.getElementById('menuRoot');
+    if (!root) return;
+    const pos = this.radio('cardImagePosition') || 'top';
+    const gridClass = `card-grid img-pos-${pos}`;
+    root.className = 'menu-root ' + gridClass;
+    root.innerHTML = '';
+    root.setAttribute('aria-live', 'polite');
+    if (showHeaders) {
+      const desc = this.categoryDescriptions?.[cid] || '';
+      const header = document.createElement('div');
+      header.className = 'category-header';
+      header.innerHTML = `<h2 class="category-header-name" tabindex="-1">${this.escapeHtml(this.categoryNames[cid] || '')}</h2>${desc ? `<p class="category-header-desc">${this.escapeHtml(desc)}</p>` : ''}`;
+      root.appendChild(header);
+      root.style.display = 'block';
+      const grid = document.createElement('div');
+      grid.className = gridClass;
+      root.appendChild(grid);
+      this._renderCards(grid, cid, showImages);
+      // Focus the heading for screen reader announcement
+      const h2 = header.querySelector('h2');
+      if (h2) requestAnimationFrame(() => h2.focus());
+    } else {
+      root.style.display = '';
+      this._renderCards(root, cid, showImages);
+    }
+    this.applyStyles();
+    // Re-sync columns after DOM is updated (offsetWidth now reflects real size)
+    requestAnimationFrame(() => this._syncMenuCols());
+  }
+
+  _renderCards(container, categoryId, showImages) {
+    const items = this.itemsByCategory[categoryId] || [];
+    const showPrices = this.checked('showPrices');
+    const showModifiers = this.checked('showModifiers');
+
+    items.forEach(item => {
+      const card = document.createElement('div');
+      const rawMods = item.modifierGroups || item.modifier_groups || (Array.isArray(item.modifiers) ? item.modifiers : []);
+      const hasMods = showModifiers && rawMods.length > 0;
+      if (rawMods.length && !item.modifierGroups) item.modifierGroups = rawMods;
+      card.className = 'list-item' + (hasMods ? ' has-modifiers' : '');
+      if (hasMods) card.addEventListener('click', () => this.openModifierModal(item));
+
+      const hasImage = item.imageUrl && item.imageUrl !== '';
+      let thumbHtml = '';
+      if (showImages) {
+        thumbHtml = `<div class="item-thumbnail-wrapper">`;
+        const cleanName = (item.name || '').replace(/^#\d+\s*/, '');
+        if (hasImage) thumbHtml += `<img class="list-item-image" src="${item.imageUrl}" alt="${this.escapeHtml(cleanName)}" loading="lazy">`;
+        thumbHtml += `</div>`;
+      }
+
+      const priceNum = parseFloat(item.price);
+      const priceText = (!showPrices || isNaN(priceNum)) ? '' : (priceNum === 0 ? 'Market Price' : `$${priceNum.toFixed(2)}`);
+      const modsBadge = '';
+      const bodyHtml = this._buildItemBody(this.escapeHtml(item.name), item.description ? this.escapeHtml(item.description) : '', priceText);
+
+      card.innerHTML = `${thumbHtml}<div class="item-content">${bodyHtml}${modsBadge}</div>`;
+      container.appendChild(card);
+    });
+  }
+
+  /* Builds title/description/price markup honoring price position + leader style. Shared shape used by preview and embed. */
+  _buildItemBody(name, description, priceText) {
+    const pos = this.radio('pricePosition') || 'below';
+    const leaderStyle = this.radio('priceLeaderStyle') || 'dots';
+    const nameHtml = `<h3 class="list-item-name">${name}</h3>`;
+    const descHtml = description ? `<p class="list-item-description">${description}</p>` : '';
+    const priceHtml = priceText ? `<p class="list-item-price" aria-label="Price: ${priceText}">${priceText}</p>` : '';
+    if (!priceText) return `${nameHtml}${descHtml}`;
+    if (pos === 'above') return `${priceHtml}${nameHtml}${descHtml}`;
+    if (pos === 'left' || pos === 'right') {
+      const row = pos === 'left'
+        ? `<div class="price-row price-pos-left"><p class="list-item-price" aria-label="Price: ${priceText}">${priceText}</p><span class="price-leader leader-${leaderStyle}"></span><h3 class="list-item-name">${name}</h3></div>`
+        : `<div class="price-row price-pos-right"><h3 class="list-item-name">${name}</h3><span class="price-leader leader-${leaderStyle}"></span><p class="list-item-price" aria-label="Price: ${priceText}">${priceText}</p></div>`;
+      return `${row}${descHtml}`;
+    }
+    return `${nameHtml}${descHtml}${priceHtml}`;
+  }
+
+  /* ── MODIFIER MODAL ── */
+  /* Gives the preview's modifier modal the same look as the cards (and the embed modal). */
+  _applyModalTheme() {
+    const v = id => this.val(id) || '';
+    const n = id => parseFloat(this.val(id)) || 0;
+    const bg = this.checked('cardBgColorTransparent') ? 'transparent' : (v('cardBgColor') || '#111315');
+    const bc = v('cardBorderColor') || '#2a2e35';
+    const bw = n('cardBorderWidth') || 0;
+    const title = v('cardTitleColor') || '#f1f5f9';
+    const desc = v('descTextColor') || '#94a3b8';
+    const price = v('priceTextColor') || '#3b82f6';
+    const fam = id => `'${v(id) || 'Inter'}', sans-serif`;
+    const css = `
+#modifierModal{background:${bg} !important;border:${bw}px solid ${bc} !important;border-radius:${n('cardRadiusTL')}px ${n('cardRadiusTR')}px ${n('cardRadiusBR')}px ${n('cardRadiusBL')}px !important;color:${title};font-family:${fam('descFontFamily')};}
+#modifierModal .modal-header{border-bottom-color:${bc} !important;}
+#modifierModal .modal-header h3{color:${title};font-family:${fam('titleFontFamily')};font-size:${n('titleFontSize') || 18}px;font-weight:${v('titleFontWeight') || 600};}
+#modifierModal .modal-close{color:${price};}
+#modifierModal .modifier-group{border-bottom-color:${bc};}
+#modifierModal .modifier-group-name{color:${desc};font-family:${fam('descFontFamily')};}
+#modifierModal .modifier-group-limits{color:${price};font-family:${fam('descFontFamily')};}
+#modifierModal .modifier-sub-name{color:${title};font-family:${fam('titleFontFamily')};}
+#modifierModal .modifier-option{border-bottom-color:${bc};font-family:${fam('descFontFamily')};font-size:${n('descFontSize') || 14}px;font-weight:${v('descFontWeight') || 400};}
+#modifierModal .modifier-option-name{color:${desc};}
+#modifierModal .modifier-option-price,#modifierModal .modifier-option-price.has-price{color:${price};font-family:${fam('priceFontFamily')};font-weight:${v('priceFontWeight') || 700};}`;
+    let el = document.getElementById('modifierModalTheme');
+    if (!el) { el = document.createElement('style'); el.id = 'modifierModalTheme'; document.head.appendChild(el); }
+    el.textContent = css;
+  }
+
+  openModifierModal(item) {
+    const overlay = document.getElementById('modifierOverlay');
+    const title = document.getElementById('modifierModalTitle');
+    const body = document.getElementById('modifierModalBody');
+    if (!overlay) return;
+    this._applyModalTheme();
+    title.textContent = item.name;
+    const groups = item.modifier_groups || [];
+    body.innerHTML = groups.length
+      ? groups.map((group, gi) => `
+          <section class="modifier-group" aria-labelledby="modifier-group-${gi}">
+            <h4 class="modifier-group-name" id="modifier-group-${gi}">${this.escapeHtml(group.name)}</h4>
+            <p class="modifier-group-limits">${this._modLimits(group)}</p>
+            <ul class="modifier-options">
+            ${group.options.map(opt => `
+              <li class="modifier-option">
+                <span class="modifier-option-name">${this.escapeHtml(opt.name)}</span>
+                <span class="modifier-option-price${opt.price > 0 ? ' has-price' : ''}">${opt.price > 0 ? '+$' + opt.price.toFixed(2) : 'Included'}</span>
+              </li>`).join('')}
+            </ul>
+          </section>`).join('')
+      : '<p class="modifier-no-options">No customization options.</p>';
+    this._modalReturnFocus = document.activeElement;
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('modifierModal').focus();
+  }
+
+  _modLimits(g) {
+    const req = g.min_select > 0 ? 'Required' : 'Optional';
+    const rule = (g.max_select != null && g.min_select === g.max_select) ? `Select exactly ${g.min_select}`
+      : g.max_select != null ? `Select up to ${g.max_select}`
+      : g.min_select > 0 ? `Select at least ${g.min_select}` : '';
+    return rule ? `${req} · ${rule}` : req;
+  }
+
+  /* ── LOAD FONT ── */
+  loadFont(family) {
+    if (!family || this.fontLinks[family]) return;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:wght@400;500;600;700&display=swap`;
+    document.head.appendChild(link);
+    this.fontLinks[family] = true;
+  }
+
+  /* ── APPLY STYLES ── */
+  /* ── shared style helpers (used by applyStyles + generateEmbedCode) ── */
+  _borderCSS(prefix) {
+    const width = parseFloat(document.getElementById(`${prefix}BorderWidth`)?.value) || 0;
+    const color = document.getElementById(`${prefix}BorderColor`)?.value || 'transparent';
+    const side = s => (document.getElementById(`${prefix}Border${s}`)?.checked !== false) ? `${width}px` : '0px';
+    return `border-style:solid; border-color:${color}; border-width:${side('Top')} ${side('Right')} ${side('Bottom')} ${side('Left')};`;
+  }
+  _bgCSS(colorId) {
+    const transparent = document.getElementById(`${colorId}Transparent`)?.checked;
+    return transparent ? 'transparent' : (document.getElementById(colorId)?.value || 'transparent');
+  }
+  _shadowCSS(prefix) {
+    const enabled = document.getElementById(`${prefix}ShadowEnabled`)?.checked;
+    if (!enabled) return 'none';
+    const g = id => document.getElementById(`${prefix}${id}`)?.value || 0;
+    const color = document.getElementById(`${prefix}ShadowColor`)?.value || '#000000';
+    return `${g('ShadowX')}px ${g('ShadowY')}px ${g('ShadowBlur')}px ${g('ShadowSpread')}px ${color}`;
+  }
+  _syncNoBgUI() {
+    ['defaultTabColor', 'activeTabColor', 'cardBgColor'].forEach(id => {
+      const cb = document.getElementById(`${id}Transparent`);
+      const colorInput = document.getElementById(id)?.closest('.color-input');
+      // activeTabColor stays editable even when transparent — it still drives the active tab's border color
+      const keepEditable = id === 'activeTabColor';
+      if (cb && colorInput) colorInput.classList.toggle('is-disabled', cb.checked && !keepEditable);
+    });
+  }
+
+  applyStyles() {
+    const get = id => document.getElementById(id)?.value || '';
+    const n = id => parseFloat(get(id)) || 0;
+
+    const tabFont = get('tabFontFamily') || 'Inter';
+    const titleFont = get('titleFontFamily') || 'Inter';
+    const descFont = get('descFontFamily') || 'Inter';
+    const priceFont = get('priceFontFamily') || 'Inter';
+    const headerFont = get('headerFontFamily') || 'Inter';
+    [tabFont, titleFont, descFont, priceFont, headerFont].forEach(f => this.loadFont(f));
+
+    const descLH = Math.max(1.5, parseFloat(get('descLineHeight')) || 1.5);
+    const titleLH = parseFloat(get('titleLineHeight')) || 1.3;
+    const priceLH = parseFloat(get('priceLineHeight')) || 1.4;
+    const headerAlign = this.radio('headerAlign') || 'left';
+    const headerLH = parseFloat(get('headerLineHeight')) || 1.2;
+    const imgH = n('imageHeight') || 180;
+    const imgW = n('imageWidthSide') || 140;
+    const cardGap = n('cardGap') || 24;
+    const cardCols = Math.max(1, n('cardColumns') || 3);
+    const textAlign = this.radio('cardTextAlign') || 'left';
+    const alignHMap = { left: '0%', center: '50%', right: '100%' };
+    const alignVMap = { top: '0%', center: '50%', bottom: '100%' };
+    const objPos = `${alignHMap[get('imageAlignH')] || '50%'} ${alignVMap[get('imageAlignV')] || '50%'}`;
+
+    const css = `
+      .category-link {
+        background: ${this._bgCSS('defaultTabColor')};
+        color: ${get('defaultTabTextColor')};
+        ${this._borderCSS('tab')}
+        border-radius: ${n('tabRadiusTL')}px ${n('tabRadiusTR')}px ${n('tabRadiusBR')}px ${n('tabRadiusBL')}px;
+        box-shadow: ${this._shadowCSS('tab')};
+        font-family: '${tabFont}', sans-serif;
+        font-size: ${n('tabFontSize')}px;
+        font-weight: ${get('tabFontWeight')};
+        line-height: 1.5;
+      }
+      .category-link.active { background: ${this._bgCSS('activeTabColor')}; color: ${get('activeTabTextColor')}; border-color: ${get('activeTabColor')}; }
+      .list-item { background: ${this._bgCSS('cardBgColor')}; ${this._borderCSS('card')} border-radius: ${n('cardRadiusTL')}px ${n('cardRadiusTR')}px ${n('cardRadiusBR')}px ${n('cardRadiusBL')}px; box-shadow: ${this._shadowCSS('card')}; }
+      .item-thumbnail-wrapper { background: ${this._bgCSS('cardBgColor')}; }
+      .img-pos-top .item-thumbnail-wrapper { border-radius: ${n('cardRadiusTL')}px ${n('cardRadiusTR')}px 0 0; }
+      .img-pos-left .item-thumbnail-wrapper { border-radius: ${n('cardRadiusTL')}px 0 0 ${n('cardRadiusBL')}px; }
+      .img-pos-right .item-thumbnail-wrapper { border-radius: 0 ${n('cardRadiusTR')}px ${n('cardRadiusBR')}px 0; }
+      .item-content { padding: ${n('cardPaddingTop')}px ${n('cardPaddingRight')}px ${n('cardPaddingBottom')}px ${n('cardPaddingLeft')}px; text-align: ${textAlign}; }
+      .card-grid { --menu-cols: ${cardCols}; --card-gap: ${cardGap}px; }
+      .img-pos-left, .img-pos-right { --img-w: ${imgW}px; }
+      .img-pos-left .list-item { padding-left: calc(${imgW}px + ${n('cardPaddingLeft')}px) !important; padding-right: ${n('cardPaddingRight')}px !important; }
+      .img-pos-right .list-item { padding-right: calc(${imgW}px + ${n('cardPaddingRight')}px) !important; padding-left: ${n('cardPaddingLeft')}px !important; }
+      .img-pos-top { --img-h: ${imgH}px; }
+      .list-item-image { object-position: ${objPos}; }
+      .list-item-name { color: ${get('cardTitleColor')}; font-family: '${titleFont}', sans-serif; font-size: ${n('titleFontSize')}px; font-weight: ${get('titleFontWeight')}; line-height: ${titleLH}; }
+      .list-item-description { color: ${get('descTextColor')}; font-family: '${descFont}', sans-serif; font-size: ${n('descFontSize')}px; font-weight: ${get('descFontWeight')}; line-height: ${descLH}; }
+      .list-item-price { color: ${get('priceTextColor')}; font-size: ${n('priceFontSize')}px; font-family: '${priceFont}', sans-serif; font-weight: ${get('priceFontWeight') || '700'}; line-height: ${priceLH}; }
+      .price-leader { border-bottom-color: ${get('priceLeaderColor') || '#cbd5e1'}; }
+      .modifier-badge { color: ${get('activeTabColor')}; }
+      .category-header { border-bottom: ${n('headerDividerThickness')}px solid ${get('headerDividerColor')}; text-align: ${headerAlign}; margin-bottom: ${cardGap}px; }
+      .category-header-name { color: ${get('headerNameColor')}; font-family: '${headerFont}', sans-serif; font-size: ${n('headerFontSize') || 22}px; font-weight: ${get('headerFontWeight') || '700'}; line-height: ${headerLH}; }
+      .category-header-desc { color: ${get('descTextColor')}; font-family: '${descFont}', sans-serif; font-size: ${n('descFontSize')}px; }
+      .category-search, .category-select { background: ${this._bgCSS('defaultTabColor')}; color: ${get('defaultTabTextColor')}; ${this._borderCSS('tab')} border-radius: ${n('tabRadiusTL')}px ${n('tabRadiusTR')}px ${n('tabRadiusBR')}px ${n('tabRadiusBL')}px; font-family: '${descFont}', sans-serif; font-size: ${n('tabFontSize')}px; line-height: normal; padding: 9px 14px; }
+      .category-search:focus { border-color: ${get('activeTabColor')}; box-shadow: 0 0 0 2px ${get('activeTabColor')}33; outline: none; }
+      .categories-column.is-stuck .category-search, .categories-column.is-stuck .category-select { background: ${get('dropdownBgColor') || '#1a1d21'}; }
+      .search-suggestions { border-color: ${get('activeTabColor')}; background: ${get('dropdownBgColor') || '#1a1d21'}; }
+      .category-dropdown-list { border-color: ${get('activeTabColor')}; background: ${get('dropdownBgColor') || '#1a1d21'}; }
+      .dropdown-option { color: ${get('defaultTabTextColor')}; font-family: '${descFont}', sans-serif; font-size: ${n('descFontSize')}px; }
+      .dropdown-option:hover, .dropdown-option.active { background: ${get('activeTabColor')}22; color: ${get('activeTabTextColor')}; }
+      /* Note: the sticky nav backdrop intentionally has no forced background — it must respect
+         the Default Tab BG / No BG setting, same as the tabs and search box it contains. */
+      .suggestion-item { color: ${get('defaultTabTextColor')}; font-family: '${descFont}', sans-serif; font-size: ${n('descFontSize')}px; }
+      .suggestion-item:hover, .suggestion-item.highlighted { background: ${get('activeTabColor')}22; color: ${get('activeTabTextColor')}; }
+      .suggestion-item mark { color: ${get('activeTabColor')}; }
+    `;
+    let styleEl = document.getElementById('dynamic-menu-styles');
+    if (!styleEl) { styleEl = document.createElement('style'); styleEl.id = 'dynamic-menu-styles'; document.head.appendChild(styleEl); }
+    styleEl.textContent = css;
+
+  }
+
+  _syncMenuCols() {
+    const pos = this.radio('cardImagePosition') || 'top';
+    const userCols = Math.max(1, this.num('cardColumns') || 3);
+    const gap = this.num('cardGap') || 24;
+    // Side-image cards need extra width for the fixed-width image plus readable text next to it
+    const minCardW = (pos === 'left' || pos === 'right') ? Math.max(280, (this.num('imageWidthSide') || 140) + 160) : 260;
+
+    // Strategy: measure the preview panel and subtract nav column width manually.
+    // Do NOT measure the grid itself — on LR layouts the grid is a flex child
+    // whose offsetWidth hasn't resolved yet even after one rAF.
+    const preview = document.getElementById('menuPreview');
+    const previewW = preview?.offsetWidth || 0;
+    if (!previewW) { requestAnimationFrame(() => this._syncMenuCols()); return; }
+
+    // Subtract nav column width if tabs/search/dropdown are on left or right
+    const tabsPos = this.radio('tabsPosition') || 'top';
+    const isLR = tabsPos === 'left' || tabsPos === 'right';
+    let navW = 0;
+    if (isLR) {
+      const navCol = preview.querySelector('.categories-column');
+      navW = navCol ? navCol.offsetWidth : 200;
+    }
+
+    // Available width = preview - nav - preview padding (48px = 24px each side)
+    const availableW = previewW - navW - 48;
+    const maxFit = Math.max(1, Math.floor((availableW + gap) / (minCardW + gap)));
+    const cols = Math.min(userCols, maxFit);
+
+    const grids = preview.querySelectorAll('.card-grid');
+    grids.forEach(el => el.style.setProperty('--menu-cols', cols));
+    this._lastCols = cols;
+  }
+
+  /* ── STATUS ── */
+  showStatus(msg, type) {
+    const container = document.getElementById('menuPreview');
+    container.querySelector('.status')?.remove();
+    const div = document.createElement('div');
+    div.className = `status ${type}`; div.textContent = msg;
+    container.insertAdjacentElement('afterbegin', div);
+    if (type === 'success') setTimeout(() => div.remove(), 3000);
+  }
+
+  /* ── DEBUG PANEL ── */
+  _showDebugPanel() {
+    document.getElementById('sp-debug-panel')?.remove();
+    const firstItems = Object.values(this.itemsByCategory)[0] || [];
+    if (!firstItems.length) return;
+    const sample = firstItems[0];
+    const allKeys = Object.keys(sample);
+    const modKeys = allKeys.filter(k => /mod|group|option|variant|choice|custom/i.test(k));
+    const panel = document.createElement('div');
+    panel.id = 'sp-debug-panel';
+    panel.style.cssText = 'background:#0c1929;border:1px solid #1e3a5f;border-radius:10px;padding:10px 14px;margin-top:16px;font-family:monospace;font-size:11px;';
+    panel.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="color:#60a5fa;font-weight:700;">🔍 API Item Structure</span>
+        <button onclick="document.getElementById('sp-debug-panel').remove()" style="background:none;border:none;color:#64748b;cursor:pointer;font-size:16px;">×</button>
+      </div>
+      <div style="color:#94a3b8;">Keys: <span style="color:#86efac">${allKeys.join(', ')}</span></div>
+      <div style="color:#94a3b8;margin-top:4px;">Modifier keys: <span style="${modKeys.length ? 'color:#fbbf24' : 'color:#ef4444'}">${modKeys.length ? modKeys.join(', ') : 'NONE'}</span></div>
+      <details style="margin-top:6px;"><summary style="color:#475569;cursor:pointer;">Full JSON</summary>
+        <pre style="color:#94a3b8;margin-top:4px;overflow:auto;max-height:180px;">${this.escapeHtml(JSON.stringify(sample, null, 2))}</pre>
+      </details>`;
+    document.getElementById('menuPreview').appendChild(panel);
+  }
+
+  escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ── GENERATE EMBED CODE ── */
+  showEmbedCode() {
+    const get = id => document.getElementById(id)?.value || '';
+    const n = id => parseFloat(get(id)) || 0;
+    const chk = id => document.getElementById(id)?.checked || false;
+
+    const tabFont = get('tabFontFamily') || 'Inter';
+    const titleFont = get('titleFontFamily') || 'Inter';
+    const descFont = get('descFontFamily') || 'Inter';
+    const priceFont = get('priceFontFamily') || 'Inter';
+
+    const tabsPos = this.radio('tabsPosition') || 'top';
+    const tabAlign = this.radio('tabAlign') || 'left';
+    const categorySort = this.radio('categorySort') || 'default';
+    const headerAlign = this.radio('headerAlign') || 'left';
+    const cardImagePosition = this.radio('cardImagePosition') || 'top';
+    const cardTextAlign = this.radio('cardTextAlign') || 'left';
+    const alignHMap = { left: '0%', center: '50%', right: '100%' };
+    const alignVMap = { top: '0%', center: '50%', bottom: '100%' };
+    const cardImageAlignH = alignHMap[get('imageAlignH')] || '50%';
+    const cardImageAlignV = alignVMap[get('imageAlignV')] || '50%';
+    const descLH = Math.max(1.5, parseFloat(get('descLineHeight')) || 1.5);
+    const titleLH = parseFloat(get('titleLineHeight')) || 1.3;
+    const priceLH = parseFloat(get('priceLineHeight')) || 1.4;
+    const headerLH = parseFloat(get('headerLineHeight')) || 1.2;
+    const imgH = n('imageHeight') || 180;
+    const imgW = n('imageWidthSide') || 140;
+    const cardGap = n('cardGap') || 24;
+    const cardCols = Math.max(1, n('cardColumns') || 3);
+
+    const fontFamilies = [...new Set([tabFont, titleFont, descFont, priceFont].filter(Boolean))];
+    const fontLinks = fontFamilies.map(f => `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=${encodeURIComponent(f)}:wght@400;500;600;700&display=swap">`).join('\n');
+
+    // Serialise all settings into a config object for import
+    const config = {
+      merchantId: get('merchantId'),
+      businessName: get('businessName'),
+      menuJsonUrl: get('menuJsonUrl'),
+      useJsonFallback: chk('useJsonFallback'),
+      cardImagePosition, cardColumns: cardCols, cardGap, imageWidthSide: imgW,
+      imageAlignH: get('imageAlignH') || 'center', imageAlignV: get('imageAlignV') || 'center',
+      cardTextAlign,
+      scrollingListMode: chk('scrollingListMode'),
+      stickyNavOffset: n('stickyNavOffset') || 0,
+      tabsPosition: tabsPos,
+      tabAlign,
+      categorySort,
+      pricePosition: this.radio('pricePosition') || 'below',
+      priceLeaderStyle: this.radio('priceLeaderStyle') || 'dots',
+      excludedCategories: this.excludedCategories,
+      showImages: chk('showImages'),
+      showPrices: chk('showPrices'),
+      showModifiers: chk('showModifiers'),
+      showTabs: chk('showTabs'),
+      showCategorySearch: chk('showCategorySearch'),
+      showCategoryDropdown: chk('showCategoryDropdown'),
+      showCategoryHeaders: chk('showCategoryHeaders'),
+      hideTabsMobile: chk('hideTabsMobile'),
+      styles: {
+        defaultTabColor: get('defaultTabColor'), defaultTabTextColor: get('defaultTabTextColor'),
+        activeTabColor: get('activeTabColor'), activeTabTextColor: get('activeTabTextColor'),
+        tabBorderColor: get('tabBorderColor'), tabBorderWidth: n('tabBorderWidth'),
+        tabRadiusTL: n('tabRadiusTL'), tabRadiusTR: n('tabRadiusTR'), tabRadiusBR: n('tabRadiusBR'), tabRadiusBL: n('tabRadiusBL'),
+        tabFontFamily: tabFont, tabFontSize: n('tabFontSize'), tabFontWeight: get('tabFontWeight'),
+        cardBgColor: get('cardBgColor'),
+        cardBorderColor: get('cardBorderColor'), cardBorderWidth: n('cardBorderWidth'),
+        cardRadiusTL: n('cardRadiusTL'), cardRadiusTR: n('cardRadiusTR'), cardRadiusBR: n('cardRadiusBR'), cardRadiusBL: n('cardRadiusBL'),
+        cardPaddingTop: n('cardPaddingTop'), cardPaddingRight: n('cardPaddingRight'), cardPaddingBottom: n('cardPaddingBottom'), cardPaddingLeft: n('cardPaddingLeft'),
+        imageHeight: imgH,
+        cardTitleColor: get('cardTitleColor'), titleFontFamily: titleFont, titleFontSize: n('titleFontSize'), titleFontWeight: get('titleFontWeight'), titleLineHeight: titleLH,
+        descTextColor: get('descTextColor'), descFontFamily: descFont, descFontSize: n('descFontSize'), descFontWeight: get('descFontWeight'), descLineHeight: descLH,
+        priceTextColor: get('priceTextColor'), priceFontFamily: priceFont, priceFontSize: n('priceFontSize'), priceFontWeight: get('priceFontWeight'), priceLineHeight: priceLH,
+        priceLeaderColor: get('priceLeaderColor'),
+        dropdownBgColor: get('dropdownBgColor'),
+        headerNameColor: get('headerNameColor'), headerDividerColor: get('headerDividerColor'), headerDividerThickness: n('headerDividerThickness'),
+        headerFontFamily: get('headerFontFamily'), headerFontSize: n('headerFontSize'), headerFontWeight: get('headerFontWeight'), headerLineHeight: headerLH,
+        headerAlign,
+        cardBorderSides: { top: chk('cardBorderTop'), right: chk('cardBorderRight'), bottom: chk('cardBorderBottom'), left: chk('cardBorderLeft') },
+        tabBorderSides: { top: chk('tabBorderTop'), right: chk('tabBorderRight'), bottom: chk('tabBorderBottom'), left: chk('tabBorderLeft') },
+        cardBgTransparent: chk('cardBgColorTransparent'),
+        defaultTabColorTransparent: chk('defaultTabColorTransparent'),
+        activeTabColorTransparent: chk('activeTabColorTransparent'),
+        cardShadow: { enabled: chk('cardShadowEnabled'), x: n('cardShadowX'), y: n('cardShadowY'), blur: n('cardShadowBlur'), spread: n('cardShadowSpread'), color: get('cardShadowColor') },
+        tabShadow: { enabled: chk('tabShadowEnabled'), x: n('tabShadowX'), y: n('tabShadowY'), blur: n('tabShadowBlur'), spread: n('tabShadowSpread'), color: get('tabShadowColor') },
+      }
+    };
+
+    const s = config.styles;
+    const alignStyle = tabAlign === 'center' ? 'center' : tabAlign === 'right' ? 'flex-end' : 'flex-start';
+
+    const embedCode = `<!-- SpotOn Menu Embed -->
+${fontLinks}
+<script id="sp-menu-config" type="application/json">${JSON.stringify(config)}<\/script>
+<style>
+  .menu-layout{display:flex;gap:24px;position:relative;}
+  .menu-layout.tabs-top{flex-direction:column;}
+  .menu-layout.tabs-bottom{flex-direction:column-reverse;}
+  .menu-layout.tabs-left{flex-direction:row;align-items:flex-start;}
+  .menu-layout.tabs-right{flex-direction:row-reverse;align-items:flex-start;}
+  .categories-container{display:flex;flex-wrap:wrap;gap:8px;}
+  .tabs-left .categories-container,.tabs-right .categories-container{flex-direction:column;min-width:180px;}
+  #sp-nav{display:flex;flex-direction:column;gap:8px;}
+  .is-scroll-list.tabs-top #sp-nav{position:sticky;top:0;z-index:2;padding:12px 0;margin:-12px 0;}
+  .is-scroll-list.tabs-left #sp-nav,.is-scroll-list.tabs-right #sp-nav{position:sticky;top:0;align-self:flex-start;max-height:100vh;overflow-y:auto;z-index:2;}
+  #sp-nav .sp-cat-search,#sp-nav .sp-cat-dropdown{width:100%;}
+  .tabs-top #sp-nav,.tabs-bottom #sp-nav{flex-direction:row;flex-wrap:wrap;justify-content:${alignStyle};}
+  .tabs-top .sp-cat-search,.tabs-bottom .sp-cat-search{width:auto;min-width:200px;}
+  .tabs-top .sp-cat-dropdown,.tabs-bottom .sp-cat-dropdown{width:auto;min-width:180px;}
+  .category-link{
+    padding:9px 18px;text-decoration:none;transition:all 0.2s;cursor:pointer;display:inline-block;
+    background:${this._bgCSS('defaultTabColor')};color:${s.defaultTabTextColor};
+    ${this._borderCSS('tab')}
+    border-radius:${s.tabRadiusTL}px ${s.tabRadiusTR}px ${s.tabRadiusBR}px ${s.tabRadiusBL}px;
+    box-shadow:${this._shadowCSS('tab')};
+    font-family:'${s.tabFontFamily}',sans-serif;font-size:${s.tabFontSize}px;font-weight:${s.tabFontWeight};line-height:1.5;
+    white-space:nowrap;
+  }
+  .tabs-left .category-link,.tabs-right .category-link{white-space:normal;word-break:break-word;width:100%;box-sizing:border-box;text-align:center;}
+  .category-link.active{background:${this._bgCSS('activeTabColor')};color:${s.activeTabTextColor};border-color:${s.activeTabColor};}
+  .sp-dropdown-option{padding:9px 14px;font-size:${s.descFontSize}px;font-family:'${s.descFontFamily}',sans-serif;cursor:pointer;color:${s.defaultTabTextColor};transition:background 0.15s;}
+  .sp-dropdown-option:hover,.sp-dropdown-option.active,.sp-dropdown-option.highlighted{background:${s.activeTabColor}22;color:${s.activeTabTextColor};}
+  .menu-root{flex:1;min-width:0;}
+  .card-grid{display:grid;grid-template-columns:repeat(var(--menu-cols,${cardCols}),minmax(0,1fr));gap:${cardGap}px;}
+  /* .img-pos-left/.img-pos-right combined with .card-grid for column layout */
+  .img-pos-left .list-item,.img-pos-right .list-item{display:flex;gap:0;align-items:stretch;position:relative;min-height:${imgW}px;}
+  .img-pos-left .list-item{padding-left:${imgW}px;}
+  .img-pos-right .list-item{padding-right:${imgW}px;}
+  .img-pos-left .item-thumbnail-wrapper,.img-pos-right .item-thumbnail-wrapper{position:absolute;top:0;bottom:0;width:${imgW}px;min-width:${imgW}px;overflow:hidden;}
+  .img-pos-left .item-thumbnail-wrapper{left:0;}
+  .img-pos-right .item-thumbnail-wrapper{right:0;}
+  .img-pos-left .item-content,.img-pos-right .item-content{flex:1;min-width:0;}
+  .img-pos-right .list-item{flex-direction:row;}
+  .img-pos-top .item-thumbnail-wrapper{width:100%;height:${imgH}px;min-height:${imgH}px;}
+  .scroll-list-category{margin-bottom:32px;scroll-margin-top:20px;}
+  .list-item{background:${this._bgCSS('cardBgColor')};${this._borderCSS('card')}border-radius:${s.cardRadiusTL}px ${s.cardRadiusTR}px ${s.cardRadiusBR}px ${s.cardRadiusBL}px;box-shadow:${this._shadowCSS('card')};display:flex;flex-direction:column;height:100%;min-width:0;}
+  .item-thumbnail-wrapper{background:${this._bgCSS('cardBgColor')};overflow:hidden;flex-shrink:0;}
+  .img-pos-top .item-thumbnail-wrapper{border-radius:${s.cardRadiusTL}px ${s.cardRadiusTR}px 0 0;}
+  .img-pos-left .item-thumbnail-wrapper{border-radius:${s.cardRadiusTL}px 0 0 ${s.cardRadiusBL}px;}
+  .img-pos-right .item-thumbnail-wrapper{border-radius:0 ${s.cardRadiusTR}px ${s.cardRadiusBR}px 0;}
+  .list-item-image{width:100%;height:100%;object-fit:cover;object-position:${(cardImageAlignH)} ${(cardImageAlignV)};display:block;}
+  .item-content{padding:${s.cardPaddingTop}px ${s.cardPaddingRight}px ${s.cardPaddingBottom}px ${s.cardPaddingLeft}px;flex:1;display:flex;flex-direction:column;text-align:${cardTextAlign};min-width:0;overflow-wrap:break-word;word-wrap:break-word;}
+  .img-pos-left .list-item{padding-left:calc(${imgW}px + ${s.cardPaddingLeft}px)!important;padding-right:${s.cardPaddingRight}px!important;}
+  .img-pos-right .list-item{padding-right:calc(${imgW}px + ${s.cardPaddingRight}px)!important;padding-left:${s.cardPaddingLeft}px!important;}
+  .list-item-name{font-family:'${s.titleFontFamily}',sans-serif;font-size:${s.titleFontSize}px;font-weight:${s.titleFontWeight};color:${s.cardTitleColor};margin-bottom:6px;line-height:${titleLH};}
+  .list-item-description{font-family:'${s.descFontFamily}',sans-serif;font-size:${s.descFontSize}px;font-weight:${s.descFontWeight};color:${s.descTextColor};margin-bottom:10px;line-height:${descLH};}
+  .list-item-price{font-size:${s.priceFontSize}px;font-weight:${s.priceFontWeight};font-family:'${s.priceFontFamily}',sans-serif;color:${s.priceTextColor};line-height:${s.priceLineHeight||1.4};margin-top:auto;padding-top:8px;}
+  .item-content>.list-item-price:first-child{margin-top:0;padding-top:0;margin-bottom:10px;}
+  .price-row{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px;margin-bottom:6px;}
+  .price-row .list-item-name{margin-bottom:0;flex:1 1 auto;min-width:0;}
+  .price-row .list-item-price{margin-top:0;padding-top:0;flex-shrink:0;white-space:nowrap;}
+  .price-leader{flex:1 1 auto;min-width:8px;align-self:center;border-bottom-width:2px;border-bottom-color:${s.priceLeaderColor||'#cbd5e1'};}
+  .price-leader.leader-dots{border-bottom-style:dotted;}
+  .price-leader.leader-dashes{border-bottom-style:dashed;}
+  .price-leader.leader-none{border-bottom-style:none;}
+  .sp-menu-title{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+  .category-header{padding:20px 0 10px;margin-bottom:${cardGap}px;border-bottom:${s.headerDividerThickness}px solid ${s.headerDividerColor};text-align:${s.headerAlign};}
+  .category-header:first-child{padding-top:0;}
+  h2.category-header-name{margin-top:0;margin-left:0;margin-right:0;padding:0;}
+  h3.list-item-name{margin-top:0;margin-left:0;margin-right:0;padding:0;}
+  p.list-item-description,p.category-header-desc{margin:0;padding:0;}
+  p.list-item-price{margin-left:0;margin-right:0;margin-bottom:0;}
+  .category-header-name:focus{outline:none;}
+  .category-header-name{font-family:'${s.headerFontFamily}',sans-serif;font-size:${s.headerFontSize}px;font-weight:${s.headerFontWeight};color:${s.headerNameColor};line-height:${headerLH};}
+  .category-header-desc{font-size:${s.descFontSize}px;color:${s.descTextColor};line-height:${descLH};}
+  @media(max-width:768px){
+    .menu-layout.tabs-left,.menu-layout.tabs-right{flex-direction:column;}
+    .categories-container{flex-wrap:wrap!important;justify-content:center!important;overflow-x:visible;}
+    .hide-tabs-mobile .categories-container{display:none!important;}
+    .img-pos-left .list-item,.img-pos-right .list-item{flex-direction:column!important;position:static!important;padding-left:0!important;padding-right:0!important;width:100%;min-height:auto;}
+    .img-pos-left .item-thumbnail-wrapper,.img-pos-right .item-thumbnail-wrapper{position:static!important;width:100%!important;height:200px!important;}
+    .img-pos-left .item-thumbnail-wrapper:empty,.img-pos-right .item-thumbnail-wrapper:empty{display:none!important;}
+    .card-grid{grid-template-columns:1fr!important;}
+    #sp-nav{flex-direction:column!important;}
+    .sp-cat-search,.sp-cat-dropdown{width:100%!important;min-width:0!important;}
+  }
+</style>
+
+<main role="main" aria-label="Menu">
+${config.businessName ? '<h2 class="sp-menu-title">' + String(config.businessName).replace(/&/g,'&amp;').replace(/</g,'&lt;') + ' menu</h2>' : ''}
+<div class="menu-layout tabs-${tabsPos}${config.scrollingListMode ? ' is-scroll-list' : ''}${config.hideTabsMobile ? ' hide-tabs-mobile' : ''}" id="sp-menu-root"${config.businessName ? ' role="region" aria-label="' + String(config.businessName).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;') + ' menu"' : ''}>
+  ${config.showTabs || config.showCategorySearch || config.showCategoryDropdown ? '<div id="sp-nav-sentinel" style="position:absolute;top:0;left:0;width:1px;height:1px;pointer-events:none;opacity:0;"></div><div id="sp-nav"></div>' : ''}
+  <div class="menu-root ${cardImagePosition === 'top' ? 'card-grid img-pos-top' : ('img-pos-' + cardImagePosition)}" id="sp-menu-items"></div>
+</div>
+</main>
+
+<script>
+(function(){
+  const config = ${JSON.stringify(config, null, 2)};
+
+  const MID = config.merchantId;
+  const EXCLUDED = config.excludedCategories || [];
+  const SHOW_IMAGES = config.showImages;
+  const SHOW_PRICES = config.showPrices;
+  const PRICE_POS = config.pricePosition || 'below';
+  const PRICE_LEADER = config.priceLeaderStyle || 'dots';
+  const SHOW_TABS = config.showTabs;
+  const SHOW_MODIFIERS = config.showModifiers !== false;
+  const SHOW_HEADERS = config.showCategoryHeaders;
+  const IMG_POS = config.cardImagePosition || 'top';
+  const GRID_CLASS = 'card-grid img-pos-' + IMG_POS;
+  const IS_SCROLL = !!config.scrollingListMode;
+  const STICKY_NAV_OFFSET = config.stickyNavOffset || 0;
+  const TABS_POS = config.tabsPosition;
+  const TAB_ALIGN = config.tabAlign;
+  const CAT_SORT = config.categorySort || 'default';
+  const s = config.styles;
+
+  let categoryNames = {}, categoryDescs = {}, itemsByCategory = {};
+
+  function esc(str){ return str ? str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''; }
+
+  function sortCats(ids){
+    if(CAT_SORT==='az') return [...ids].sort((a,b)=>categoryNames[a].localeCompare(categoryNames[b]));
+    if(CAT_SORT==='za') return [...ids].sort((a,b)=>categoryNames[b].localeCompare(categoryNames[a]));
+    return ids;
+  }
+
+  const SHOW_SEARCH = config.showCategorySearch;
+  const SHOW_DROPDOWN = config.showCategoryDropdown;
+
+  const scrollSections = {};
+  let scrollSpyObserver = null;
+
+  function setActive(cid){
+    document.querySelectorAll('.category-link').forEach(l=>l.classList.toggle('active',l.dataset.cid===cid));
+    setDropdownDisplay(cid);
+    if(IS_SCROLL){
+      const el=scrollSections[cid];
+      if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+      const heading = el?.querySelector('h2');
+      if(heading) requestAnimationFrame(()=>heading.focus());
+    } else {
+      renderItems(cid);
+      const heading = document.querySelector('#sp-menu-items h2');
+      if(heading) requestAnimationFrame(()=>heading.focus());
+    }
+  }
+
+  function setDropdownDisplay(cid){
+    const label=document.getElementById('sp-cat-select-label');
+    if(label) label.textContent=categoryNames[cid]||'';
+    document.querySelectorAll('.sp-dropdown-option').forEach(o=>{o.classList.toggle('active',o.dataset.cid===cid);o.setAttribute('aria-selected',o.dataset.cid===cid?'true':'false');});
+  }
+
+  function renderNav(ids){
+    const navEl = document.getElementById('sp-nav');
+    if(!navEl) return;
+    navEl.innerHTML='';
+    const isLR = TABS_POS==='left'||TABS_POS==='right';
+    const alignStyle = TAB_ALIGN==='center'?'center':TAB_ALIGN==='right'?'flex-end':'flex-start';
+
+    // Search
+    if(SHOW_SEARCH){
+      const srch=document.createElement('input');
+      srch.type='text'; srch.placeholder='Search categories…'; srch.className='sp-cat-search';
+      srch.style.cssText=\`padding:9px 14px;line-height:normal;${this._borderCSS('tab')}border-radius:${s.tabRadiusTL}px ${s.tabRadiusTR}px ${s.tabRadiusBR}px ${s.tabRadiusBL}px;font-family:'${s.descFontFamily}',sans-serif;font-size:${s.tabFontSize}px;background:${this._bgCSS('defaultTabColor')};color:${s.defaultTabTextColor};outline:none;box-sizing:border-box;\`;
+      srch.addEventListener('input',()=>{
+        const term=srch.value.toLowerCase();
+        document.querySelectorAll('.sp-tab-link').forEach(el=>{
+          el.style.display=el.textContent.toLowerCase().includes(term)?'':'none';
+        });
+      });
+      navEl.appendChild(srch);
+    }
+
+    // Dropdown — custom (not a native <select>). Native <option> background-color styling is
+    // unreliable cross-browser and can leak into the closed control's own appearance, so the
+    // closed trigger and the open list are built as fully separate, independently-styled elements.
+    if(SHOW_DROPDOWN){
+      const wrap=document.createElement('div');
+      wrap.className='sp-cat-dropdown'; wrap.id='sp-cat-dropdown';
+      const btn=document.createElement('button');
+      btn.type='button'; btn.className='sp-cat-select-btn'; btn.setAttribute('aria-haspopup','listbox'); btn.setAttribute('aria-expanded','false');
+      btn.style.cssText=\`display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 14px;line-height:normal;${this._borderCSS('tab')}border-radius:${s.tabRadiusTL}px ${s.tabRadiusTR}px ${s.tabRadiusBR}px ${s.tabRadiusBL}px;font-family:'${s.descFontFamily}',sans-serif;font-size:${s.tabFontSize}px;background:${this._bgCSS('defaultTabColor')};color:${s.defaultTabTextColor};outline:none;box-sizing:border-box;appearance:none;-webkit-appearance:none;cursor:pointer;width:100%;text-align:left;\`;
+      const label=document.createElement('span');
+      label.id='sp-cat-select-label'; label.style.cssText='overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
+      label.textContent=ids.length?categoryNames[ids[0]]:'';
+      const chevron=document.createElementNS('http://www.w3.org/2000/svg','svg');
+      chevron.setAttribute('viewBox','0 0 20 20'); chevron.setAttribute('width','14'); chevron.setAttribute('height','14');
+      chevron.style.cssText='flex-shrink:0;opacity:0.7;transition:transform 0.15s;';
+      chevron.innerHTML='<path d="M5 7l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+      btn.appendChild(label); btn.appendChild(chevron);
+      const list=document.createElement('div');
+      list.className='sp-cat-dropdown-list'; list.setAttribute('role','listbox');
+      list.style.cssText=\`display:none;position:absolute;top:calc(100% + 5px);left:0;right:0;border-radius:12px;overflow:hidden;z-index:100;max-height:260px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.4);border:1px solid ${s.activeTabColor};background:${s.dropdownBgColor||'#1a1d21'};\`;
+      ids.forEach(id=>{
+        const opt=document.createElement('div');
+        opt.className='sp-dropdown-option'; opt.setAttribute('role','option'); opt.dataset.cid=id;
+        opt.textContent=categoryNames[id];
+        opt.addEventListener('click',()=>{
+          setActive(id);
+          wrap.classList.remove('open'); btn.setAttribute('aria-expanded','false'); list.style.display='none';
+        });
+        list.appendChild(opt);
+      });
+      const ddOptions=()=>[...list.querySelectorAll('.sp-dropdown-option')];
+      const ddHighlight=(opts,idx)=>{opts.forEach(o=>o.classList.remove('highlighted'));if(opts[idx]){opts[idx].classList.add('highlighted');opts[idx].scrollIntoView({block:'nearest'});}};
+      const ddClose=()=>{wrap.classList.remove('open');btn.setAttribute('aria-expanded','false');list.style.display='none';ddOptions().forEach(o=>o.classList.remove('highlighted'));};
+      btn.addEventListener('click',e=>{
+        e.stopPropagation();
+        if(wrap.classList.contains('open')){ddClose();}else{wrap.classList.add('open');btn.setAttribute('aria-expanded','true');list.style.display='block';}
+      });
+      btn.addEventListener('keydown',e=>{
+        const opts=ddOptions();
+        const ci=opts.findIndex(o=>o.classList.contains('highlighted'));
+        if(e.key==='ArrowDown'){e.preventDefault();if(!wrap.classList.contains('open')){wrap.classList.add('open');btn.setAttribute('aria-expanded','true');list.style.display='block';}ddHighlight(opts,ci<opts.length-1?ci+1:0);}
+        else if(e.key==='ArrowUp'){e.preventDefault();if(!wrap.classList.contains('open')){wrap.classList.add('open');btn.setAttribute('aria-expanded','true');list.style.display='block';}ddHighlight(opts,ci>0?ci-1:opts.length-1);}
+        else if(e.key==='Enter'||e.key===' '){e.preventDefault();if(wrap.classList.contains('open')){const cur=opts[ci];if(cur)cur.click();}else{wrap.classList.add('open');btn.setAttribute('aria-expanded','true');list.style.display='block';}}
+        else if(e.key==='Escape'){e.preventDefault();ddClose();btn.focus();}
+        else if(e.key==='Home'){e.preventDefault();ddHighlight(opts,0);}
+        else if(e.key==='End'){e.preventDefault();ddHighlight(opts,opts.length-1);}
+      });
+      wrap.appendChild(btn); wrap.appendChild(list);
+      wrap.style.position='relative';
+      navEl.appendChild(wrap);
+      if(ids[0]) setDropdownDisplay(ids[0]);
+    }
+
+    // Tabs
+    if(SHOW_TABS){
+      const container = document.createElement('div');
+      container.className='categories-container';
+      if(!isLR) container.style.justifyContent=alignStyle;
+      ids.forEach((id,i)=>{
+        const a=document.createElement('a');
+        a.href='#';a.className='category-link sp-tab-link'+(i===0?' active':'');
+        a.textContent=categoryNames[id];a.dataset.cid=id;
+        a.addEventListener('click',e=>{ e.preventDefault(); setActive(id); });
+        container.appendChild(a);
+      });
+      navEl.appendChild(container);
+    }
+  }
+
+  function renderHeader(cid){
+    const desc = categoryDescs[cid]||'';
+    return SHOW_HEADERS ? \`<div class="category-header"><h2 class="category-header-name" tabindex="-1">\${esc(categoryNames[cid]||'')}</h2>\${desc?\`<p class="category-header-desc">\${esc(desc)}</p>\`:''}</div>\` : '';
+  }
+
+  function renderCard(item){
+    const hasImg = item.imageUrl && item.imageUrl!=='';
+    let thumb='';
+    if(SHOW_IMAGES){
+      const cleanName = (item.name || '').replace(/^#\d+\s*/, '');
+      thumb=\`<div class="item-thumbnail-wrapper">\${hasImg?\`<img class="list-item-image" src="\${esc(item.imageUrl)}" alt="\${esc(cleanName)}" loading="lazy">\`:''}</div>\`;
+    }
+    const priceNum=parseFloat(item.price);
+    const price=SHOW_PRICES&&!isNaN(priceNum)?(priceNum===0?'Market Price':'$'+priceNum.toFixed(2)):'';
+    const nm=esc(item.name), desc=item.description?esc(item.description):'';
+    const nameHtml=\`<h3 class="list-item-name">\${nm}</h3>\`;
+    const descHtml=desc?\`<p class="list-item-description">\${desc}</p>\`:'';
+    const priceHtml=price?\`<p class="list-item-price" aria-label="Price: \${price}">\${price}</p>\`:'';
+    let body;
+    if(!price) body=\`\${nameHtml}\${descHtml}\`;
+    else if(PRICE_POS==='above') body=\`\${priceHtml}\${nameHtml}\${descHtml}\`;
+    else if(PRICE_POS==='left'||PRICE_POS==='right'){
+      const row=PRICE_POS==='left'
+        ?\`<div class="price-row price-pos-left"><p class="list-item-price" aria-label="Price: \${price}">\${price}</p><span class="price-leader leader-\${PRICE_LEADER}"></span><h3 class="list-item-name">\${nm}</h3></div>\`
+        :\`<div class="price-row price-pos-right"><h3 class="list-item-name">\${nm}</h3><span class="price-leader leader-\${PRICE_LEADER}"></span><p class="list-item-price" aria-label="Price: \${price}">\${price}</p></div>\`;
+      body=\`\${row}\${descHtml}\`;
+    }
+    else body=\`\${nameHtml}\${descHtml}\${priceHtml}\`;
+    return \`<div class="list-item\${modAttr(item)}">\${thumb}<div class="item-content">\${body}</div></div>\`;
+  }
+
+  function renderItems(id){
+    const root=document.getElementById('sp-menu-items');
+    if(!root) return;
+    root.setAttribute('aria-live','polite');
+    const items=itemsByCategory[id]||[];
+    const header=renderHeader(id);
+    if(header){
+      // Header must sit outside the grid — switch root to block wrapper
+      root.style.display='block';
+      const grid=document.createElement('div');
+      grid.className=GRID_CLASS;
+      grid.innerHTML=items.map(renderCard).join('');
+      root.innerHTML=header;
+      root.appendChild(grid);
+    } else {
+      root.style.display='';
+      root.innerHTML=items.map(renderCard).join('');
+    }
+  }
+
+  function renderScrollList(ids){
+    const root=document.getElementById('sp-menu-items');
+    if(!root) return;
+    root.className='menu-root';
+    root.innerHTML='';
+    ids.forEach(cid=>{
+      const items=itemsByCategory[cid]||[];
+      const section=document.createElement('div');
+      section.className='scroll-list-category';
+      section.dataset.cid=cid;
+      section.setAttribute('tabindex','-1');
+      section.innerHTML=\`\${renderHeader(cid)}<div class="\${GRID_CLASS}">\${items.map(renderCard).join('')}</div>\`;
+      root.appendChild(section);
+      scrollSections[cid]=section;
+    });
+    setupScrollSpy(ids);
+  }
+
+  function setupScrollSpy(ids){
+    scrollSpyObserver?.disconnect();
+    const sections=ids.map(cid=>scrollSections[cid]).filter(Boolean);
+    if(!sections.length||typeof IntersectionObserver==='undefined') return;
+    scrollSpyObserver=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(!entry.isIntersecting) return;
+        const cid=entry.target.dataset.cid;
+        document.querySelectorAll('.category-link').forEach(l=>l.classList.toggle('active',l.dataset.cid===cid));
+        setDropdownDisplay(cid);
+      });
+    },{root:null,rootMargin:'-15% 0px -70% 0px',threshold:0});
+    sections.forEach(s=>scrollSpyObserver.observe(s));
+    if(ids[0]){
+      document.querySelectorAll('.category-link').forEach(l=>l.classList.toggle('active',l.dataset.cid===ids[0]));
+      setDropdownDisplay(ids[0]);
+    }
+    requestAnimationFrame(syncStickyNavOffset);
+    setupStickyBgWatcher();
+  }
+
+  let stickyBgObserver=null;
+  function setupStickyBgWatcher(){
+    stickyBgObserver?.disconnect();
+    const nav=document.getElementById('sp-nav');
+    const sentinel=document.getElementById('sp-nav-sentinel');
+    if(!nav||!sentinel||typeof IntersectionObserver==='undefined') return;
+    const stuckBg='${s.dropdownBgColor || '#1a1d21'}';
+    const normalBg='${this._bgCSS('defaultTabColor')}';
+    stickyBgObserver=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        const isStuck=!entry.isIntersecting;
+        const srch=nav.querySelector('.sp-cat-search');
+        const btn=nav.querySelector('.sp-cat-select-btn');
+        if(srch) srch.style.background=isStuck?stuckBg:normalBg;
+        if(btn) btn.style.background=isStuck?stuckBg:normalBg;
+      });
+    },{root:null,threshold:0});
+    stickyBgObserver.observe(sentinel);
+  }
+
+  function syncStickyNavOffset(){
+    const nav=document.getElementById('sp-nav');
+    if(nav) nav.style.top=STICKY_NAV_OFFSET+'px';
+    const layout=document.getElementById('sp-menu-root');
+    if(layout) layout.style.paddingTop=STICKY_NAV_OFFSET+'px';
+    const offset=(TABS_POS==='top'&&nav)?nav.offsetHeight+STICKY_NAV_OFFSET+12:20+STICKY_NAV_OFFSET;
+    document.querySelectorAll('.scroll-list-category').forEach(s=>{ s.style.scrollMarginTop=offset+'px'; });
+  }
+
+  function syncCols(){
+    const userCols=Math.max(1,${cardCols});
+    const gap=${cardGap};
+    const minCardW=${(cardImagePosition === 'left' || cardImagePosition === 'right') ? Math.max(280, imgW + 160) : 260};
+    const grids=document.querySelectorAll('.card-grid');
+    if(!grids.length) return;
+    // Measure the grid element itself — avoids including the nav column width on LR layouts
+    const containerW=grids[0].offsetWidth||800;
+    const maxFit=Math.max(1,Math.floor((containerW+gap)/(minCardW+gap)));
+    const cols=Math.min(userCols,maxFit);
+    grids.forEach(g=>g.style.setProperty('--menu-cols',cols));
+  }
+
+var SPOTON_API = 'https://o.spoton.com/api/v1/locations/';
+
+function spotonRawGroups(groups) {
+  return (groups || []).map(function (g) {
+    var max = g.maxSelections > 0 ? g.maxSelections : 99;
+    var min = g.minSelections || 0;
+    return {
+      name: g.title || g.name || 'Options',
+      active: true,
+      limits: { min: min, max: max, multi_select_max: max },
+      modifiers: (g.modifiers || []).map(function (m) {
+        var cents = (typeof m.price === 'number') ? m.price : ((m.price && m.price.amount) || 0);
+        return {
+          name: m.title || m.name || '',
+          active: true,
+          is_available: m.isAvailable !== false,
+          price: { amount: cents, pricing_kind: 'PRICING_KIND_FIXED' }
+        };
+      })
+    };
+  });
+}
+
+function spotonNormalizeGroups(groups) {
+  return (groups || [])
+    .filter(function (g) { return g && g.active !== false; })
+    .map(function (g) {
+      var limits = g.limits || {};
+      var caps = [limits.max, limits.multi_select_max].filter(function (v) { return v != null; });
+      var cap = caps.length ? Math.min.apply(null, caps) : null;
+      var options = (g.modifiers || g.options || [])
+        .filter(function (m) { return m && m.active !== false && m.is_available !== false; })
+        .map(function (m) {
+          var cents = (typeof m.price === 'object' && m.price) ? (Number(m.price.amount) || 0) : (Number(m.price) || 0);
+          return { name: m.name || '', price: cents / 100 };
+        });
+      return {
+        name: g.name || 'Options',
+        min_select: Number(limits.min != null ? limits.min : (g.min_select || 0)),
+        max_select: (cap != null && cap < 99) ? cap : null,
+        options: options
+      };
+    })
+    .filter(function (g) { return g.options.length; });
+}
+
+async function loadMenuJson(url) {
+  var r = await fetch(url);
+  if (!r.ok) throw new Error('JSON ' + r.status);
+  var j = await r.json();
+  var cats = (j.menu && j.menu.categories) || [];
+  var itemsByCategory = {}, categoryNames = {}, categoryDescs = {};
+  (j.items || []).forEach(function (it) {
+    if (it.active === false) return;
+    var cid = String((it.category_ids && it.category_ids[0]) || (it.category_references && it.category_references[0] && it.category_references[0].category_id) || '');
+    if (!cid) return;
+    var cents = (typeof it.price === 'object' && it.price) ? (Number(it.price.amount) || 0) : (Number(it.price) || 0);
+    (itemsByCategory[cid] = itemsByCategory[cid] || []).push({
+      id: String(it.id),
+      name: String(it.name || '').trim(),
+      description: it.description || '',
+      price: cents / 100,
+      imageUrl: it.image_url || it.thumbnail_url || '',
+      modifier_groups: spotonNormalizeGroups(it.modifier_groups || [])
+    });
+  });
+  cats.forEach(function (c) {
+    var cid = String(c.id);
+    if (!itemsByCategory[cid]) return;
+    categoryNames[cid] = String(c.name || '').trim();
+    if (c.description) categoryDescs[cid] = String(c.description).trim();
+  });
+  Object.keys(itemsByCategory).forEach(function (cid) { if (!categoryNames[cid]) categoryNames[cid] = 'Category ' + cid; });
+  return { menuId: 'json', categoryNames: categoryNames, categoryDescs: categoryDescs, itemsByCategory: itemsByCategory };
+}
+
+async function spotonFetchMenu(locationId) {
+  var api = SPOTON_API + encodeURIComponent(locationId);
+  var mr = await fetch(api + '/menus');
+  if (!mr.ok) throw new Error('menus ' + mr.status);
+  var menus = (await mr.json()).menus || [];
+  var preferred = menus.filter(function (m) { return /default|pickup|online/i.test(m.name || ''); });
+  var order = preferred.concat(menus.filter(function (m) { return preferred.indexOf(m) === -1; }));
+  if (!order.length) throw new Error('No menus returned for this location');
+  var ids = order.map(function (m) { return m.id; });
+  if (ids.indexOf('default') === -1) ids.push('default');
+  var menu = null, base = '', data = null, lastErr = '';
+  var dtq = '?datetime=' + encodeURIComponent(new Date().toISOString());
+  for (var mi = 0; mi < ids.length && !data; mi++) {
+    var candidate = api + '/menus/' + ids[mi];
+    var sr = await fetch(candidate + '/summary' + dtq);
+    if (!sr.ok) { lastErr = ids[mi] + ' summary ' + sr.status; continue; }
+    var d = await sr.json();
+    var hasItems = (d.menuGroups || []).some(function (g) { return (g.menuItems || []).length > 0; });
+    if (hasItems) { menu = { id: ids[mi] }; base = candidate; data = d; }
+    else { lastErr = ids[mi] + ' has no items'; }
+  }
+  if (!data) throw new Error('No menu with items (' + lastErr + ')');
+
+  var pairs = [];
+  (data.menuGroups || []).forEach(function (g) {
+    (g.menuItems || []).forEach(function (it) { pairs.push({ g: g, it: it }); });
+  });
+  var details = {};
+  for (var n = 0; n < pairs.length; n += 6) {
+    await Promise.all(pairs.slice(n, n + 6).map(function (p) {
+      return fetch(base + '/menu-groups/' + p.g.id + '/items/' + p.it.id + dtq)
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) { if (d) details[p.it.id] = d; })
+        .catch(function () {});
+    }));
+  }
+
+  var categoryNames = {}, categoryDescs = {}, itemsByCategory = {};
+  (data.menuGroups || []).forEach(function (g) {
+    var cid = String(g.id);
+    var list = [];
+    (g.menuItems || []).forEach(function (it) {
+      var d = details[it.id] || {};
+      var priceSrc = (d.price != null) ? d.price : it.price;
+      var cents = (typeof priceSrc === 'number') ? priceSrc : ((priceSrc && priceSrc.amount) || 0);
+      list.push({
+        id: String(it.id),
+        name: String(d.title || it.title || it.name || '').trim(),
+        description: d.description || it.description || '',
+        price: cents / 100,
+        imageUrl: d.imageUrl || it.imageUrl || '',
+        modifier_groups: spotonNormalizeGroups(spotonRawGroups(d.modifierGroups))
+      });
+    });
+    if (list.length) {
+      categoryNames[cid] = String(g.title || g.name || '').trim();
+      if (g.description) categoryDescs[cid] = String(g.description).trim();
+      itemsByCategory[cid] = list;
+    }
+  });
+  return { menuId: menu.id, categoryNames: categoryNames, categoryDescs: categoryDescs, itemsByCategory: itemsByCategory };
+}
+
+function findItemById(id) {
+  var keys = Object.keys(itemsByCategory);
+  for (var i = 0; i < keys.length; i++) {
+    var list = itemsByCategory[keys[i]] || [];
+    for (var j = 0; j < list.length; j++) { if (list[j].id === id) return list[j]; }
+  }
+  return null;
+}
+
+function modAttr(item) {
+  return (SHOW_MODIFIERS && item.modifier_groups && item.modifier_groups.length)
+    ? ' sp-has-mods" role="button" tabindex="0" aria-haspopup="dialog" data-sp-mod="' + esc(item.id) + '"'
+    : '';
+}
+
+function modLimitText(g) {
+  var min = g.min_select || 0, max = g.max_select;
+  var req = min > 0 ? 'Required' : 'Optional';
+  var rule = '';
+  if (max != null && min === max) rule = 'Select exactly ' + min;
+  else if (max != null) rule = 'Select up to ' + max;
+  else if (min > 0) rule = 'Select at least ' + min;
+  return rule ? req + ' · ' + rule : req;
+}
+
+function modThemeCss() {
+  var st = config.styles || {};
+  var bc = st.cardBorderColor || '#2a2e35';
+  var bw = (st.cardBorderWidth != null ? st.cardBorderWidth : 1) + 'px';
+  var bg = st.cardBgTransparent ? 'transparent' : (st.cardBgColor || '#111315');
+  var title = st.cardTitleColor || '#f1f5f9';
+  var desc = st.descTextColor || '#94a3b8';
+  var price = st.priceTextColor || '#3b82f6';
+  var fam = function(f) { return "'" + (f || 'Inter') + "', sans-serif"; };
+  return '#sp-mod-box{background:' + bg + ' !important;border:' + bw + ' solid ' + bc + ' !important;'
+    + 'border-radius:' + st.cardRadiusTL + 'px ' + st.cardRadiusTR + 'px ' + st.cardRadiusBR + 'px ' + st.cardRadiusBL + 'px !important;color:' + title + ';font-family:' + fam(st.descFontFamily) + ';}'
+    + '#sp-mod-box .sp-mod-close{color:' + price + ';}'
+    + '#sp-mod-box h3{color:' + title + ';font-family:' + fam(st.titleFontFamily) + ';font-size:' + st.titleFontSize + 'px;font-weight:' + st.titleFontWeight + ';}'
+    + '#sp-mod-box .sp-mod-group{border-top-color:' + bc + ';}'
+    + '#sp-mod-box .sp-mod-group-name{color:' + title + ';font-family:' + fam(st.titleFontFamily) + ';}'
+    + '#sp-mod-box .sp-mod-limits{color:' + desc + ';font-family:' + fam(st.descFontFamily) + ';}'
+    + '#sp-mod-box .sp-mod-opt{color:' + desc + ';border-bottom-color:' + bc + ';font-family:' + fam(st.descFontFamily) + ';font-size:' + st.descFontSize + 'px;font-weight:' + st.descFontWeight + ';}'
+    + '#sp-mod-box .sp-mod-opt span:last-child{color:' + price + ';font-family:' + fam(st.priceFontFamily) + ';font-weight:' + st.priceFontWeight + ';}';
+}
+
+function ensureModDom() {
+  if (document.getElementById('sp-mod-overlay')) return;
+  var css = '#sp-mod-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:9999;padding:16px}'
+    + '#sp-mod-overlay.active{display:flex}'
+    + '#sp-mod-box{background:#1a1d21;color:#e2e8f0;border-radius:14px;max-width:480px;width:100%;max-height:85vh;overflow:auto;padding:20px 22px;font-family:inherit;position:relative}'
+    + '#sp-mod-box h3{margin:0 0 12px;font-size:18px;padding-right:28px}'
+    + '.sp-mod-group{border-top:1px solid #2a2e35;padding:12px 0}'
+    + '.sp-mod-group-name{font-weight:600;margin-bottom:2px}'
+    + '.sp-mod-limits{font-size:12px;color:#94a3b8;margin-bottom:8px}'
+    + '.sp-mod-opt{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:14px}'
+    + '.sp-mod-close{position:absolute;top:12px;right:14px;background:none;border:0;color:#e2e8f0;font-size:22px;cursor:pointer;line-height:1}'
+    + '.list-item.sp-has-mods{cursor:pointer}'
+    + 'h4.sp-mod-group-name{margin:0 0 4px;}'
+    + '.sp-mod-opts{list-style:none;margin:0;padding:0;}'
+    + '#sp-mod-box:focus{outline:none;}'
+    + modThemeCss();
+  var st = document.createElement('style');
+  st.textContent = css;
+  document.head.appendChild(st);
+  var ov = document.createElement('div');
+  ov.id = 'sp-mod-overlay';
+  ov.innerHTML = '<div id="sp-mod-box" role="dialog" aria-modal="true" aria-labelledby="sp-mod-title" tabindex="-1"><button class="sp-mod-close" aria-label="Close">&times;</button><h3 id="sp-mod-title"></h3><div id="sp-mod-body"></div></div>';
+  ov.addEventListener('click', function (e) {
+    if (e.target === ov || (e.target.classList && e.target.classList.contains('sp-mod-close'))) closeMods();
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMods(); });
+  document.body.appendChild(ov);
+}
+
+function openMods(id) {
+  var item = findItemById(id);
+  if (!item) return;
+  ensureModDom();
+  document.getElementById('sp-mod-title').textContent = item.name;
+  var groups = item.modifier_groups || [];
+  document.getElementById('sp-mod-body').innerHTML = groups.length
+    ? groups.map(function (g) {
+        return '<section class="sp-mod-group" aria-labelledby="sp-mod-g' + esc(String(g.id || g.name)).replace(/[^A-Za-z0-9_-]/g, '') + '"><h4 class="sp-mod-group-name" id="sp-mod-g' + esc(String(g.id || g.name)).replace(/[^A-Za-z0-9_-]/g, '') + '">' + esc(g.name) + '</h4>'
+          + '<p class="sp-mod-limits">' + modLimitText(g) + '</p>'
+          + '<ul class="sp-mod-opts">' + g.options.map(function (o) {
+              return '<li class="sp-mod-opt"><span>' + esc(o.name) + '</span><span>'
+                + (o.price > 0 ? '+$' + o.price.toFixed(2) : 'Included') + '</span></li>';
+            }).join('') + '</ul>'
+          + '</section>';
+      }).join('')
+    : '<p>No customization options.</p>';
+  window._spModReturnFocus = document.activeElement;
+  document.getElementById('sp-mod-overlay').classList.add('active');
+  document.getElementById('sp-mod-box').focus();
+}
+
+function closeMods() {
+  var ov = document.getElementById('sp-mod-overlay');
+  if (!ov || !ov.classList.contains('active')) return;
+  ov.classList.remove('active');
+  if (window._spModReturnFocus && window._spModReturnFocus.focus) window._spModReturnFocus.focus();
+}
+
+  async function loadMenu(){
+    if(!MID) return;
+    try{
+      let m;
+      try{ m=await spotonFetchMenu(MID); }
+      catch(err){ if(!(config.useJsonFallback && config.menuJsonUrl)) throw err; m=await loadMenuJson(config.menuJsonUrl); }
+      Object.assign(categoryNames,m.categoryNames); Object.assign(itemsByCategory,m.itemsByCategory); Object.assign(categoryDescs,m.categoryDescs);
+    } catch(e){ return; }
+    let ids=Object.keys(itemsByCategory).filter(id=>!EXCLUDED.includes(categoryNames[id]));
+    ids=sortCats(ids);
+    if(!IS_SCROLL){ renderNav(ids); if(ids[0]) renderItems(ids[0]); }
+    else { renderNav(ids); renderScrollList(ids); }
+    requestAnimationFrame(syncCols);
+    if(window.ResizeObserver){
+      const root=document.getElementById('sp-menu-items');
+      if(root) new ResizeObserver(()=>requestAnimationFrame(syncCols)).observe(root);
+    }
+  }
+
+  document.addEventListener('click',e=>{
+    const dd=document.getElementById('sp-cat-dropdown');
+    if(dd && dd.classList.contains('open') && !dd.contains(e.target)){
+      dd.classList.remove('open');
+      const btn=dd.querySelector('.sp-cat-select-btn'); if(btn) btn.setAttribute('aria-expanded','false');
+      const list=dd.querySelector('.sp-cat-dropdown-list'); if(list) list.style.display='none';
+    }
+  });
+
+  document.addEventListener('click',e=>{ const c=e.target.closest&&e.target.closest('.list-item[data-sp-mod]'); if(c) openMods(c.getAttribute('data-sp-mod')); });
+  document.addEventListener('keydown',e=>{ if(e.key!=='Enter'&&e.key!==' ') return; const c=e.target.closest&&e.target.closest('.list-item[data-sp-mod]'); if(c){ e.preventDefault(); openMods(c.getAttribute('data-sp-mod')); } });
+  loadMenu();
+})();
+<\/script>`;
+
+    document.getElementById('embedCodeDisplay').value = embedCode;
+    document.getElementById('codeModal').classList.add('active');
+
+    const btn = document.getElementById('modalCopyBtn');
+    btn.textContent = 'Copy';
+    btn.onclick = () => {
+      navigator.clipboard.writeText(embedCode).then(() => {
+        btn.textContent = '✓ Copied!';
+        setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+      });
+    };
+  }
+}
+
+/* ═══════════════════════════════════════════
+   MODALS
+═══════════════════════════════════════════ */
+function closeModal() { document.getElementById('codeModal').classList.remove('active'); }
+function closeModifierModal() {
+  const overlay = document.getElementById('modifierOverlay');
+  if (!overlay || !overlay.classList.contains('active')) return;
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+  if (window._studio?._modalReturnFocus?.focus) window._studio._modalReturnFocus.focus();
+}
+function openImportModal() { document.getElementById('importCodeTextarea').value = ''; document.getElementById('importError').style.display = 'none'; document.getElementById('importModal').classList.add('active'); }
+function closeImportModal() { document.getElementById('importModal').classList.remove('active'); }
+
+/* Maps a legacy config (pre-column/card-design rebuild) onto the new field set so old
+   saved embeds still import correctly. Old "layoutType" values become cardImagePosition +
+   cardColumns + cardGap; scroll-list becomes the scrollingListMode toggle. No-op on current configs. */
+function migrateLegacyLayout(cfg) {
+  if (cfg.cardImagePosition || !cfg.layoutType) return;
+  const map = {
+    'classic-grid':      { pos: 'top',   cols: 3, gap: 24 },
+    'hero-grid':         { pos: 'top',   cols: 2, gap: 28 },
+    'compact-cards':     { pos: 'top',   cols: 4, gap: 16 },
+    'split-view':        { pos: 'top',   cols: 2, gap: 24 },
+    'list-image-left':   { pos: 'left',  cols: 1, gap: 20 },
+    'list-image-right':  { pos: 'right', cols: 1, gap: 20 },
+    'scroll-list':       { pos: 'top',   cols: 3, gap: 24, scroll: true },
+  };
+  const m = map[cfg.layoutType] || { pos: 'top', cols: 3, gap: 24 };
+  cfg.cardImagePosition = m.pos;
+  cfg.cardColumns = m.cols;
+  cfg.cardGap = m.gap;
+  cfg.imageWidthSide = cfg.imageWidthSide || 140;
+  cfg.imageAlignH = cfg.imageAlignH || 'center';
+  cfg.imageAlignV = cfg.imageAlignV || 'center';
+  cfg.cardTextAlign = cfg.cardTextAlign || 'left';
+  if (m.scroll) cfg.scrollingListMode = true;
+}
+
+function applyImportedConfig() {
+  const raw = document.getElementById('importCodeTextarea').value.trim();
+  const errEl = document.getElementById('importError');
+  errEl.style.display = 'none';
+
+  // Extract config: try <script type="application/json"> first,
+  // then HTML comment, then legacy CSS comment
+  const match =
+    raw.match(/<script[^>]*id="sp-menu-config"[^>]*type="application\/json"[^>]*>([\s\S]*?)<\/script>/i) ||
+    raw.match(/<!--menu-studio-config:(\{[\s\S]*?)-->/) ||
+    raw.match(/\/\*\s*config=(\{[\s\S]*?\})\s*\*\//);
+  if (!match) {
+    errEl.textContent = 'Could not find a config object in the pasted code. Make sure you paste the full embed code generated by this tool.';
+    errEl.style.display = 'block'; return;
+  }
+
+  let cfg;
+  try { cfg = JSON.parse(match[1]); }
+  catch(e) { errEl.textContent = 'Failed to parse config: ' + e.message; errEl.style.display = 'block'; return; }
+
+  migrateLegacyLayout(cfg);
+
+  const setVal = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined && val !== null) { el.value = val; } };
+  const setCheck = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.checked = !!val; };
+  const setRadio = (name, val) => { const el = document.querySelector(`input[name="${name}"][value="${val}"]`); if (el) el.checked = true; };
+  const setColor = (id, val) => { if (!val) return; setVal(id, val); const span = document.getElementById(id + 'Value'); if (span) span.textContent = val; };
+
+  // Top-level
+  if (cfg.merchantId) setVal('merchantId', cfg.merchantId);
+  if (cfg.businessName) setVal('businessName', cfg.businessName);
+  setVal('menuJsonUrl', cfg.menuJsonUrl || '');
+  setCheck('useJsonFallback', cfg.useJsonFallback);
+  if (cfg.cardImagePosition) setRadio('cardImagePosition', cfg.cardImagePosition);
+  if (cfg.cardColumns) setVal('cardColumns', cfg.cardColumns);
+  if (cfg.cardGap !== undefined) setVal('cardGap', cfg.cardGap);
+  if (cfg.imageWidthSide) setVal('imageWidthSide', cfg.imageWidthSide);
+  if (cfg.imageAlignH) setVal('imageAlignH', cfg.imageAlignH);
+  if (cfg.imageAlignV) setVal('imageAlignV', cfg.imageAlignV);
+  if (cfg.cardTextAlign) setRadio('cardTextAlign', cfg.cardTextAlign);
+  setCheck('scrollingListMode', cfg.scrollingListMode);
+  if (cfg.stickyNavOffset !== undefined) setVal('stickyNavOffset', cfg.stickyNavOffset);
+  if (cfg.tabsPosition) setRadio('tabsPosition', cfg.tabsPosition);
+  if (cfg.tabAlign) setRadio('tabAlign', cfg.tabAlign);
+  if (cfg.categorySort) setRadio('categorySort', cfg.categorySort);
+  if (cfg.pricePosition) setRadio('pricePosition', cfg.pricePosition);
+  if (cfg.priceLeaderStyle) setRadio('priceLeaderStyle', cfg.priceLeaderStyle);
+
+  setCheck('showImages', cfg.showImages);
+  setCheck('showPrices', cfg.showPrices);
+  setCheck('showModifiers', cfg.showModifiers);
+  setCheck('showTabs', cfg.showTabs !== false);
+  setCheck('showCategorySearch', cfg.showCategorySearch);
+  setCheck('showCategoryDropdown', cfg.showCategoryDropdown);
+  setCheck('hideTabsMobile', cfg.hideTabsMobile);
+  setCheck('showCategoryHeaders', cfg.showCategoryHeaders !== false);
+
+  if (cfg.excludedCategories) window._studio.excludedCategories = cfg.excludedCategories;
+
+  const s = cfg.styles || {};
+  setColor('defaultTabColor', s.defaultTabColor); setColor('defaultTabTextColor', s.defaultTabTextColor);
+  setColor('activeTabColor', s.activeTabColor); setColor('activeTabTextColor', s.activeTabTextColor);
+  setColor('tabBorderColor', s.tabBorderColor);
+  setColor('cardBgColor', s.cardBgColor); setColor('cardBorderColor', s.cardBorderColor);
+  setColor('cardTitleColor', s.cardTitleColor); setColor('descTextColor', s.descTextColor);
+  setColor('priceTextColor', s.priceTextColor);
+  setColor('priceLeaderColor', s.priceLeaderColor);
+  setColor('dropdownBgColor', s.dropdownBgColor);
+  setColor('headerNameColor', s.headerNameColor); setColor('headerDividerColor', s.headerDividerColor);
+  setColor('cardShadowColor', s.cardShadow?.color); setColor('tabShadowColor', s.tabShadow?.color);
+
+  if (s.cardBorderSides) { setCheck('cardBorderTop', s.cardBorderSides.top); setCheck('cardBorderRight', s.cardBorderSides.right); setCheck('cardBorderBottom', s.cardBorderSides.bottom); setCheck('cardBorderLeft', s.cardBorderSides.left); }
+  if (s.tabBorderSides) { setCheck('tabBorderTop', s.tabBorderSides.top); setCheck('tabBorderRight', s.tabBorderSides.right); setCheck('tabBorderBottom', s.tabBorderSides.bottom); setCheck('tabBorderLeft', s.tabBorderSides.left); }
+  setCheck('cardBgColorTransparent', s.cardBgTransparent);
+  setCheck('defaultTabColorTransparent', s.defaultTabColorTransparent);
+  setCheck('activeTabColorTransparent', s.activeTabColorTransparent);
+  if (s.cardShadow) { setCheck('cardShadowEnabled', s.cardShadow.enabled); setVal('cardShadowX', s.cardShadow.x); setVal('cardShadowY', s.cardShadow.y); setVal('cardShadowBlur', s.cardShadow.blur); setVal('cardShadowSpread', s.cardShadow.spread); }
+  if (s.tabShadow) { setCheck('tabShadowEnabled', s.tabShadow.enabled); setVal('tabShadowX', s.tabShadow.x); setVal('tabShadowY', s.tabShadow.y); setVal('tabShadowBlur', s.tabShadow.blur); setVal('tabShadowSpread', s.tabShadow.spread); }
+  window._studio?._syncNoBgUI();
+
+  const valMap = {
+    tabBorderWidth: s.tabBorderWidth, tabRadiusTL: s.tabRadiusTL, tabRadiusTR: s.tabRadiusTR, tabRadiusBR: s.tabRadiusBR, tabRadiusBL: s.tabRadiusBL,
+    tabFontFamily: s.tabFontFamily, tabFontSize: s.tabFontSize, tabFontWeight: s.tabFontWeight,
+    cardBorderWidth: s.cardBorderWidth, cardRadiusTL: s.cardRadiusTL, cardRadiusTR: s.cardRadiusTR, cardRadiusBR: s.cardRadiusBR, cardRadiusBL: s.cardRadiusBL,
+    cardPaddingTop: s.cardPaddingTop, cardPaddingRight: s.cardPaddingRight, cardPaddingBottom: s.cardPaddingBottom, cardPaddingLeft: s.cardPaddingLeft,
+    imageHeight: s.imageHeight,
+    titleFontFamily: s.titleFontFamily, titleFontSize: s.titleFontSize, titleFontWeight: s.titleFontWeight, titleLineHeight: s.titleLineHeight,
+    descFontFamily: s.descFontFamily, descFontSize: s.descFontSize, descFontWeight: s.descFontWeight, descLineHeight: s.descLineHeight,
+    priceFontFamily: s.priceFontFamily, priceFontSize: s.priceFontSize, priceFontWeight: s.priceFontWeight, priceLineHeight: s.priceLineHeight,
+    headerFontFamily: s.headerFontFamily, headerFontSize: s.headerFontSize, headerFontWeight: s.headerFontWeight, headerLineHeight: s.headerLineHeight,
+    headerDividerThickness: s.headerDividerThickness,
+  };
+  Object.entries(valMap).forEach(([id, val]) => { if (val !== undefined && val !== null) setVal(id, val); });
+  if (s.headerAlign) setRadio('headerAlign', s.headerAlign);
+
+  // Sync header controls visibility
+  const headersToggle = document.getElementById('showCategoryHeaders');
+  const wrapper = document.getElementById('headerControlsWrapper');
+  const note = document.getElementById('headerOffNote');
+  if (wrapper) wrapper.style.display = headersToggle?.checked ? '' : 'none';
+  if (note) note.style.display = headersToggle?.checked ? 'none' : '';
+
+  // Sync price leader controls visibility
+  const priceLeaderWrapper = document.getElementById('priceLeaderWrapper');
+  if (priceLeaderWrapper) priceLeaderWrapper.style.display = (cfg.pricePosition === 'left' || cfg.pricePosition === 'right') ? '' : 'none';
+
+  // Sync image-position-dependent field visibility (image width vs height)
+  const isSidePos = cfg.cardImagePosition === 'left' || cfg.cardImagePosition === 'right';
+  const heightGroup = document.getElementById('imageHeightGroup');
+  const widthGroup = document.getElementById('imageWidthGroup');
+  if (heightGroup) heightGroup.style.display = isSidePos ? 'none' : '';
+  if (widthGroup) widthGroup.style.display = isSidePos ? '' : 'none';
+
+  // Sync dropdown-bg field visibility
+  const dropdownBgWrapper = document.getElementById('dropdownBgWrapper');
+  if (dropdownBgWrapper) dropdownBgWrapper.style.display = (cfg.showCategorySearch || cfg.showCategoryDropdown) ? '' : 'none';
+
+  const stickyNavOffsetGroup = document.getElementById('stickyNavOffsetGroup');
+  if (stickyNavOffsetGroup) stickyNavOffsetGroup.style.display = cfg.scrollingListMode ? '' : 'none';
+
+  closeImportModal();
+
+  // Re-render with imported settings
+  if (window._studio) {
+    if (Object.keys(window._studio.itemsByCategory).length) window._studio.renderMenu();
+    else window._studio.loadMenu(false);
+  }
+}
+
+/* ── CLOSE ON ESCAPE ── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal(); closeImportModal(); closeModifierModal(); }
+});
+
+/* ── CLOSE MODALS ON BACKDROP CLICK ── */
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) { closeModal(); closeImportModal(); closeModifierModal(); } });
+});
+
+/* ── BOOT ── */
+
+function setJsonStatus(msg, type) {
+  const el = document.getElementById('jsonStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = type === 'error' ? '#f87171' : type === 'ok' ? '#34d399' : '#94a3b8';
+}
+
+// Apps Script Web app URL (see Code.gs). Paste the deployed URL here.
+const UPLOAD_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzJfwH5moGIkGqpo6WQRJK7K335Y1tLLC-Ep_DHucYRfPaL9vK3c1mMNVi7pG0pneQD/exec';
+
+async function uploadMenuJsonToGithub(file, locationId, account) {
+  if (!UPLOAD_ENDPOINT || UPLOAD_ENDPOINT.indexOf('PASTE_') === 0) throw new Error('Upload endpoint is not set in this studio.');
+  const text = await file.text();
+  JSON.parse(text);
+  const fileName = (locationId || file.name.replace(/\.json$/i, '')) + '_menu.json';
+  const date = new Date().toLocaleDateString('en-CA');
+  const res = await fetch(UPLOAD_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ account: account, date: date, fileName: fileName, content: text })
+  });
+  const out = await res.json();
+  if (!out.ok) throw new Error(out.error || 'Upload failed');
+  return out.url;
+}
+
+function locationFromMenuJson(j) {
+  return (j && j.menu && j.menu.location_id) || (j && j.items && j.items[0] && j.items[0].location_id) || '';
+}
+
+function fillLocationFrom(j) {
+  const loc = locationFromMenuJson(j);
+  const el = document.getElementById('merchantId');
+  if (!loc || !el) return;
+  window.jsonLocation = loc;
+  if (el.value.trim() !== loc) {
+    el.value = loc;
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+}
+
+// If a different location is loaded, the JSON fallback no longer belongs to it: clear the JSON inputs.
+function clearJsonIfMismatch() {
+  const el = document.getElementById('merchantId');
+  if (!window.jsonLocation || !el || el.value.trim() === window.jsonLocation) return;
+  window.jsonLocation = null;
+  window.localMenuText = null;
+  const fileEl = document.getElementById('menuJsonFile');
+  const urlEl = document.getElementById('menuJsonUrl');
+  if (fileEl) fileEl.value = '';
+  if (urlEl) urlEl.value = '';
+  setJsonStatus('Cleared the saved JSON because it is for a different location.', 'info');
+}
+
+function wireLocationAutofill() {
+  const idEl = document.getElementById('merchantId');
+  if (idEl) idEl.addEventListener('input', clearJsonIfMismatch);
+  const fileEl = document.getElementById('menuJsonFile');
+  if (fileEl) {
+    fileEl.addEventListener('change', async () => {
+      const file = fileEl.files[0];
+      window.localMenuText = null;
+      if (!file) return;
+      try {
+        const text = await file.text();
+        JSON.parse(text);
+        window.localMenuText = text;
+        fillLocationFrom(JSON.parse(text));
+      } catch (e) { /* not valid JSON; the upload will report it */ }
+    });
+  }
+  const urlEl = document.getElementById('menuJsonUrl');
+  if (urlEl) {
+    urlEl.addEventListener('change', async () => {
+      const url = urlEl.value.trim();
+      if (!url) return;
+      try { const r = await fetch(url); if (r.ok) fillLocationFrom(await r.json()); } catch (e) { /* unreachable URL; the fallback will report it */ }
+    });
+  }
+}
+
+function wireJsonUpload() {
+  wireLocationAutofill();
+  const btn = document.getElementById('uploadJsonBtn');
+  if (!btn) return;
+  btn.addEventListener('click', async () => {
+    const file = document.getElementById('menuJsonFile').files[0];
+    if (!file) { setJsonStatus('Choose a JSON file first.', 'error'); return; }
+    const account = document.getElementById('ghAccount').value.trim();
+    if (!account) { setJsonStatus('Enter the account name for the commit note.', 'error'); return; }
+    btn.disabled = true;
+    try {
+      setJsonStatus('Uploading…');
+      const url = await uploadMenuJsonToGithub(file, document.getElementById('merchantId').value.trim(), account);
+      document.getElementById('menuJsonUrl').value = url;
+      window.jsonLocation = document.getElementById('merchantId').value.trim();
+      setJsonStatus('Uploaded. The URL is filled in below and saved with the embed code.', 'ok');
+      if (window._studio) window._studio.loadMenu(true);
+    } catch (e) {
+      setJsonStatus(e.message, 'error');
+    } finally {
+      btn.disabled = false;
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  wireJsonUpload();
+  window._studio = new MenuStudio();
+
+  // Re-sync column count when the preview panel resizes
+  const preview = document.getElementById('menuPreview');
+  if (preview && window.ResizeObserver) {
+    new ResizeObserver(() => {
+      if (window._studio) requestAnimationFrame(() => window._studio._syncMenuCols());
+    }).observe(preview);
+  }
+
+  // Auto-load if merchantId field already has a value on page load
+  const mid = document.getElementById('merchantId')?.value?.trim();
+  if (mid) window._studio.loadMenu(false);
+});
+</script>
+</body>
+</html>
